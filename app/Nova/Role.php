@@ -95,4 +95,30 @@ class Role extends Resource
     {
         return [];
     }
+
+
+    public static function authorizedToCreate(Request $request)
+    {
+        return $request->user() && $request->user()->can('create role');
+    }
+
+    public function authorizedToUpdate(Request $request)
+    {
+        return $request->user() && $request->user()->can('update role');
+    }
+
+    public function authorizedToDelete(Request $request): bool
+    {
+        return $request->user() && $request->user() && $request->user()->can('delete role');
+    }
+
+    public static function authorizedToViewAny(Request $request): bool
+    {
+        return $request->user() && $request->user()->can('view any role');
+    }
+
+    public function authorizedToView(Request $request)
+    {
+        return $request->user()->can('view role');
+    }
 }

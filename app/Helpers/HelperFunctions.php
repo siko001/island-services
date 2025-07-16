@@ -48,8 +48,8 @@ Class HelperFunctions {
    public static  function generateCrudPermissionsFromNovaResources($output = null): int
     {
         $resources = Nova::$resources;
-        $actions = ['view', 'view any' , 'create', 'update', 'delete'];
-
+        $allActions = ['view', 'view any' , 'create', 'update', 'delete'];
+        $permissionModelActions = ['view', 'view any'];
         $createdCount = 0;
 
         foreach ($resources as $resourceClass) {
@@ -58,6 +58,11 @@ Class HelperFunctions {
 
             $name = class_basename($model);
             $slug = Str::snake($name);
+
+            // Use limited actions for Permission model only
+            $actions = is_a($model, \Spatie\Permission\Models\Permission::class, true)
+                ? $permissionModelActions
+                : $allActions;
 
             foreach ($actions as $action) {
                 $permissionName = "{$action} {$slug}";

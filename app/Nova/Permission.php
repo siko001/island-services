@@ -89,20 +89,30 @@ class Permission extends Resource
     }
 
 
-    public function authorizedToUpdate(\Illuminate\Http\Request $request): bool
+    public function authorizedToUpdate(Request $request): bool
     {
         return false; // Disable the "Edit" button
     }
 
 
-    public function authorizedToDelete(\Illuminate\Http\Request $request): bool
+    public function authorizedToDelete(Request $request): bool
     {
         return false; // Disable the "Delete" button
     }
 
 
-    public static function authorizedToCreate(\Illuminate\Http\Request $request): bool
+    public static function authorizedToCreate(Request $request): bool
     {
         return false; //disable the Create
+    }
+
+    public static function authorizedToViewAny(Request $request):bool
+    {
+        return $request->user() && $request->user()->can('view any permission');
+    }
+
+    public function authorizedToView(Request $request): bool
+    {
+        return $request->user() && $request->user()->can('view permission');
     }
 }
