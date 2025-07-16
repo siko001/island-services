@@ -1,10 +1,8 @@
 <?php
 
-namespace App\Listeners;
+namespace App\Listeners\Login;
 
 use Illuminate\Auth\Events\Login;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Queue\InteractsWithQueue;
 
 class LogSuccessfulLogin
 {
@@ -19,12 +17,15 @@ class LogSuccessfulLogin
     /**
      * Handle the event.
      */
-    public function handle(Login $event)
+    public function handle(Login $event): void
     {
+
         \App\Models\LoginAudit::create([
             'email' => $event->user->email,
             'ip_address' => request()->ip(),
             'success' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
         ]);
     }
 }

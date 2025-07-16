@@ -6,14 +6,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class LoginAudit extends Model
 {
-
-
-    protected $listen = [
-        'Illuminate\Auth\Events\Login' => [
-            'App\Listeners\LogSuccessfulLogin',
-        ],
-        'Illuminate\Auth\Events\Failed' => [
-            'App\Listeners\LogFailedLogin',
-        ],
+    protected $fillable = [
+        'email',
+        'ip_address',
+        'success',
+        'created_at',
+        'updated_at',
     ];
 }
