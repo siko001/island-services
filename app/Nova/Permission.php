@@ -44,6 +44,7 @@ class Permission extends Resource
            return [
                Text::make('Name', 'name')->sortable()->rules('required', 'max:255')->onlyOnIndex(),
                BelongsToMany::make('Roles'),
+               BelongsToMany::make('Users', 'users', User::class),
            ];
     }
 
