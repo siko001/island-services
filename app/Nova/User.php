@@ -14,6 +14,7 @@ use Laravel\Nova\Fields\Password;
 use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Http\Requests\NovaRequest;
 use Laravel\Nova\Tabs\Tab;
+use Vyuldashev\NovaPermission\PermissionBooleanGroup;
 use Vyuldashev\NovaPermission\RoleBooleanGroup;
 
 class User extends Resource
@@ -118,8 +119,7 @@ class User extends Resource
                 ]),
 
                 Tab::make('Permissions', [
-                    //replace with Permissions boolean group
-                    Text::make('Address')->hideFromIndex(),
+                    PermissionBooleanGroup::make('Permissions', 'permissions')->hideFromIndex(),
                 ]),
 
             ]),
@@ -166,4 +166,31 @@ class User extends Resource
     {
         return [];
     }
+
+
+    public static function authorizedToCreate(Request $request): bool
+    {
+        return $request->user() && $request->user()->can('create role');
+    }
+
+    public function authorizedToUpdate(Request $request): bool
+    {
+        return $request->user() && $request->user()->can('update user');
+    }
+
+    public function authorizedToDelete(Request $request): bool
+    {
+        return $request->user() && $request->user()->can('delete user');
+    }
+
+    public static function authorizedToViewAny(Request $request): bool
+    {
+        return $request->user() && $request->user()->can('view any user');
+    }
+
+    public function authorizedToView(Request $request): bool
+    {
+        return $request->user() && $request->user()->can('view user');
+    }
+
 }

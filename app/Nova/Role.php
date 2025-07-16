@@ -8,6 +8,7 @@ use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Http\Requests\NovaRequest;
+use Vyuldashev\NovaPermission\PermissionBooleanGroup;
 
 class Role extends Resource
 {
@@ -16,7 +17,7 @@ class Role extends Resource
      *
      * @var class-string<\App\Models\Role>
      */
-    public static $model = \Spatie\Permission\Models\Role::class;
+    public static $model = \App\Models\Role::class;
 
     /**
      * The single value that should be used to represent the resource when being displayed.
@@ -47,8 +48,9 @@ class Role extends Resource
                 ->sortable()
                 ->rules('required', 'max:255'),
             Boolean::make('Earns Commission')->help('Enable this to allow users with this role to have additional fields for commission when creating or updating users'),
-            BelongsToMany::make('Users', 'users', User::class),
 
+            PermissionBooleanGroup::make('Permissions', 'permissions'),
+            BelongsToMany::make('Users', 'users', User::class),
         ];
 
 
@@ -92,5 +94,31 @@ class Role extends Resource
     public function actions(NovaRequest $request): array
     {
         return [];
+    }
+
+
+    public static function authorizedToCreate(Request $request) :bool
+    {
+        return $request->user() && $request->user()->can('create role');
+    }
+
+    public function authorizedToUpdate(Request $request)
+    {
+        return $request->user() && $request->user()->can('update role');
+    }
+
+    public function authorizedToDelete(Request $request): bool
+    {
+        return $request->user() && $request->user() && $request->user()->can('delete role');
+    }
+
+    public static function authorizedToViewAny(Request $request): bool
+    {
+        return $request->user() && $request->user()->can('view any role');
+    }
+
+    public function authorizedToView(Request $request):bool
+    {
+        return $request->user() && $request->user()->can('view role');
     }
 }

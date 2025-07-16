@@ -15,7 +15,7 @@ class Permission extends Resource
      *
      * @var class-string<\App\Models\Permission>
      */
-    public static $model = \Spatie\Permission\Models\Permission::class;
+    public static $model = \App\Models\Permission::class;
 
     /**
      * The single value that should be used to represent the resource when being displayed.
@@ -44,6 +44,7 @@ class Permission extends Resource
            return [
                Text::make('Name', 'name')->sortable()->rules('required', 'max:255')->onlyOnIndex(),
                BelongsToMany::make('Roles'),
+               BelongsToMany::make('Users', 'users', User::class),
            ];
     }
 
@@ -85,5 +86,33 @@ class Permission extends Resource
     public function actions(NovaRequest $request): array
     {
         return [];
+    }
+
+
+    public function authorizedToUpdate(Request $request): bool
+    {
+        return false; // Disable the "Edit" button
+    }
+
+
+    public function authorizedToDelete(Request $request): bool
+    {
+        return false; // Disable the "Delete" button
+    }
+
+
+    public static function authorizedToCreate(Request $request): bool
+    {
+        return false; //disable the Create
+    }
+
+    public static function authorizedToViewAny(Request $request):bool
+    {
+        return $request->user() && $request->user()->can('view any permission');
+    }
+
+    public function authorizedToView(Request $request): bool
+    {
+        return $request->user() && $request->user()->can('view permission');
     }
 }

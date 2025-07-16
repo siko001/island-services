@@ -30,6 +30,7 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
         Nova::resources([
             \App\Nova\User::class,
             \App\Nova\Role::class,
+            \App\Nova\Permission::class,
         ]);
 
         //Nav Menu
