@@ -17,7 +17,7 @@ class Role extends Resource
      *
      * @var class-string<\App\Models\Role>
      */
-    public static $model = \Spatie\Permission\Models\Role::class;
+    public static $model = \App\Models\Role::class;
 
     /**
      * The single value that should be used to represent the resource when being displayed.
