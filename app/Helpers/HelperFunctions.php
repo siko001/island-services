@@ -48,7 +48,7 @@ Class HelperFunctions {
    public static  function generateCrudPermissionsFromNovaResources($output = null): int
     {
         $resources = Nova::$resources;
-        $actions = ['view', 'create', 'update', 'delete'];
+        $actions = ['view', 'view any' , 'create', 'update', 'delete'];
 
         $createdCount = 0;
 
