@@ -97,7 +97,7 @@ class Role extends Resource
     }
 
 
-    public static function authorizedToCreate(Request $request)
+    public static function authorizedToCreate(Request $request) :bool
     {
         return $request->user() && $request->user()->can('create role');
     }
@@ -117,8 +117,8 @@ class Role extends Resource
         return $request->user() && $request->user()->can('view any role');
     }
 
-    public function authorizedToView(Request $request)
+    public function authorizedToView(Request $request):bool
     {
-        return $request->user()->can('view role');
+        return $request->user() && $request->user()->can('view role');
     }
 }
