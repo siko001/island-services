@@ -86,4 +86,22 @@ class Permission extends Resource
     {
         return [];
     }
+
+
+    public function authorizedToUpdate(\Illuminate\Http\Request $request): bool
+    {
+        return false; // Disable the "Edit" button
+    }
+
+
+    public function authorizedToDelete(\Illuminate\Http\Request $request): bool
+    {
+        return false; // Disable the "Delete" button
+    }
+
+
+    public static function authorizedToCreate(\Illuminate\Http\Request $request): bool
+    {
+        return false; //disable the Create
+    }
 }

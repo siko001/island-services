@@ -33,5 +33,8 @@ class DatabaseSeeder extends Seeder
                 'is_terminated' => false,
             ]
         );
+
+        $this->call(RoleSeeder::class);
+
     }
 }

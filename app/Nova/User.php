@@ -14,6 +14,7 @@ use Laravel\Nova\Fields\Password;
 use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Http\Requests\NovaRequest;
 use Laravel\Nova\Tabs\Tab;
+use Vyuldashev\NovaPermission\PermissionBooleanGroup;
 use Vyuldashev\NovaPermission\RoleBooleanGroup;
 
 class User extends Resource
@@ -118,8 +119,7 @@ class User extends Resource
                 ]),
 
                 Tab::make('Permissions', [
-                    //replace with Permissions boolean group
-                    Text::make('Address')->hideFromIndex(),
+                    PermissionBooleanGroup::make('Permissions', 'permissions')->hideFromIndex(),
                 ]),
 
             ]),

@@ -8,6 +8,7 @@ use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Http\Requests\NovaRequest;
+use Vyuldashev\NovaPermission\PermissionBooleanGroup;
 
 class Role extends Resource
 {
@@ -47,8 +48,9 @@ class Role extends Resource
                 ->sortable()
                 ->rules('required', 'max:255'),
             Boolean::make('Earns Commission')->help('Enable this to allow users with this role to have additional fields for commission when creating or updating users'),
-            BelongsToMany::make('Users', 'users', User::class),
 
+            PermissionBooleanGroup::make('Permissions', 'permissions'),
+            BelongsToMany::make('Users', 'users', User::class),
         ];
 
 
