@@ -16,8 +16,8 @@
                     Log #{{ $log->id }}: {{ $log->name }}
                 </h3>
                 <span class="px-2 py-1 text-xs rounded bg-green-100 text-green-800 font-medium">
-                {{ ucfirst($log->status) }}
-            </span>
+                    {{ ucfirst($log->status) }}
+                </span>
             </div>
             
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-gray-700">
