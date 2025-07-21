@@ -3,9 +3,10 @@
 namespace Database\Seeders;
 
 use App\Models\User;
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
+
+// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
 class DatabaseSeeder extends Seeder
 {
@@ -14,6 +15,8 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+
+        //create a default user if it does not exist
         User::firstOrCreate(
             ['email' => 'neil@gmail.com'],
             [
@@ -34,7 +37,11 @@ class DatabaseSeeder extends Seeder
             ]
         );
 
+        //this calls the Permission and RoleSeeder and creates related data and give the default user the admin role
         $this->call(RoleSeeder::class);
+
+        //This Call the Area and location seeder and creates related data
+        $this->call(LocationSeeder::class);
 
     }
 }

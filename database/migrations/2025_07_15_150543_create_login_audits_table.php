@@ -16,7 +16,8 @@ return new class extends Migration
             $table->string('email');
             $table->string('ip_address');
             $table->boolean('success');
-            $table->timestamp('created_at')->useCurrent();
+            $table->timestamp('created_at')->nullable();
+            $table->timestamp('updated_at')->nullable();
         });
     }
 

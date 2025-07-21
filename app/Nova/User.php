@@ -4,15 +4,13 @@ namespace App\Nova;
 
 use App\Helpers\HelperFunctions;
 use Illuminate\Http\Request;
-use Laravel\Nova\Fields\Boolean;
-use Laravel\Nova\Fields\FormData;
-use Laravel\Nova\Panel;
 use Laravel\Nova\Auth\PasswordValidationRules;
-use Laravel\Nova\Fields\Gravatar;
+use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Password;
 use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Http\Requests\NovaRequest;
+use Laravel\Nova\Panel;
 use Laravel\Nova\Tabs\Tab;
 use Vyuldashev\NovaPermission\PermissionBooleanGroup;
 use Vyuldashev\NovaPermission\RoleBooleanGroup;
@@ -23,21 +21,16 @@ class User extends Resource
 
     /**
      * The model the resource corresponds to.
-     *
      * @var class-string<\App\Models\User>
      */
     public static $model = \App\Models\User::class;
-
     /**
      * The single value that should be used to represent the resource when being displayed.
-     *
      * @var string
      */
     public static $title = 'name';
-
     /**
      * The columns that should be searched.
-     *
      * @var array
      */
     public static $search = [
@@ -46,7 +39,6 @@ class User extends Resource
 
     /**
      * Get the fields displayed by the resource.
-     *
      * @return array<int, \Laravel\Nova\Fields\Field|\Laravel\Nova\Panel|\Laravel\Nova\ResourceTool|\Illuminate\Http\Resources\MergeValue>
      */
     public function fields(NovaRequest $request): array
@@ -57,7 +49,6 @@ class User extends Resource
                 Text::make('Name')
                     ->sortable()
                     ->rules('required', 'max:255'),
-
 
                 Text::make('Abbreviation')->rules('required', 'max:255')->hideFromIndex(),
                 Text::make('Email')
@@ -97,23 +88,22 @@ class User extends Resource
                     //Show the below if roles are selected that earn commission
                     Boolean::make('Gets Commission')
                         ->hide()
-                        ->dependsOn(['roles'], function ($field, $request, $formData) {
+                        ->dependsOn(['roles'], function($field, $request, $formData) {
                             HelperFunctions::showFieldIfEarningCommissionRole($field, $formData);
                         })
                         ->hideFromIndex(),
                     Boolean::make('Apply Standard Commission Rates', 'standard_commission')
                         ->hide()
-                        ->dependsOn(['roles'], function ($field, $request, $formData) {
+                        ->dependsOn(['roles'], function($field, $request, $formData) {
                             HelperFunctions::showFieldIfEarningCommissionRole($field, $formData);
                         })
                         ->hideFromIndex(),
-                    Text::make("Dakar Pay Code",'dakar_code')
+                    Text::make("Dakar Pay Code", 'dakar_code')
                         ->hide()
-                        ->dependsOn(['roles'], function ($field, $request, $formData) {
+                        ->dependsOn(['roles'], function($field, $request, $formData) {
                             HelperFunctions::showFieldIfEarningCommissionRole($field, $formData);
                         })
                         ->hideFromIndex(),
-
 
                     Boolean::make('Is Terminated')
                 ]),
@@ -129,7 +119,6 @@ class User extends Resource
 
     /**
      * Get the cards available for the request.
-     *
      * @return array<int, \Laravel\Nova\Card>
      */
     public function cards(NovaRequest $request): array
@@ -139,7 +128,6 @@ class User extends Resource
 
     /**
      * Get the filters available for the resource.
-     *
      * @return array<int, \Laravel\Nova\Filters\Filter>
      */
     public function filters(NovaRequest $request): array
@@ -149,7 +137,6 @@ class User extends Resource
 
     /**
      * Get the lenses available for the resource.
-     *
      * @return array<int, \Laravel\Nova\Lenses\Lens>
      */
     public function lenses(NovaRequest $request): array
@@ -159,7 +146,6 @@ class User extends Resource
 
     /**
      * Get the actions available for the resource.
-     *
      * @return array<int, \Laravel\Nova\Actions\Action>
      */
     public function actions(NovaRequest $request): array
@@ -167,7 +153,7 @@ class User extends Resource
         return [];
     }
 
-
+    //Resource authorization methods
     public static function authorizedToCreate(Request $request): bool
     {
         return $request->user() && $request->user()->can('create role');
@@ -192,5 +178,4 @@ class User extends Resource
     {
         return $request->user() && $request->user()->can('view user');
     }
-
 }
