@@ -2,10 +2,14 @@
 
 namespace App\Nova;
 
+use App\Helpers\HelperFunctions;
+use Illuminate\Http\Request;
+use Laravel\Nova\Fields\BelongsToMany;
 use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\Email;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Number;
+use Laravel\Nova\Fields\Select;
 use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Fields\Textarea;
 use Laravel\Nova\Http\Requests\NovaRequest;
@@ -47,7 +51,6 @@ class Area extends Resource
                 ->hideFromIndex(),
 
             Panel::make('Commission ( in % ) for Paid Outstanding ', [
-                //            Heading::make("<p style='margin-top:24px;' class='md:text-xl'>Commission ( in % ) for Paid Outstanding </p>")->asHtml(),
                 Number::make('on Deliveries', 'commission_paid_outstanding_delivery')
                     ->sortable()
                     ->rules('required', 'numeric')
@@ -67,7 +70,6 @@ class Area extends Resource
             ]),
 
             Panel::make('Commission ( in % ) for Cash', [
-                //                Heading::make("<p style='margin-top:24px;' class='md:text-xl'>Commission ( in % ) for Cash</p>")->asHtml(),
                 Number::make('on Deliveries', 'commission_cash_delivery')
                     ->sortable()
                     ->rules('required', 'numeric')
@@ -96,7 +98,39 @@ class Area extends Resource
                     ->sortable()
                     ->rules('required', 'email')
                     ->hideFromIndex(),
-            ])
+            ]),
+
+            BelongsToMany::make('Locations')
+                ->rules('required')
+                ->fields(function() {
+                    $areaId = request()->resourceId || request()->viaResourceId;
+                    $pivotLocationNumber = optional($this->pivot)->location_number;
+                    $availableNumbers = HelperFunctions::availableLocationNumbers($areaId, $pivotLocationNumber);
+                    return [
+                        Select::make('Routing Number', 'location_number')
+                            ->options($availableNumbers)
+                            ->displayUsingLabels()
+                            ->rules(function() {
+                                return [
+                                    'required',
+                                    'integer',
+                                    'min:1',
+
+                                ];
+                            }),
+
+                        Panel::make('Delivery Days', [
+                            Boolean::make('Monday'),
+                            Boolean::make('Tuesday'),
+                            Boolean::make('Wednesday'),
+                            Boolean::make('Thursday'),
+                            Boolean::make('Friday'),
+                            Boolean::make('Saturday'),
+                            Boolean::make('Sunday'),
+                        ])
+                    ];
+                }),
+
         ];
 
     }
@@ -135,5 +169,31 @@ class Area extends Resource
     public function actions(NovaRequest $request): array
     {
         return [];
+    }
+
+    //Resource authorization methods
+    public static function authorizedToCreate(Request $request): bool
+    {
+        return $request->user() && $request->user()->can('create area');
+    }
+
+    public function authorizedToUpdate(Request $request): bool
+    {
+        return $request->user() && $request->user()->can('update area');
+    }
+
+    public function authorizedToDelete(Request $request): bool
+    {
+        return $request->user() && $request->user() && $request->user()->can('delete area');
+    }
+
+    public static function authorizedToViewAny(Request $request): bool
+    {
+        return $request->user() && $request->user()->can('view any area');
+    }
+
+    public function authorizedToView(Request $request): bool
+    {
+        return $request->user() && $request->user()->can('view area');
     }
 }

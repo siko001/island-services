@@ -26,4 +26,15 @@ class Area extends Model
         'is_foreign_area' => 'boolean',
         'updated_at' => 'datetime',
     ];
+
+    public function locations()
+    {
+        return $this->belongsToMany(Location::class)
+            ->withPivot([
+                'location_number',
+                'monday', 'tuesday', 'wednesday', 'thursday',
+                'friday', 'saturday', 'sunday'
+            ])
+            ->withTimestamps();
+    }
 }

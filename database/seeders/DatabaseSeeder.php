@@ -15,6 +15,8 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+
+        //create a default user if it does not exist
         User::firstOrCreate(
             ['email' => 'neil@gmail.com'],
             [
@@ -35,8 +37,11 @@ class DatabaseSeeder extends Seeder
             ]
         );
 
+        //this calls the Permission and RoleSeeder and creates related data and give the default user the admin role
         $this->call(RoleSeeder::class);
-        $this->call(AreaSeeder::class);
+
+        //This Call the Area and location seeder and creates related data
+        $this->call(LocationSeeder::class);
 
     }
 }

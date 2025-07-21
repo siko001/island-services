@@ -2,21 +2,22 @@
 
 namespace App\Nova;
 
+use App\Helpers\HelperFunctions;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\BelongsToMany;
 use Laravel\Nova\Fields\Boolean;
-use Laravel\Nova\Fields\ID;
+use Laravel\Nova\Fields\Select;
 use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Http\Requests\NovaRequest;
-use Vyuldashev\NovaPermission\PermissionBooleanGroup;
+use Laravel\Nova\Panel;
 
-class Role extends Resource
+class Location extends Resource
 {
     /**
      * The model the resource corresponds to.
-     * @var class-string<\App\Models\Role>
+     * @var class-string<\App\Models\Location>
      */
-    public static $model = \App\Models\Role::class;
+    public static $model = \App\Models\Location::class;
     /**
      * The single value that should be used to represent the resource when being displayed.
      * @var string
@@ -37,16 +38,34 @@ class Role extends Resource
     public function fields(NovaRequest $request): array
     {
         return [
-            ID::make()->sortable(),
-            Text::make('Name')
+            Text::make("Name")
                 ->sortable()
                 ->rules('required', 'max:255'),
-            Boolean::make('Earns Commission')->help('Enable this to allow users with this role to have additional fields for commission when creating or updating users'),
 
-            PermissionBooleanGroup::make('Permissions', 'permissions'),
-            BelongsToMany::make('Users', 'users', User::class),
+            BelongsToMany::make('Areas')
+                ->rules('required')
+                ->fields(function() {
+                    $areaId = request()->resourceId || request()->viaResourceId;
+                    $pivotLocationNumber = optional($this->pivot)->location_number;
+                    $availableNumbers = HelperFunctions::availableLocationNumbers($areaId, $pivotLocationNumber);
+                    return [
+                        Select::make('Location Number', 'location_number')
+                            ->options($availableNumbers)
+                            ->displayUsingLabels()
+                            ->rules('required'),
+
+                        Panel::make('Delivery Days', [
+                            Boolean::make('Monday'),
+                            Boolean::make('Tuesday'),
+                            Boolean::make('Wednesday'),
+                            Boolean::make('Thursday'),
+                            Boolean::make('Friday'),
+                            Boolean::make('Saturday'),
+                            Boolean::make('Sunday'),
+                        ])
+                    ];
+                }),
         ];
-
     }
 
     /**
@@ -88,26 +107,26 @@ class Role extends Resource
     //Resource authorization methods
     public static function authorizedToCreate(Request $request): bool
     {
-        return $request->user() && $request->user()->can('create role');
+        return $request->user() && $request->user()->can('create location');
     }
 
     public function authorizedToUpdate(Request $request): bool
     {
-        return $request->user() && $request->user()->can('update role');
+        return $request->user() && $request->user()->can('update location');
     }
 
     public function authorizedToDelete(Request $request): bool
     {
-        return $request->user() && $request->user() && $request->user()->can('delete role');
+        return $request->user() && $request->user() && $request->user()->can('delete location');
     }
 
     public static function authorizedToViewAny(Request $request): bool
     {
-        return $request->user() && $request->user()->can('view any role');
+        return $request->user() && $request->user()->can('view any location');
     }
 
     public function authorizedToView(Request $request): bool
     {
-        return $request->user() && $request->user()->can('view role');
+        return $request->user() && $request->user()->can('view location');
     }
 }

@@ -8,6 +8,12 @@ use Illuminate\Support\Facades\DB;
 
 class AreaSeeder extends Seeder
 {
+    /**
+     * Seed the application's database with areas.
+     * This will create areas for Malta and Italy, with specific commission and delivery note settings.
+     * It will also ensure that foreign areas are marked correctly.
+     * This seeder is called from the Location seeder to ensure areas exist before creating locations.
+     */
     public function run(): void
     {
 
