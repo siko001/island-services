@@ -6,6 +6,7 @@ use App\Helpers\HelperFunctions;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\BelongsToMany;
 use Laravel\Nova\Fields\Boolean;
+use Laravel\Nova\Fields\FormData;
 use Laravel\Nova\Fields\Select;
 use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Http\Requests\NovaRequest;
@@ -41,18 +42,21 @@ class Location extends Resource
             Text::make("Name")
                 ->sortable()
                 ->rules('required', 'max:255'),
-
             BelongsToMany::make('Areas')
-                ->rules('required')
                 ->fields(function() {
-                    $areaId = request()->resourceId || request()->viaResourceId;
-                    $pivotLocationNumber = optional($this->pivot)->location_number;
-                    $availableNumbers = HelperFunctions::availableLocationNumbers($areaId, $pivotLocationNumber);
                     return [
-                        Select::make('Location Number', 'location_number')
-                            ->options($availableNumbers)
+                        Select::make('Routing Number', 'location_number')
                             ->displayUsingLabels()
-                            ->rules('required'),
+                            ->dependsOn('areas', function($field, $request, FormData $formData) {
+                                $areaId = $formData->areas ?? null;
+
+                                $available = $areaId
+                                    ? HelperFunctions::availableLocationNumbers($areaId)
+                                    : collect(range(1, 20))->mapWithKeys(fn($i) => [$i => $i])->toArray();
+
+                                $field->options($available);
+                            })
+                            ->rules(['required', 'integer', 'min:1']),
 
                         Panel::make('Delivery Days', [
                             Boolean::make('Monday'),
@@ -62,9 +66,10 @@ class Location extends Resource
                             Boolean::make('Friday'),
                             Boolean::make('Saturday'),
                             Boolean::make('Sunday'),
-                        ])
+                        ]),
                     ];
-                }),
+                })
+
         ];
     }
 

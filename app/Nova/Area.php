@@ -101,13 +101,15 @@ class Area extends Resource
             ]),
 
             BelongsToMany::make('Locations')
+                ->searchable()
                 ->rules('required')
                 ->fields(function() {
-                    $areaId = request()->resourceId || request()->viaResourceId;
+                    $areaId = request()->viaResourceId ?? request()->resourceId;
                     $pivotLocationNumber = optional($this->pivot)->location_number;
                     $availableNumbers = HelperFunctions::availableLocationNumbers($areaId, $pivotLocationNumber);
                     return [
                         Select::make('Routing Number', 'location_number')
+                            ->searchable()
                             ->options($availableNumbers)
                             ->displayUsingLabels()
                             ->rules(function() {
