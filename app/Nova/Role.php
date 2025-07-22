@@ -41,10 +41,11 @@ class Role extends Resource
             Text::make('Name')
                 ->sortable()
                 ->rules('required', 'max:255'),
-            Boolean::make('Earns Commission')->help('Enable this to allow users with this role to have additional fields for commission when creating or updating users'),
+            Boolean::make('Earns Commission')->help('Enable this to allow users with this role to have additional fields for commission when creating or updating users')->sortable(),
 
-            PermissionBooleanGroup::make('Permissions', 'permissions'),
+            PermissionBooleanGroup::make('Permissions', 'permissions')->hideFromIndex(),
             BelongsToMany::make('Users', 'users', User::class),
+
         ];
 
     }

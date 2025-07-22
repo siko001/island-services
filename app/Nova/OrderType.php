@@ -2,8 +2,8 @@
 
 namespace App\Nova;
 
+use Illuminate\Http\Request;
 use Laravel\Nova\Fields\Boolean;
-use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Http\Requests\NovaRequest;
 
@@ -34,11 +34,10 @@ class OrderType extends Resource
     public function fields(NovaRequest $request): array
     {
         return [
-            ID::make()->sortable(),
-            Text::make('Name')->rules('required', 'max:255'),
-            Text::make('Abbreviation')->rules('required', 'max:16')->maxlength(16),
-            Boolean::make('Short Period Type'),
-            Boolean::make('Default', 'is_default'),
+            Text::make('Name')->rules('required', 'max:255')->sortable(),
+            Text::make('Abbreviation')->rules('required', 'max:16')->maxlength(16)->sortable(),
+            Boolean::make('Short Period Type')->sortable(),
+            Boolean::make('Default', 'is_default')->sortable(),
         ];
     }
 
@@ -76,5 +75,31 @@ class OrderType extends Resource
     public function actions(NovaRequest $request): array
     {
         return [];
+    }
+
+    //Resource authorization methods
+    public static function authorizedToCreate(Request $request): bool
+    {
+        return $request->user() && $request->user()->can('create order_type');
+    }
+
+    public function authorizedToUpdate(Request $request): bool
+    {
+        return $request->user() && $request->user()->can('update order_type');
+    }
+
+    public function authorizedToDelete(Request $request): bool
+    {
+        return $request->user() && $request->user() && $request->user()->can('delete order_type');
+    }
+
+    public static function authorizedToViewAny(Request $request): bool
+    {
+        return $request->user() && $request->user()->can('view any order_type');
+    }
+
+    public function authorizedToView(Request $request): bool
+    {
+        return $request->user() && $request->user()->can('view order_type');
     }
 }

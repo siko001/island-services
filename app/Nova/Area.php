@@ -7,7 +7,6 @@ use Illuminate\Http\Request;
 use Laravel\Nova\Fields\BelongsToMany;
 use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\Email;
-use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Number;
 use Laravel\Nova\Fields\Select;
 use Laravel\Nova\Fields\Text;
@@ -42,9 +41,13 @@ class Area extends Resource
     public function fields(NovaRequest $request): array
     {
         return [
-            ID::make()->sortable(),
             Text::make('Name')->sortable()->rules('required', 'max:255'),
-            Text::make('Abbreviation')->rules('required', 'max:16')->maxlength(16)->sortable(),
+            Text::make('Abbreviation')->rules('required', 'max:16')
+                ->maxlength(16)
+                ->sortable()
+                ->hideFromIndex(function(NovaRequest $request) {
+                    return $request->viaRelationship();
+                }),
 
             Boolean::make('Is Foreign', 'is_foreign_area')
                 ->sortable()
@@ -124,13 +127,13 @@ class Area extends Resource
                             }),
 
                         Panel::make('Delivery Days', [
-                            Boolean::make('Monday'),
-                            Boolean::make('Tuesday'),
-                            Boolean::make('Wednesday'),
-                            Boolean::make('Thursday'),
-                            Boolean::make('Friday'),
-                            Boolean::make('Saturday'),
-                            Boolean::make('Sunday'),
+                            Boolean::make('Monday')->sortable(),
+                            Boolean::make('Tuesday')->sortable(),
+                            Boolean::make('Wednesday')->sortable(),
+                            Boolean::make('Thursday')->sortable(),
+                            Boolean::make('Friday')->sortable(),
+                            Boolean::make('Saturday')->sortable(),
+                            Boolean::make('Sunday')->sortable(),
                         ])
                     ];
                 }),

@@ -46,6 +46,7 @@ class Location extends Resource
                 ->fields(function() {
                     return [
                         Select::make('Routing Number', 'location_number')
+                            ->sortable()
                             ->displayUsingLabels()
                             ->dependsOn('areas', function($field, $request, FormData $formData) {
                                 $areaId = $formData->areas ?? null;
@@ -59,13 +60,13 @@ class Location extends Resource
                             ->rules(['required', 'integer', 'min:1']),
 
                         Panel::make('Delivery Days', [
-                            Boolean::make('Monday'),
-                            Boolean::make('Tuesday'),
-                            Boolean::make('Wednesday'),
-                            Boolean::make('Thursday'),
-                            Boolean::make('Friday'),
-                            Boolean::make('Saturday'),
-                            Boolean::make('Sunday'),
+                            Boolean::make('Monday')->sortable(),
+                            Boolean::make('Tuesday')->sortable(),
+                            Boolean::make('Wednesday')->sortable(),
+                            Boolean::make('Thursday')->sortable(),
+                            Boolean::make('Friday')->sortable(),
+                            Boolean::make('Saturday')->sortable(),
+                            Boolean::make('Sunday')->sortable(),
                         ]),
                     ];
                 })
