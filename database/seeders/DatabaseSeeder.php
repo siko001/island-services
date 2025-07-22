@@ -40,8 +40,11 @@ class DatabaseSeeder extends Seeder
         //this calls the Permission and RoleSeeder and creates related data and give the default user the admin role
         $this->call(RoleSeeder::class);
 
-        //This Call the Area and location seeder and creates related data
+        //This calls the Area and location seeder and creates related data
         $this->call(LocationSeeder::class);
+
+        //This calls the OrderTypeSeeder and creates related data
+        $this->call(OrderTypeSeeder::class);
 
     }
 }
