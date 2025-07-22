@@ -50,8 +50,7 @@ class SparePart extends Resource
                 ->rules('required', 'numeric', 'min:0')
                 ->default('0.00')
                 ->step(0.01)
-                ->withMeta(['extraAttributes' => ['style' => 'width:50%;min-width: 250px;']])
-                ->hideFromIndex(),
+                ->withMeta(['extraAttributes' => ['style' => 'width:50%;min-width: 250px;']]),
 
             Number::make('On Order')
                 ->sortable()

@@ -14,7 +14,7 @@ return new class extends Migration {
             $table->id();
             $table->string('name');
             $table->string('abbreviation')->nullable();
-            $table->integer('cost');
+            $table->float('cost');
             $table->integer('on_order')->default(0);
             $table->integer('in_stock')->default(0);
             $table->timestamp('purchase_date')->nullable();
