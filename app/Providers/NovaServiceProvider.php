@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Nova\Area;
+use App\Nova\Complaint;
 use App\Nova\Location;
 use App\Nova\OrderType;
 use App\Nova\Permission;
@@ -39,7 +40,8 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
             Permission::class,
             OrderType::class,
             SparePart::class,
-            Service::class
+            Service::class,
+            Complaint::class,
         ]);
 
         //Nav Menu
@@ -52,6 +54,7 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
                     MenuItem::resource(OrderType::class),
                     MenuItem::resource(SparePart::class),
                     MenuItem::resource(Service::class),
+                    MenuItem::resource(Complaint::class),
                 ])->icon("home")->collapsable(),
 
                 //Admin Menu

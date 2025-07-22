@@ -54,5 +54,8 @@ class DatabaseSeeder extends Seeder
 
         //This calls the SpareParts and creates related data
         $this->call(ServiceSeeder::class);
+
+        //This calls the SpareParts and creates related data
+        $this->call(ComplaintSeeder::class);
     }
 }
