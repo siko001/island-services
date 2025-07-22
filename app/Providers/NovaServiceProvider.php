@@ -7,6 +7,7 @@ use App\Nova\Location;
 use App\Nova\OrderType;
 use App\Nova\Permission;
 use App\Nova\Role;
+use App\Nova\Service;
 use App\Nova\SparePart;
 use App\Nova\User;
 use Illuminate\Http\Request;
@@ -38,6 +39,7 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
             Permission::class,
             OrderType::class,
             SparePart::class,
+            Service::class
         ]);
 
         //Nav Menu
@@ -49,6 +51,7 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
                     MenuItem::resource(Location::class),
                     MenuItem::resource(OrderType::class),
                     MenuItem::resource(SparePart::class),
+                    MenuItem::resource(Service::class),
                 ])->icon("home")->collapsable(),
 
                 //Admin Menu
