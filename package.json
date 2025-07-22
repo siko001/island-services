@@ -4,7 +4,9 @@
     "type": "module",
     "scripts": {
         "build": "vite build",
-        "dev": "vite"
+        "dev": "vite",
+        "build-example-card": "cd nova-components/ExampleCard && npm run dev",
+        "build-example-card-prod": "cd nova-components/ExampleCard && npm run prod"
     },
     "devDependencies": {
         "@tailwindcss/vite": "^4.0.0",
