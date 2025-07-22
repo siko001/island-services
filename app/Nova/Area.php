@@ -44,7 +44,8 @@ class Area extends Resource
         return [
             ID::make()->sortable(),
             Text::make('Name')->sortable()->rules('required', 'max:255'),
-            Text::make('Abbreviation')->sortable()->rules('max:20'),
+            Text::make('Abbreviation')->rules('required', 'max:16')->maxlength(16)->sortable(),
+
             Boolean::make('Is Foreign', 'is_foreign_area')
                 ->sortable()
                 ->default(false)
@@ -110,6 +111,7 @@ class Area extends Resource
                     return [
                         Select::make('Routing Number', 'location_number')
                             ->searchable()
+                            ->sortable()
                             ->options($availableNumbers)
                             ->displayUsingLabels()
                             ->rules(function() {

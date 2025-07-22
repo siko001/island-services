@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Nova\Area;
 use App\Nova\Location;
+use App\Nova\OrderType;
 use App\Nova\Permission;
 use App\Nova\Role;
 use App\Nova\User;
@@ -27,13 +28,14 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
     {
         parent::boot();
 
-        //All Nova resources should be registered here
+        //All Nova resources should be registered here (to generate the permissions)
         Nova::resources([
-            \App\Nova\Area::class,
-            \App\Nova\Location::class,
-            \App\Nova\User::class,
-            \App\Nova\Role::class,
-            \App\Nova\Permission::class,
+            Area::class,
+            Location::class,
+            User::class,
+            Role::class,
+            Permission::class,
+            OrderType::class,
         ]);
 
         //Nav Menu
@@ -43,6 +45,7 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
                 MenuSection::make('General', [
                     MenuItem::resource(Area::class),
                     MenuItem::resource(Location::class),
+                    MenuItem::resource(OrderType::class),
                 ])->icon("home")->collapsable(),
 
                 //Admin Menu

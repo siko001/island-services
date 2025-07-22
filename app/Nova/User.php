@@ -50,7 +50,11 @@ class User extends Resource
                     ->sortable()
                     ->rules('required', 'max:255'),
 
-                Text::make('Abbreviation')->rules('required', 'max:255')->hideFromIndex(),
+                Text::make('Abbreviation')
+                    ->maxlength(16)
+                    ->rules('required', 'max:16')
+                    ->hideFromIndex(),
+
                 Text::make('Email')
                     ->sortable()
                     ->rules('required', 'email', 'max:254')
