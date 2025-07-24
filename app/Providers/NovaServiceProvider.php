@@ -11,6 +11,7 @@ use App\Nova\Role;
 use App\Nova\Service;
 use App\Nova\SparePart;
 use App\Nova\User;
+use App\Nova\Vehicle;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Gate;
@@ -42,6 +43,7 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
             SparePart::class,
             Service::class,
             Complaint::class,
+            Vehicle::class
         ]);
 
         //Nav Menu
@@ -51,6 +53,7 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
                 MenuSection::make('General', [
                     MenuItem::resource(Area::class),
                     MenuItem::resource(Location::class),
+                    MenuItem::resource(Vehicle::class),
                     MenuItem::resource(OrderType::class),
                     MenuItem::resource(SparePart::class),
                     MenuItem::resource(Service::class),
