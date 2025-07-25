@@ -12,6 +12,6 @@ class Service extends Model
         'cost',
     ];
     protected $casts = [
-        'cost' => 'float',
+        'cost' => 'decimal:2',
     ];
 }

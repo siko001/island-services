@@ -14,7 +14,7 @@ return new class extends Migration {
             $table->id();
             $table->string('name');
             $table->string('abbreviation');
-            $table->float('cost');
+            $table->decimal('cost', 5, 2);
             $table->timestamps();
         });
     }
