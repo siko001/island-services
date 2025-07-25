@@ -16,9 +16,9 @@ class Location extends Resource
 {
     /**
      * The model the resource corresponds to.
-     * @var class-string<\App\Models\Location>
+     * @var class-string<\App\Models\General\Location>
      */
-    public static $model = \App\Models\Location::class;
+    public static $model = \App\Models\General\Location::class;
     /**
      * The single value that should be used to represent the resource when being displayed.
      * @var string

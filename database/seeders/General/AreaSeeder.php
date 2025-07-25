@@ -2,7 +2,7 @@
 
 namespace Database\Seeders\General;
 
-use App\Models\Area;
+use App\Models\General\Area;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 

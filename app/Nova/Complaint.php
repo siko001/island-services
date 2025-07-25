@@ -11,9 +11,9 @@ class Complaint extends Resource
 {
     /**
      * The model the resource corresponds to.
-     * @var class-string<\App\Models\Complaint>
+     * @var class-string<\App\Models\General\Complaint>
      */
-    public static $model = \App\Models\Complaint::class;
+    public static $model = \App\Models\General\Complaint::class;
     /**
      * The single value that should be used to represent the resource when being displayed.
      * @var string

@@ -11,9 +11,9 @@ class OrderType extends Resource
 {
     /**
      * The model the resource corresponds to.
-     * @var class-string<\App\Models\OrderType>
+     * @var class-string<\App\Models\General\OrderType>
      */
-    public static $model = \App\Models\OrderType::class;
+    public static $model = \App\Models\General\OrderType::class;
     /**
      * The single value that should be used to represent the resource when being displayed.
      * @var string

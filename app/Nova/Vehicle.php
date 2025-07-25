@@ -13,9 +13,9 @@ class Vehicle extends Resource
 {
     /**
      * The model the resource corresponds to.
-     * @var class-string<\App\Models\Vehicle>
+     * @var class-string<\App\Models\General\Vehicle>
      */
-    public static $model = \App\Models\Vehicle::class;
+    public static $model = \App\Models\General\Vehicle::class;
     /**
      * The single value that should be used to represent the resource when being displayed.
      * @var string

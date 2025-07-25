@@ -14,9 +14,9 @@ class Role extends Resource
 {
     /**
      * The model the resource corresponds to.
-     * @var class-string<\App\Models\Role>
+     * @var class-string<\App\Models\Admin\Role>
      */
-    public static $model = \App\Models\Role::class;
+    public static $model = \App\Models\Admin\Role::class;
     /**
      * The single value that should be used to represent the resource when being displayed.
      * @var string

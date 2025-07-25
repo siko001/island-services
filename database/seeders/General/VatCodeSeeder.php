@@ -2,7 +2,7 @@
 
 namespace Database\Seeders\General;
 
-use App\Models\VatCode;
+use App\Models\General\VatCode;
 use Illuminate\Database\Seeder;
 
 class VatCodeSeeder extends Seeder

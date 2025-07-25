@@ -11,9 +11,9 @@ class Permission extends Resource
 {
     /**
      * The model the resource corresponds to.
-     * @var class-string<\App\Models\Permission>
+     * @var class-string<\App\Models\Admin\Permission>
      */
-    public static $model = \App\Models\Permission::class;
+    public static $model = \App\Models\Admin\Permission::class;
     /**
      * The single value that should be used to represent the resource when being displayed.
      * @var string

@@ -20,7 +20,7 @@ class LogSuccessfulLogin
     public function handle(Login $event): void
     {
 
-        \App\Models\LoginAudit::create([
+        \App\Models\Admin\LoginAudit::create([
             'email' => $event->user->email,
             'ip_address' => request()->ip(),
             'success' => true,

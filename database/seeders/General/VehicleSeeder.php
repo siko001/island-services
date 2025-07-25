@@ -2,9 +2,9 @@
 
 namespace Database\Seeders\General;
 
-use App\Models\Area;
+use App\Models\General\Area;
+use App\Models\General\Vehicle;
 use App\Models\User;
-use App\Models\Vehicle;
 use Illuminate\Database\Seeder;
 
 class VehicleSeeder extends Seeder

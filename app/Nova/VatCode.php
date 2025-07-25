@@ -12,9 +12,9 @@ class VatCode extends Resource
 {
     /**
      * The model the resource corresponds to.
-     * @var class-string<\App\Models\VatCode>
+     * @var class-string<\App\Models\General\VatCode>
      */
-    public static $model = \App\Models\VatCode::class;
+    public static $model = \App\Models\General\VatCode::class;
     /**
      * The single value that should be used to represent the resource when being displayed.
      * @var string

@@ -11,9 +11,9 @@ class MonetoryValue extends Resource
 {
     /**
      * The model the resource corresponds to.
-     * @var class-string<\App\Models\MonetoryValue>
+     * @var class-string<\App\Models\General\MonetoryValue>
      */
-    public static $model = \App\Models\MonetoryValue::class;
+    public static $model = \App\Models\General\MonetoryValue::class;
     /**
      * The single value that should be used to represent the resource when being displayed.
      * @var string

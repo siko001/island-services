@@ -36,7 +36,7 @@ class ComplaintSeeder extends Seeder
         ];
 
         foreach($complaints as $complaint) {
-            \App\Models\Complaint::firstOrCreate(
+            \App\Models\General\Complaint::firstOrCreate(
                 ['name' => $complaint['name']],
                 [
                     'department' => $complaint['department'],

@@ -2,11 +2,11 @@
 
 namespace Database\Factories;
 
-use App\Models\Vehicle;
+use App\Models\General\Vehicle;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @template TModel of \App\Models\Vehicle
+ * @template TModel of \App\Models\General\Vehicle
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<TModel>
  */
 class VehicleFactory extends Factory
