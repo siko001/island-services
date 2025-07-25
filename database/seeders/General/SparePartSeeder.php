@@ -1,6 +1,6 @@
 <?php
 
-namespace Database\Seeders;
+namespace Database\Seeders\General;
 
 use Illuminate\Database\Seeder;
 
@@ -61,7 +61,7 @@ class SparePartSeeder extends Seeder
         ];
 
         foreach($parts as $part) {
-            \App\Models\SparePart::updateOrCreate(
+            \App\Models\General\SparePart::updateOrCreate(
                 ['name' => $part['name']],
                 [
                     'abbreviation' => $part['abbreviation'],

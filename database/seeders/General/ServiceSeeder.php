@@ -1,6 +1,6 @@
 <?php
 
-namespace Database\Seeders;
+namespace Database\Seeders\General;
 
 use Illuminate\Database\Seeder;
 
@@ -41,7 +41,7 @@ class ServiceSeeder extends Seeder
         ];
 
         foreach($services as $service) {
-            \App\Models\Service::firstOrCreate(
+            \App\Models\General\Service::firstOrCreate(
                 ['name' => $service['name']],
                 [
                     'abbreviation' => $service['abbreviation'],

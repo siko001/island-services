@@ -12,9 +12,9 @@ class DocumentControl extends Resource
 {
     /**
      * The model the resource corresponds to.
-     * @var class-string<\App\Models\DocumentControl>
+     * @var class-string<\App\Models\General\DocumentControl>
      */
-    public static $model = \App\Models\DocumentControl::class;
+    public static $model = \App\Models\General\DocumentControl::class;
     /**
      * The single value that should be used to represent the resource when being displayed.
      * @var string

@@ -11,9 +11,9 @@ class Offer extends Resource
 {
     /**
      * The model the resource corresponds to.
-     * @var class-string<\App\Models\Offer>
+     * @var class-string<\App\Models\General\Offer>
      */
-    public static $model = \App\Models\Offer::class;
+    public static $model = \App\Models\General\Offer::class;
     /**
      * The single value that should be used to represent the resource when being displayed.
      * @var string

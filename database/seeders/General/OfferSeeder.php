@@ -1,6 +1,6 @@
 <?php
 
-namespace Database\Seeders;
+namespace Database\Seeders\General;
 
 use Illuminate\Database\Seeder;
 
@@ -46,7 +46,7 @@ class OfferSeeder extends Seeder
         ];
 
         foreach($offers as $offer) {
-            \App\Models\Offer::firstOrCreate(['name' => $offer]);
+            \App\Models\General\Offer::firstOrCreate(['name' => $offer]);
         }
     }
 }

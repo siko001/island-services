@@ -18,9 +18,9 @@ class Area extends Resource
 {
     /**
      * The model the resource corresponds to.
-     * @var class-string<\App\Models\Area>
+     * @var class-string<\App\Models\General\Area>
      */
-    public static $model = \App\Models\Area::class;
+    public static $model = \App\Models\General\Area::class;
     /**
      * The single value that should be used to represent the resource when being displayed.
      * @var string

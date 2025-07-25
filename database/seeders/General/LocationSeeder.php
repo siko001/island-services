@@ -1,9 +1,9 @@
 <?php
 
-namespace Database\Seeders;
+namespace Database\Seeders\General;
 
-use App\Models\Area;
-use App\Models\Location;
+use App\Models\General\Area;
+use App\Models\General\Location;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 

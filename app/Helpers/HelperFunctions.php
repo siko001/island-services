@@ -2,7 +2,7 @@
 
 namespace App\Helpers;
 
-use App\Models\Role;
+use App\Models\Admin\Role;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;

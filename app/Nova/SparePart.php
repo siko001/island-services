@@ -12,9 +12,9 @@ class SparePart extends Resource
 {
     /**
      * The model the resource corresponds to.
-     * @var class-string<\App\Models\SparePart>
+     * @var class-string<\App\Models\General\SparePart>
      */
-    public static $model = \App\Models\SparePart::class;
+    public static $model = \App\Models\General\SparePart::class;
     /**
      * The single value that should be used to represent the resource when being displayed.
      * @var string

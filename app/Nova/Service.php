@@ -12,9 +12,9 @@ class Service extends Resource
 {
     /**
      * The model the resource corresponds to.
-     * @var class-string<\App\Models\Service>
+     * @var class-string<\App\Models\General\Service>
      */
-    public static $model = \App\Models\Service::class;
+    public static $model = \App\Models\General\Service::class;
     /**
      * The single value that should be used to represent the resource when being displayed.
      * @var string

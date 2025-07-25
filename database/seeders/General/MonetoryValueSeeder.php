@@ -1,6 +1,6 @@
 <?php
 
-namespace Database\Seeders;
+namespace Database\Seeders\General;
 
 use Illuminate\Database\Seeder;
 
@@ -75,7 +75,7 @@ class MonetoryValueSeeder extends Seeder
         ];
 
         foreach($values as $value) {
-            \App\Models\MonetoryValue::firstOrCreate(
+            \App\Models\General\MonetoryValue::firstOrCreate(
                 ['name' => $value['name']],
                 ['value' => $value['value']]
             );
