@@ -11,6 +11,7 @@ use App\Nova\Role;
 use App\Nova\Service;
 use App\Nova\SparePart;
 use App\Nova\User;
+use App\Nova\VatCode;
 use App\Nova\Vehicle;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Blade;
@@ -43,7 +44,8 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
             SparePart::class,
             Service::class,
             Complaint::class,
-            Vehicle::class
+            Vehicle::class,
+            VatCode::class,
         ]);
 
         //Nav Menu
@@ -58,6 +60,7 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
                     MenuItem::resource(SparePart::class),
                     MenuItem::resource(Service::class),
                     MenuItem::resource(Complaint::class),
+                    MenuItem::resource(VatCode::class),
                 ])->icon("home")->collapsable(),
 
                 //Admin Menu

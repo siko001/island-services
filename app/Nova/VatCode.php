@@ -3,18 +3,18 @@
 namespace App\Nova;
 
 use Illuminate\Http\Request;
-use Laravel\Nova\Fields\Date;
+use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\Number;
 use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Http\Requests\NovaRequest;
 
-class SparePart extends Resource
+class VatCode extends Resource
 {
     /**
      * The model the resource corresponds to.
-     * @var class-string<\App\Models\SparePart>
+     * @var class-string<\App\Models\VatCode>
      */
-    public static $model = \App\Models\SparePart::class;
+    public static $model = \App\Models\VatCode::class;
     /**
      * The single value that should be used to represent the resource when being displayed.
      * @var string
@@ -32,45 +32,30 @@ class SparePart extends Resource
      * Get the fields displayed by the resource.
      * @return array<int, \Laravel\Nova\Fields\Field>
      */
-
     public function fields(NovaRequest $request): array
     {
         return [
-            Text::make('Name')
-                ->rules('required', 'max:255')
-                ->sortable(),
+            Text::make('Name', 'name')
+                ->sortable()
+                ->rules('required', 'max:255'),
 
-            Text::make('Abbreviation')
+            Text::make('Abbreviation', 'abbreviation')
                 ->rules('required', 'max:16')
                 ->maxlength(16)
                 ->sortable(),
 
-            Number::make('Cost')
+            Boolean::make('Default', 'is_default')
                 ->sortable()
-                ->rules('required', 'numeric', 'min:0')
+                ->rules('boolean'),
+
+            Number::make('Percentage', 'percentage')
+                ->withMeta(['extraAttributes' => ['style' => 'width:50%;min-width: 250px;']])
+                ->rules('required', 'numeric', 'min:0', 'max:100')
                 ->textAlign('center')
-                ->default('0.00')
                 ->step(0.01)
-                ->withMeta(['extraAttributes' => ['style' => 'width:50%;min-width: 250px;']]),
-
-            Number::make('On Order')
                 ->sortable()
-                ->default('0')
-                ->rules('required', 'numeric', 'min:0')
-                ->withMeta(['extraAttributes' => ['style' => 'width:50%;min-width: 250px;']])
-                ->hideFromIndex(),
-
-            Number::make('In Stock')
-                ->sortable()
-                ->rules('required', 'numeric', 'min:0')
-                ->default('0')
-                ->withMeta(['extraAttributes' => ['style' => 'width:50%;min-width: 250px;']])
-                ->hideFromIndex(),
-
-            Date::make('Purchase Date')
-                ->sortable()
-                ->rules('nullable', 'date')
-                ->hideFromIndex(),
+                ->min(0)
+                ->max(100),
         ];
     }
 
@@ -110,29 +95,28 @@ class SparePart extends Resource
         return [];
     }
 
-    //Resource authorization methods
     public static function authorizedToCreate(Request $request): bool
     {
-        return $request->user() && $request->user()->can('create spare_part');
+        return $request->user() && $request->user()->can('create vat_code');
     }
 
     public function authorizedToUpdate(Request $request): bool
     {
-        return $request->user() && $request->user()->can('update spare_part');
+        return $request->user() && $request->user()->can('update vat_code');
     }
 
     public function authorizedToDelete(Request $request): bool
     {
-        return $request->user() && $request->user() && $request->user()->can('delete spare_part');
+        return $request->user() && $request->user() && $request->user()->can('delete vat_code');
     }
 
     public static function authorizedToViewAny(Request $request): bool
     {
-        return $request->user() && $request->user()->can('view any spare_part');
+        return $request->user() && $request->user()->can('view any vat_code');
     }
 
     public function authorizedToView(Request $request): bool
     {
-        return $request->user() && $request->user()->can('view spare_part');
+        return $request->user() && $request->user()->can('view vat_code');
     }
 }

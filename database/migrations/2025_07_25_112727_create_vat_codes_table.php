@@ -10,12 +10,13 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('services', function(Blueprint $table) {
+        Schema::create('vat_codes', function(Blueprint $table) {
             $table->id();
+            $table->timestamps();
             $table->string('name');
             $table->string('abbreviation');
-            $table->decimal('cost', 5, 2);
-            $table->timestamps();
+            $table->boolean('is_default')->default(false);
+            $table->decimal('percentage', 5, 2)->default(0.00);
         });
     }
 
@@ -24,6 +25,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('services');
+        Schema::dropIfExists('vat_codes');
     }
 };
