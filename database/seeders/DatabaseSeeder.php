@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\User;
+use Database\Seeders\General\GeneralSeeder;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 
@@ -37,25 +38,7 @@ class DatabaseSeeder extends Seeder
             ]
         );
 
-        $seeders = [
-            RoleSeeder::class,       //this calls the Permission and RoleSeeder and creates related data and give the default user the admin role
-            UserSeeder::class,       //This calls the UserSeeder
-            AreaSeeder::class,       //This calls the AreaSeeder and creates related data
-            LocationSeeder::class,   //This calls the Area and location seeder and creates related data
-            OrderTypeSeeder::class,  //This calls the OrderTypeSeeder
-            SparePartSeeder::class,  //This calls the SpareParts
-            ServiceSeeder::class,    //This calls the ServiceSeeder
-            ComplaintSeeder::class,  //This calls the ComplaintSeeder
-            VehicleSeeder::class,    //This calls the VehicleSeeder and creates related data
-            VatCodeSeeder::class,    //This calls the VatCodeSeeder
-            DocumentControlSeeder::class, //This calls the DocumentControlSeeder
-            MonetoryValueSeeder::class, //This calls the MonetoryValueSeeder
-            OfferSeeder::class,      //This calls the OfferSeeder
-        ];
+        $this->call(GeneralSeeder::class); //Call the GeneralSeeder to seed the General Tab Data
 
-        // Loop through each seeder and call it
-        foreach($seeders as $seeder) {
-            $this->call($seeder);
-        }
     }
 }
