@@ -48,6 +48,7 @@ class SparePart extends Resource
             Number::make('Cost')
                 ->sortable()
                 ->rules('required', 'numeric', 'min:0')
+                ->textAlign('center')
                 ->default('0.00')
                 ->step(0.01)
                 ->withMeta(['extraAttributes' => ['style' => 'width:50%;min-width: 250px;']]),

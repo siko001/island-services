@@ -16,7 +16,7 @@ class SparePart extends Model
         'purchase_date',
     ];
     protected $casts = [
-        'cost' => 'float',
+        'cost' => 'decimal:2',
         'purchase_date' => 'datetime',
     ];
 }
