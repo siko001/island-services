@@ -46,6 +46,7 @@ class Service extends Resource
                 ->sortable(),
 
             Number::make('cost')
+                ->textAlign('center')
                 ->withMeta(['extraAttributes' => ['style' => 'width:50%;min-width: 250px;']])
                 ->min(0)
                 ->step(0.01),
