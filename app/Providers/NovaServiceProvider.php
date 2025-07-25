@@ -6,6 +6,7 @@ use App\Nova\Area;
 use App\Nova\Complaint;
 use App\Nova\DocumentControl;
 use App\Nova\Location;
+use App\Nova\MonetoryValue;
 use App\Nova\OrderType;
 use App\Nova\Permission;
 use App\Nova\Role;
@@ -48,6 +49,7 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
             Vehicle::class,
             VatCode::class,
             DocumentControl::class,
+            MonetoryValue::class,
         ]);
 
         //Nav Menu
@@ -64,6 +66,7 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
                     MenuItem::resource(Complaint::class),
                     MenuItem::resource(VatCode::class),
                     MenuItem::resource(DocumentControl::class),
+                    MenuItem::resource(MonetoryValue::class),
                 ])->icon("home")->collapsable(),
 
                 //Admin Menu
