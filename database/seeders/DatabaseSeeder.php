@@ -37,31 +37,22 @@ class DatabaseSeeder extends Seeder
             ]
         );
 
-        //this calls the Permission and RoleSeeder and creates related data and give the default user the admin role
-        $this->call(RoleSeeder::class);
+        $seeders = [
+            RoleSeeder::class,       //this calls the Permission and RoleSeeder and creates related data and give the default user the admin role
+            UserSeeder::class,       //This calls the UserSeeder
+            AreaSeeder::class,       //This calls the AreaSeeder and creates related data
+            LocationSeeder::class,   //This calls the Area and location seeder and creates related data
+            OrderTypeSeeder::class,  //This calls the OrderTypeSeeder
+            SparePartSeeder::class,  //This calls the SpareParts
+            ServiceSeeder::class,    //This calls the ServiceSeeder
+            ComplaintSeeder::class,  //This calls the ComplaintSeeder
+            VehicleSeeder::class,    //This calls the VehicleSeeder and creates related data
+            VatCodeSeeder::class,    //This calls the VehicleSeeder and creates related data
+        ];
 
-        //This calls the UserSeeder
-        $this->call(UserSeeder::class);
-
-        //This calls the AreaSeeder and creates related data
-        $this->call(AreaSeeder::class);
-
-        //This calls the Area and location seeder and creates related data
-        $this->call(LocationSeeder::class);
-
-        //This calls the OrderTypeSeeder
-        $this->call(OrderTypeSeeder::class);
-
-        //This calls the SpareParts
-        $this->call(SparePartSeeder::class);
-
-        //This calls the ServiceSeeder
-        $this->call(ServiceSeeder::class);
-
-        //This calls the ComplaintSeeder
-        $this->call(ComplaintSeeder::class);
-
-        //This calls the VehicleSeeder and creates related data
-        $this->call(VehicleSeeder::class);
+        // Loop through each seeder and call it
+        foreach($seeders as $seeder) {
+            $this->call($seeder);
+        }
     }
 }
