@@ -47,7 +47,8 @@ class DatabaseSeeder extends Seeder
             ServiceSeeder::class,    //This calls the ServiceSeeder
             ComplaintSeeder::class,  //This calls the ComplaintSeeder
             VehicleSeeder::class,    //This calls the VehicleSeeder and creates related data
-            VatCodeSeeder::class,    //This calls the VehicleSeeder and creates related data
+            VatCodeSeeder::class,    //This calls the VatCodeSeeder
+            DocumentControlSeeder::class, //This calls the DocumentControlSeeder
         ];
 
         // Loop through each seeder and call it

@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Nova\Area;
 use App\Nova\Complaint;
+use App\Nova\DocumentControl;
 use App\Nova\Location;
 use App\Nova\OrderType;
 use App\Nova\Permission;
@@ -46,6 +47,7 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
             Complaint::class,
             Vehicle::class,
             VatCode::class,
+            DocumentControl::class,
         ]);
 
         //Nav Menu
@@ -61,6 +63,7 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
                     MenuItem::resource(Service::class),
                     MenuItem::resource(Complaint::class),
                     MenuItem::resource(VatCode::class),
+                    MenuItem::resource(DocumentControl::class),
                 ])->icon("home")->collapsable(),
 
                 //Admin Menu
