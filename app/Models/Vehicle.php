@@ -1,0 +1,50 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+
+class Vehicle extends Model
+{
+    use HasFactory;
+
+    protected $table = 'vehicles';
+    protected $primaryKey = 'id';
+    protected $fillable = [
+        'make',
+        'model',
+        'body_type',
+        'engine_no',
+        'chassis_no',
+        'color',
+        'purchase_date',
+        'purchase_price',
+        'cc',
+        'manufacture_year',
+        'tonnage',
+        'fuel_type',
+        'tank_capacity',
+        'registration_number',
+        'area_id'
+    ];
+    protected $casts = [
+        'purchase_date' => 'date',
+        'purchase_price' => 'integer',
+        'manufacture_year' => 'integer',
+    ];
+
+    /**
+     * Get the area that owns the vehicle.
+     */
+    public function area()
+    {
+        return $this->belongsTo(Area::class);
+    }
+
+    public function drivers()
+    {
+        //        return $this->belongsToMany(User::class, 'driver_vehicle');
+        return $this->belongsToMany(User::class, 'driver_vehicle', 'vehicle_id', 'user_id');
+    }
+}

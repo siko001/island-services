@@ -37,4 +37,9 @@ class Area extends Model
             ])
             ->withTimestamps();
     }
+
+    public function vehicles()
+    {
+        return $this->hasMany(Vehicle::class);
+    }
 }

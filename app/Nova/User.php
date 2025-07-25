@@ -3,6 +3,7 @@
 namespace App\Nova;
 
 use App\Helpers\HelperFunctions;
+use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Laravel\Nova\Auth\PasswordValidationRules;
 use Laravel\Nova\Fields\Boolean;
@@ -160,7 +161,7 @@ class User extends Resource
     //Resource authorization methods
     public static function authorizedToCreate(Request $request): bool
     {
-        return $request->user() && $request->user()->can('create role');
+        return $request->user() && $request->user()->can('create user');
     }
 
     public function authorizedToUpdate(Request $request): bool
@@ -181,5 +182,17 @@ class User extends Resource
     public function authorizedToView(Request $request): bool
     {
         return $request->user() && $request->user()->can('view user');
+    }
+
+    //Method to filter the query for relatable resources
+    public static function relatableQuery(NovaRequest $request, $query): Builder
+    {
+        //        first check if the user is a driver and if the request is for vehicles via the drivers relationship
+        if($request->resource === 'vehicles' && $request->viaRelationship === 'drivers') {
+            return $query->whereHas('roles', function($q) {
+                $q->where('name', 'driver');
+            });
+        }
+        return $query;
     }
 }
