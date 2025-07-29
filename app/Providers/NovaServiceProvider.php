@@ -25,6 +25,8 @@ use Laravel\Nova\Menu\MenuItem;
 use Laravel\Nova\Menu\MenuSection;
 use Laravel\Nova\Nova;
 use Laravel\Nova\NovaApplicationServiceProvider;
+use Stancl\Tenancy\Middleware\InitializeTenancyByDomain;
+use Stancl\Tenancy\Middleware\PreventAccessFromCentralDomains;
 use Vyuldashev\NovaPermission\NovaPermissionTool;
 
 class NovaServiceProvider extends NovaApplicationServiceProvider
@@ -57,8 +59,12 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
         //Nav Menu
         Nova::mainMenu(function(Request $request) {
             return [
+
+                MenuItem::externalLink('Companies', env('APP_URL') . '/admin/get-companies'),
+
                 // General
                 MenuSection::make('General', [
+                    //                    MenuItem::resource(Tenant::class),
                     MenuItem::resource(Area::class),
                     MenuItem::resource(Location::class),
                     MenuItem::resource(Vehicle::class),
@@ -70,7 +76,6 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
                     MenuItem::resource(VatCode::class),
                     MenuItem::resource(Offer::class),
                     MenuItem::resource(DocumentControl::class),
-
                 ])->icon("home")->collapsable(),
 
                 //Admin Menu
@@ -114,8 +119,18 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
     protected function routes(): void
     {
         Nova::routes()
-            ->withAuthenticationRoutes(default: true)
-            ->withPasswordResetRoutes()
+            ->withAuthenticationRoutes([
+                // You can make this simpler by creating a tenancy route group
+                InitializeTenancyByDomain::class,
+                PreventAccessFromCentralDomains::class,
+                'nova',
+            ])
+            ->withPasswordResetRoutes([
+                // You can make this simpler by creating a tenancy route group
+                InitializeTenancyByDomain::class,
+                PreventAccessFromCentralDomains::class,
+                'nova',
+            ])
             ->withoutEmailVerificationRoutes()
             ->register();
     }

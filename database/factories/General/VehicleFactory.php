@@ -1,6 +1,6 @@
 <?php
 
-namespace Database\Factories;
+namespace Database\Factories\General;
 
 use App\Models\General\Vehicle;
 use Illuminate\Database\Eloquent\Factories\Factory;
