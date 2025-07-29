@@ -1,14 +1,13 @@
 <?php
 
-use App\Http\Controllers\AuditTrailController;
 use App\Http\Controllers\CentralController;
 use Illuminate\Support\Facades\Route;
 
 //Audit Trails Routes
-Route::group(['prefix' => 'admin/audit-trails'], function() {
-    Route::get('/login', [AuditTrailController::class, "login"])->name('audit-trails.login');
-    Route::get('/system', [AuditTrailController::class, "system"])->name('audit-trails.system');
-});
+//Route::group(['prefix' => 'admin/audit-trails'], function() {
+//    Route::get('/login', [AuditTrailController::class, "login"])->name('audit-trails.login');
+//    Route::get('/system', [AuditTrailController::class, "system"])->name('audit-trails.system');
+//});
 
 //// Redirect root to main dashboard
 

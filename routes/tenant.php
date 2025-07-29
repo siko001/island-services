@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Http\Controllers\AuditTrailController;
 use App\Http\Controllers\CentralController;
 use Illuminate\Support\Facades\Route;
 use Stancl\Tenancy\Middleware\InitializeTenancyByDomain;
@@ -24,6 +25,12 @@ Route::middleware([
     InitializeTenancyByDomain::class,
     PreventAccessFromCentralDomains::class,
 ])->group(function() {
+
+    Route::group(['prefix' => 'admin/audit-trails'], function() {
+        Route::get('/login', [AuditTrailController::class, "login"])->name('audit-trails.login');
+        Route::get('/system', [AuditTrailController::class, "system"])->name('audit-trails.system');
+    });
+
     Route::fallback(function() {
         return redirect('/admin/dashboards/main');
     });

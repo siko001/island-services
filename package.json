@@ -1,19 +1,20 @@
 {
-    "$schema": "https://json.schemastore.org/package.json",
-    "private": true,
-    "type": "module",
-    "scripts": {
-        "build": "vite build",
-        "dev": "vite",
-        "build-example-card": "cd nova-components/ExampleCard && npm run dev",
-        "build-example-card-prod": "cd nova-components/ExampleCard && npm run prod"
-    },
-    "devDependencies": {
-        "@tailwindcss/vite": "^4.0.0",
-        "axios": "^1.8.2",
-        "concurrently": "^9.0.1",
-        "laravel-vite-plugin": "^1.2.0",
-        "tailwindcss": "^4.0.0",
-        "vite": "^6.2.4"
-    }
+  "$schema": "https://json.schemastore.org/package.json",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build && npm run copy-tenants",
+    "copy-tenants": "mkdir -p public/tenancy/assets/build/assets/ && rsync -a public/build/assets/ public/tenancy/assets/build/assets/",
+    "build-example-card": "cd nova-components/ExampleCard && npm run dev",
+    "build-example-card-prod": "cd nova-components/ExampleCard && npm run prod"
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "^4.0.0",
+    "axios": "^1.8.2",
+    "concurrently": "^9.0.1",
+    "laravel-vite-plugin": "^1.2.0",
+    "tailwindcss": "^4.0.0",
+    "vite": "^6.2.4"
+  }
 }

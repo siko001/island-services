@@ -1,11 +1,14 @@
 @if($tenants)
-    <h1 class="font-bold text-2xl sm:text-3xl">Select an Application</h1>
+    <h1 class="font-bold text-2xl sm:text-3xl dark:text-gray-200 text-gray-700">Select an Application</h1>
     <ul id="tenant-list" class="mt-4 space-y-2 max-w-[350px] w-full">
         @foreach($tenants as $tenant)
             <li class="w-full relative tenant-item" data-id="{{ $tenant['id'] }}" tabindex="0" role="button">
-                <div class="p-4 flex items-center gap-4 justify-between bg-white rounded-lg relative z-10 shadow hover:shadow-lg transition-all duration-200 border border-blue-900
+                <div class="p-4 flex items-center gap-4 justify-between bg-white dark:bg-gray-900 rounded-lg relative z-10 shadow hover:shadow-lg transition-all duration-200
+                border border-blue-900
                     cursor-pointer">
-                    <p>{{ $tenant['id'] }}</p>
+                    <p class="text-2xl dark:text-gray-200 text-gray-700">
+                        {{ $tenant['id'] }}
+                    </p>
                     
                     <form id="delete-form-{{ $tenant['id'] }}" action="{{ route('tenancy.delete', ['id' => $tenant['id']]) }}" method="POST" style="display:none;">
                         @csrf
