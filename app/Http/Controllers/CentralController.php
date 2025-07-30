@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Artisan;
 use Laravel\Nova\Nova;
 
 class CentralController extends Controller
@@ -34,10 +35,33 @@ class CentralController extends Controller
         // Validate the request
         $request->validate([
             'tenant_id' => 'required|string|unique:tenants,id',
+            'admin_email' => 'required|email|unique:users,email',
+            'admin_password' => 'required|string|min:8',
         ]);
 
         $tenant = \App\Models\Tenant::create(['id' => $request->tenant_id]);
         $tenant->domains()->create(['domain' => $request->tenant_id . '.' . config('tenancy.central_domains')[0]]);
+
+        //Create the super admin user for the tenant
+        $tenant->run(function() use ($tenant, $request) {
+            // Run migrations for the tenant
+            Artisan::call('tenants:migrate', ['--tenants' => $tenant->id]);
+
+            // Create a super admin user for the tenant
+            \App\Models\User::create([
+                'name' => 'Super Admin',
+                'email' => $request->admin_password,
+                'password' => bcrypt($request->admin_password),
+            ]);
+
+            //call the Permission and role seeder to give the super admin user all permissions
+            Artisan::call('db:seed', [
+                '--class' => 'Database\\Seeders\\General\\RoleSeeder',
+                '--force' => true,
+            ]);
+
+        });
+
         return redirect()->route('central.index')->with('message', 'Tenant created successfully.');
     }
 
