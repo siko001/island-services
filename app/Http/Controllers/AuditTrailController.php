@@ -2,19 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class AuditTrailController extends Controller
 {
-
     //Custom Login Details
     public function login(): object
     {
         $logs = DB::table('login_audits')->orderBy('created_at', 'desc')->paginate(50);
+
         return view('audit-trails.login', ['logs' => $logs]);
     }
-
 
     //System Audit Trail (nova table)
     public function system(): object

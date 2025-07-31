@@ -25,6 +25,8 @@ use Laravel\Nova\Menu\MenuItem;
 use Laravel\Nova\Menu\MenuSection;
 use Laravel\Nova\Nova;
 use Laravel\Nova\NovaApplicationServiceProvider;
+use Stancl\Tenancy\Middleware\InitializeTenancyByDomain;
+use Stancl\Tenancy\Middleware\PreventAccessFromCentralDomains;
 use Vyuldashev\NovaPermission\NovaPermissionTool;
 
 class NovaServiceProvider extends NovaApplicationServiceProvider
@@ -34,7 +36,13 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
      */
     public function boot(): void
     {
+
         parent::boot();
+        //CSS
+        Nova::style('navbar-header', resource_path('css/navbar-header.css'));
+
+        //JS
+        \Laravel\Nova\Nova::script('custom', public_path('nova.js'));
 
         //All Nova resources should be registered here (to generate the permissions)
         Nova::resources([
@@ -56,7 +64,12 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
 
         //Nav Menu
         Nova::mainMenu(function(Request $request) {
+            $logoPath = tenancy()->tenant?->logo_path;
+
             return [
+                MenuItem::make('', '/')->data(["logopath" => $logoPath])->canSee(fn() => true)->name((tenancy()->tenant?->id)),
+                MenuItem::externalLink('Companies', env('APP_URL') . '/admin/get-companies'),
+
                 // General
                 MenuSection::make('General', [
                     MenuItem::resource(Area::class),
@@ -70,8 +83,7 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
                     MenuItem::resource(VatCode::class),
                     MenuItem::resource(Offer::class),
                     MenuItem::resource(DocumentControl::class),
-
-                ])->icon("home")->collapsable(),
+                ])->collapsable(),
 
                 //Admin Menu
                 MenuSection::make('Admin', [
@@ -114,8 +126,18 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
     protected function routes(): void
     {
         Nova::routes()
-            ->withAuthenticationRoutes(default: true)
-            ->withPasswordResetRoutes()
+            ->withAuthenticationRoutes([
+                // You can make this simpler by creating a tenancy route group
+                InitializeTenancyByDomain::class,
+                PreventAccessFromCentralDomains::class,
+                'nova',
+            ])
+            ->withPasswordResetRoutes([
+                // You can make this simpler by creating a tenancy route group
+                InitializeTenancyByDomain::class,
+                PreventAccessFromCentralDomains::class,
+                'nova',
+            ])
             ->withoutEmailVerificationRoutes()
             ->register();
     }

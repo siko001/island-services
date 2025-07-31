@@ -1,5 +1,8 @@
 <?php
 
+use Stancl\Tenancy\Middleware\InitializeTenancyByDomain;
+use Stancl\Tenancy\Middleware\PreventAccessFromCentralDomains;
+
 return [
 
     /*
@@ -65,8 +68,8 @@ return [
     |
     */
 
-    'guard' => env('NOVA_GUARD', null),
-
+    //    'guard' => env('NOVA_GUARD', null),
+    'guard' => 'tenant',
     /*
     |--------------------------------------------------------------------------
     | Nova Password Reset Broker
@@ -92,6 +95,8 @@ return [
     */
 
     'middleware' => [
+        InitializeTenancyByDomain::class,
+        PreventAccessFromCentralDomains::class,
         'web',
         \Laravel\Nova\Http\Middleware\HandleInertiaRequests::class,
         \Vyuldashev\NovaPermission\ForgetCachedPermissions::class,
@@ -148,7 +153,7 @@ return [
     |
     */
 
-    'currency' => 'USD',
+    'currency' => 'EUR',
 
     /*
     |--------------------------------------------------------------------------

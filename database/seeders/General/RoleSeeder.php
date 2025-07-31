@@ -37,7 +37,7 @@ class RoleSeeder extends Seeder
 
         foreach(Data::RoleOptions() as $roleName) {
             $role = Role::updateOrCreate(
-                ['name' => $roleName, 'guard_name' => 'web'],
+                ['name' => $roleName, 'guard_name' => 'tenant'],
                 ['earns_commission' => in_array($roleName, $commissionRoles)]
             );
 
