@@ -14,7 +14,8 @@ class CustomerTabSeeder extends Seeder
         $this->call([
             CustomerGroupSeeder::class,
             ClassesSeeder::class,
-            ClientStatusSeeder::class
+            ClientStatusSeeder::class,
+            HearAboutSeeder::class
         ]);
     }
 }

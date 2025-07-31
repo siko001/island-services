@@ -4,10 +4,17 @@ namespace App\Models\Customer;
 
 use Illuminate\Database\Eloquent\Model;
 
-class CustomerGroup extends Model
+class HearAbout extends Model
 {
-    protected $table = 'customer_groups';
-    protected $fillable = ['name', 'abbreviation', 'is_default', 'created_at', 'updated_at'];
+    //
+    protected $table = 'hear_abouts';
+    protected $fillable = [
+        'name',
+        'abbreviation',
+        'is_default',
+        'created_at',
+        'updated_at'
+    ];
     public $timestamps = true;
     protected $casts = [
         'is_default' => 'boolean',

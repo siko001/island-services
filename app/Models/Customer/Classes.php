@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Classes extends Model
 {
     protected $table = 'classes';
+    public $timestamps = true;
     protected $fillable = [
         'name',
         'abbreviation',
@@ -20,5 +21,7 @@ class Classes extends Model
         'is_default' => 'boolean',
         'flat_rate' => 'decimal:2',
         'deliveries_exceeding' => 'integer',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
     ];
 }
