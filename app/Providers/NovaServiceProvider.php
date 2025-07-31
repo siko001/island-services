@@ -8,6 +8,7 @@ use App\Nova\ClientStatus;
 use App\Nova\Complaint;
 use App\Nova\CustomerGroup;
 use App\Nova\DocumentControl;
+use App\Nova\HearAbout;
 use App\Nova\Location;
 use App\Nova\MonetoryValue;
 use App\Nova\Offer;
@@ -65,7 +66,8 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
             Offer::class,
             CustomerGroup::class,
             Classes::class,
-            ClientStatus::class
+            ClientStatus::class,
+            HearAbout::class,
         ]);
 
         //Nav Menu
@@ -94,6 +96,7 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
                     MenuItem::resource(CustomerGroup::class),
                     MenuItem::resource(Classes::class),
                     MenuItem::resource(ClientStatus::class),
+                    MenuItem::resource(HearAbout::class),
                 ])->icon('user-group')->collapsable(),
 
                 //Admin Menu
