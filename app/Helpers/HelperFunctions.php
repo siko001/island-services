@@ -26,7 +26,7 @@ class HelperFunctions
             ->where('earns_commission', true)
             ->exists();
 
-        if($hasCommission) {
+        if($hasCommission && method_exists($field, 'show')) {
             $field->show();
         }
     }
