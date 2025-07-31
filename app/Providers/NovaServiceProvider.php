@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Nova\Area;
 use App\Nova\Complaint;
+use App\Nova\CustomerGroup;
 use App\Nova\DocumentControl;
 use App\Nova\Location;
 use App\Nova\MonetoryValue;
@@ -59,15 +60,15 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
             VatCode::class,
             DocumentControl::class,
             MonetoryValue::class,
-            Offer::class
+            Offer::class,
+            CustomerGroup::class,
         ]);
 
         //Nav Menu
         Nova::mainMenu(function(Request $request) {
-            $logoPath = tenancy()->tenant?->logo_path;
-
             return [
-                MenuItem::make('', '/')->data(["logopath" => $logoPath])->canSee(fn() => true)->name((tenancy()->tenant?->id)),
+                //Company branding and central app
+                MenuItem::make('', '/')->data(["logopath" => tenancy()->tenant?->logo_path])->canSee(fn() => true)->name((tenancy()->tenant?->id)),
                 MenuItem::externalLink('Companies', env('APP_URL') . '/admin/get-companies'),
 
                 // General
@@ -84,6 +85,10 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
                     MenuItem::resource(Offer::class),
                     MenuItem::resource(DocumentControl::class),
                 ])->collapsable(),
+
+                MenuSection::make('Customers', [
+                    MenuItem::resource(CustomerGroup::class),
+                ])->icon('user-group')->collapsable(),
 
                 //Admin Menu
                 MenuSection::make('Admin', [
