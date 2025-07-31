@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\User;
+use Database\Seeders\Customer\CustomerTabSeeder;
 use Database\Seeders\General\GeneralSeeder;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
@@ -39,6 +40,7 @@ class DatabaseSeeder extends Seeder
         );
 
         $this->call(GeneralSeeder::class); //Call the GeneralSeeder to seed the General Tab Data
+        $this->call(CustomerTabSeeder::class); //Call the CustomerTabSeeder to seed the Customer Tab Data
 
     }
 }
