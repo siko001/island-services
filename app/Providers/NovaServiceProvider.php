@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Nova\Area;
 use App\Nova\Classes;
+use App\Nova\ClientStatus;
 use App\Nova\Complaint;
 use App\Nova\CustomerGroup;
 use App\Nova\DocumentControl;
@@ -63,7 +64,8 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
             MonetoryValue::class,
             Offer::class,
             CustomerGroup::class,
-            Classes::class
+            Classes::class,
+            ClientStatus::class
         ]);
 
         //Nav Menu
@@ -91,6 +93,7 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
                 MenuSection::make('Customers', [
                     MenuItem::resource(CustomerGroup::class),
                     MenuItem::resource(Classes::class),
+                    MenuItem::resource(ClientStatus::class),
                 ])->icon('user-group')->collapsable(),
 
                 //Admin Menu
