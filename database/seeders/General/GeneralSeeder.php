@@ -2,7 +2,7 @@
 
 namespace Database\Seeders\General;
 
-use Database\Seeders\admin\UserSeeder;
+use Database\Seeders\Admin\UserSeeder;
 use Illuminate\Database\Seeder;
 
 class GeneralSeeder extends Seeder

@@ -3,30 +3,30 @@
 use App\Http\Controllers\CentralController;
 use Illuminate\Support\Facades\Route;
 
-//Audit Trails Routes
-//Route::group(['prefix' => 'admin/audit-trails'], function() {
-//    Route::get('/login', [AuditTrailController::class, "login"])->name('audit-trails.login');
-//    Route::get('/system', [AuditTrailController::class, "system"])->name('audit-trails.system');
-//});
-
-//// Redirect root to main dashboard
-///
-
 foreach(config('tenancy.central_domains') as $domain) {
     Route::domain($domain)->group(function() {
+
+        //home
         Route::get('/', function() {
             return redirect('/admin/get-companies');
         });
 
-        //////Redirect all undefined routes to main dashboard
+        //Redirect all undefined routes to main dashboard
         Route::fallback(function() {
             return redirect('/admin/get-companies');
         });
 
+        //        Global
         Route::get('/admin/get-companies', [CentralController::class, 'index'])->name('central.index');
-        Route::post('/tenancy/add', [CentralController::class, 'store'])->name('tenancy.store');
-        Route::post('/tenancy/delete/{id}', [CentralController::class, 'delete'])->name('tenancy.delete');
-        Route::get('/tenancy/select/{id}', [CentralController::class, 'select'])->name('tenancy.select');
+
+        //Tenant Management
+        Route::group(['prefix' => "/tenancy"], function() {
+            Route::post('/add', [CentralController::class, 'store'])->name('tenancy.store');
+            Route::get('/edit/{id}', [CentralController::class, 'edit'])->name('tenancy.edit');
+            Route::put('/update/{id}', [CentralController::class, 'update'])->name('tenancy.update');
+            Route::post('/delete/{id}', [CentralController::class, 'delete'])->name('tenancy.delete');
+            Route::get('/select/{id}', [CentralController::class, 'select'])->name('tenancy.select');
+        });
 
     });
 }

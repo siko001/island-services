@@ -3,6 +3,7 @@
 namespace App\Nova;
 
 use App\Helpers\HelperFunctions;
+use Illuminate\Http\Request;
 use Laravel\Nova\Fields\BelongsToMany;
 use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\Email;
@@ -177,29 +178,29 @@ class Area extends Resource
         return [];
     }
 
-    //    //Resource authorization methods
-    //    public static function authorizedToCreate(Request $request): bool
-    //    {
-    //        return $request->user() && $request->user()->can('create area');
-    //    }
-    //
-    //    public function authorizedToUpdate(Request $request): bool
-    //    {
-    //        return $request->user() && $request->user()->can('update area');
-    //    }
-    //
-    //    public function authorizedToDelete(Request $request): bool
-    //    {
-    //        return $request->user() && $request->user() && $request->user()->can('delete area');
-    //    }
-    //
-    //    public static function authorizedToViewAny(Request $request): bool
-    //    {
-    //        return $request->user() && $request->user()->can('view any area');
-    //    }
-    //
-    //    public function authorizedToView(Request $request): bool
-    //    {
-    //        return $request->user() && $request->user()->can('view area');
-    //    }
+    //Resource authorization methods
+    public static function authorizedToCreate(Request $request): bool
+    {
+        return $request->user() && $request->user()->can('create area');
+    }
+
+    public function authorizedToUpdate(Request $request): bool
+    {
+        return $request->user() && $request->user()->can('update area');
+    }
+
+    public function authorizedToDelete(Request $request): bool
+    {
+        return $request->user() && $request->user() && $request->user()->can('delete area');
+    }
+
+    public static function authorizedToViewAny(Request $request): bool
+    {
+        return $request->user() && $request->user()->can('view any area');
+    }
+
+    public function authorizedToView(Request $request): bool
+    {
+        return $request->user() && $request->user()->can('view area');
+    }
 }

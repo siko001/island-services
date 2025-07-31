@@ -36,7 +36,13 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
      */
     public function boot(): void
     {
+
         parent::boot();
+        //CSS
+        Nova::style('navbar-header', resource_path('css/navbar-header.css'));
+
+        //JS
+        \Laravel\Nova\Nova::script('custom', public_path('nova.js'));
 
         //All Nova resources should be registered here (to generate the permissions)
         Nova::resources([
@@ -58,13 +64,14 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
 
         //Nav Menu
         Nova::mainMenu(function(Request $request) {
-            return [
+            $logoPath = tenancy()->tenant?->logo_path;
 
+            return [
+                MenuItem::make('', '/')->data(["logopath" => $logoPath])->canSee(fn() => true)->name((tenancy()->tenant?->id)),
                 MenuItem::externalLink('Companies', env('APP_URL') . '/admin/get-companies'),
 
                 // General
                 MenuSection::make('General', [
-                    //                    MenuItem::resource(Tenant::class),
                     MenuItem::resource(Area::class),
                     MenuItem::resource(Location::class),
                     MenuItem::resource(Vehicle::class),
@@ -76,7 +83,7 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
                     MenuItem::resource(VatCode::class),
                     MenuItem::resource(Offer::class),
                     MenuItem::resource(DocumentControl::class),
-                ])->icon("home")->collapsable(),
+                ])->collapsable(),
 
                 //Admin Menu
                 MenuSection::make('Admin', [
