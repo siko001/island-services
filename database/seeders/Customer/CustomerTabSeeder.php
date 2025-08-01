@@ -15,7 +15,8 @@ class CustomerTabSeeder extends Seeder
             CustomerGroupSeeder::class,
             ClassesSeeder::class,
             ClientStatusSeeder::class,
-            HearAboutSeeder::class
+            HearAboutSeeder::class,
+            ClientTypeSeeder::class,
         ]);
     }
 }

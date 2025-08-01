@@ -3,7 +3,6 @@
 declare(strict_types=1);
 
 use App\Http\Controllers\AuditTrailController;
-use App\Http\Controllers\CentralController;
 use Illuminate\Support\Facades\Route;
 use Stancl\Tenancy\Middleware\InitializeTenancyByDomain;
 use Stancl\Tenancy\Middleware\PreventAccessFromCentralDomains;
@@ -38,10 +37,4 @@ Route::middleware([
     Route::get('/login', function() {
         return redirect('/admin/dashboards/main');
     })->name('login');
-
-    Route::get('/admin/get-companies', [CentralController::class, 'index'])->name('central.index');
-    Route::post('/tenancy/add', [CentralController::class, 'store'])->name('tenancy.store');
-    Route::post('/tenancy/delete/{id}', [CentralController::class, 'delete'])->name('tenancy.delete');
-    Route::get('/tenancy/select/{id}', [CentralController::class, 'select'])->name('tenancy.select');
-
 });
