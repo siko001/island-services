@@ -3,6 +3,7 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Models\Admin\Role;
 use App\Models\General\Vehicle;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -60,5 +61,20 @@ class User extends Authenticatable
     public function vehicles()
     {
         return $this->belongsToMany(Vehicle::class, 'driver_vehicle');
+    }
+
+    public static function getSalesmenRoles()
+    {
+        $salesmen = [];
+
+        $roles = Role::with('users')
+            ->where('earns_commission', true)
+            ->get();
+        foreach($roles as $role) {
+            foreach($role->users as $user) {
+                $salesmen[$user->id] = $user->name;
+            }
+        }
+        return $salesmen;
     }
 }

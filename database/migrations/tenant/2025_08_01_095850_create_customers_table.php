@@ -87,6 +87,17 @@ return new class extends Migration {
             $table->foreignId('summer_address_area_id')->constrained('areas')->onDelete('cascade');
             $table->foreignId('summer_address_locality_id')->constrained('locations')->onDelete('cascade');
 
+            //Other Details / remarks
+            $table->foreignId('customer_groups_id')->constrained('customer_groups')->onDelete('cascade');
+            $table->foreignId('classes_id')->constrained('classes')->onDelete('cascade');
+            $table->foreignId('client_statuses_id')->constrained('client_statuses')->onDelete('cascade');
+            $table->foreignId('hear_about_id')->constrained('hear_abouts')->onDelete('cascade');
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
+            $table->foreignId('client_types_id')->constrained('client_types')->onDelete('cascade');
+            $table->string('deliver_instruction')->nullable();
+            $table->string('directions')->nullable();
+            $table->string('remarks')->nullable();
+
             $table->timestamps();
         });
     }
