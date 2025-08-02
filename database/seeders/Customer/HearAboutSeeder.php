@@ -25,10 +25,6 @@ class HearAboutSeeder extends Seeder
                 'name' => 'Adverts',
                 'abbreviation' => 'Adverts',
             ],
-            [
-                'name' => 'Word of Mouth',
-                'abbreviation' => 'Friend',
-            ],
         ];
 
         foreach($hearAboutOptions as $option) {

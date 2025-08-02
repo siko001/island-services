@@ -16,35 +16,48 @@ class ClientStatusSeeder extends Seeder
         $clientStatuses = [
             [
                 'name' => 'Accounts Problems',
-                'abbreviation' => 'Accounts'
+                'abbreviation' => 'Accounts',
+                'is_default' => false
             ],
             [
                 'name' => 'Bad Customer Care Service',
-                'abbreviation' => 'Cust Care'
+                'abbreviation' => 'Cust Care',
+                'is_default' => false
             ],
             [
                 'name' => 'Bad Delivery Service',
-                'abbreviation' => 'Deliveries'
+                'abbreviation' => 'Deliveries',
+                'is_default' => false
             ],
             [
                 'name' => 'Buying Elsewhere',
-                'abbreviation' => 'B. Elsewhere'
+                'abbreviation' => 'B. Elsewhere',
+                'is_default' => false
             ],
             [
                 'name' => 'Buying Small Bottles',
-                'abbreviation' => 'Small'
+                'abbreviation' => 'Small',
+                'is_default' => false
             ],
             [
                 'name' => 'Buying from supermarkets',
-                'abbreviation' => 'Supermarkets'
+                'abbreviation' => 'Supermarkets',
+                'is_default' => false
             ],
             [
                 'name' => 'Collects water themselves',
-                'abbreviation' => 'Collects'
+                'abbreviation' => 'Collects',
+                'is_default' => false
             ],
             [
                 'name' => 'Company Closed Down',
-                'abbreviation' => 'Closed'
+                'abbreviation' => 'Closed',
+                'is_default' => false
+            ],
+            [
+                'name' => 'Active Account',
+                'abbreviation' => 'Active',
+                'is_default' => true
             ],
         ];
 

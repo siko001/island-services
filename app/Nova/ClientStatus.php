@@ -3,6 +3,7 @@
 namespace App\Nova;
 
 use App\Nova\Parts\Helpers\ResourcePolicies;
+use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Http\Requests\NovaRequest;
 
@@ -44,6 +45,8 @@ class ClientStatus extends Resource
                 ->rules('required', 'max:16')
                 ->maxlength(16)
                 ->sortable(),
+
+            Boolean::make('Is Default')
 
         ];
     }
