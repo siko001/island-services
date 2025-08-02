@@ -2,7 +2,6 @@
 
 namespace App\Nova;
 
-use App\Nova\Parts\Helpers\ResourcePolicies;
 use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\BelongsToMany;
 use Laravel\Nova\Fields\Date;
@@ -12,9 +11,6 @@ use Laravel\Nova\Tabs\Tab;
 
 class Vehicle extends Resource
 {
-    use ResourcePolicies;
-
-    public static string $policyKey = 'vehicle';
     /**
      * The model the resource corresponds to.
      * @var class-string<\App\Models\General\Vehicle>
