@@ -95,7 +95,8 @@ class Area extends Resource
                 Textarea::make('Delivery Note Remark', 'delivery_note_remark')
                     ->sortable()
                     ->rules('max:255')
-                    ->withMeta(['extraAttributes' => ['style' => 'max-height: 150px;']])
+                    ->maxlength(255)
+                    ->withMeta(['extraAttributes' => ['style' => 'max-height: 150px; min-height:100px']])
                     ->hideFromIndex(),
 
                 Email::make('Customer Care Email', 'customer_care_email')

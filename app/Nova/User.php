@@ -3,8 +3,8 @@
 namespace App\Nova;
 
 use App\Helpers\HelperFunctions;
+use App\Nova\Parts\Helpers\ResourcePolicies;
 use Illuminate\Contracts\Database\Eloquent\Builder;
-use Illuminate\Http\Request;
 use Laravel\Nova\Auth\PasswordValidationRules;
 use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\ID;
@@ -18,8 +18,9 @@ use Vyuldashev\NovaPermission\RoleBooleanGroup;
 
 class User extends Resource
 {
-    use PasswordValidationRules;
+    use PasswordValidationRules, ResourcePolicies;
 
+    public static string $policyKey = 'user';
     /**
      * The model the resource corresponds to.
      * @var class-string<\App\Models\User>
@@ -158,36 +159,10 @@ class User extends Resource
         return [];
     }
 
-    //Resource authorization methods
-    public static function authorizedToCreate(Request $request): bool
-    {
-        return $request->user() && $request->user()->can('create user');
-    }
-
-    public function authorizedToUpdate(Request $request): bool
-    {
-        return $request->user() && $request->user()->can('update user');
-    }
-
-    public function authorizedToDelete(Request $request): bool
-    {
-        return $request->user() && $request->user()->can('delete user');
-    }
-
-    public static function authorizedToViewAny(Request $request): bool
-    {
-        return $request->user() && $request->user()->can('view any user');
-    }
-
-    public function authorizedToView(Request $request): bool
-    {
-        return $request->user() && $request->user()->can('view user');
-    }
-
     //Method to filter the query for relatable resources
     public static function relatableQuery(NovaRequest $request, $query): Builder
     {
-        //        first check if the user is a driver and if the request is for vehicles via the drivers relationship
+        // first check if the user is a driver and if the request is for vehicles via the drivers relationship
         if($request->resource === 'vehicles' && $request->viaRelationship === 'drivers') {
             return $query->whereHas('roles', function($q) {
                 $q->where('name', 'driver');

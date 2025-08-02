@@ -2,13 +2,16 @@
 
 namespace App\Nova;
 
-use Illuminate\Http\Request;
+use App\Nova\Parts\Helpers\ResourcePolicies;
 use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Http\Requests\NovaRequest;
 
 class OrderType extends Resource
 {
+    use ResourcePolicies;
+
+    public static string $policyKey = 'order_type';
     /**
      * The model the resource corresponds to.
      * @var class-string<\App\Models\General\OrderType>
@@ -75,31 +78,5 @@ class OrderType extends Resource
     public function actions(NovaRequest $request): array
     {
         return [];
-    }
-
-    //Resource authorization methods
-    public static function authorizedToCreate(Request $request): bool
-    {
-        return $request->user() && $request->user()->can('create order_type');
-    }
-
-    public function authorizedToUpdate(Request $request): bool
-    {
-        return $request->user() && $request->user()->can('update order_type');
-    }
-
-    public function authorizedToDelete(Request $request): bool
-    {
-        return $request->user() && $request->user() && $request->user()->can('delete order_type');
-    }
-
-    public static function authorizedToViewAny(Request $request): bool
-    {
-        return $request->user() && $request->user()->can('view any order_type');
-    }
-
-    public function authorizedToView(Request $request): bool
-    {
-        return $request->user() && $request->user()->can('view order_type');
     }
 }

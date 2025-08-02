@@ -2,13 +2,16 @@
 
 namespace App\Nova;
 
-use Illuminate\Http\Request;
+use App\Nova\Parts\Helpers\ResourcePolicies;
 use Laravel\Nova\Fields\Number;
 use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Http\Requests\NovaRequest;
 
 class MonetoryValue extends Resource
 {
+    use ResourcePolicies;
+
+    public static string $policyKey = 'monetory_value';
     /**
      * The model the resource corresponds to.
      * @var class-string<\App\Models\General\MonetoryValue>
@@ -81,30 +84,6 @@ class MonetoryValue extends Resource
     {
         return [];
     }
-
     //Resource authorization methods
-    public static function authorizedToCreate(Request $request): bool
-    {
-        return $request->user() && $request->user()->can('create monetory_value');
-    }
 
-    public function authorizedToUpdate(Request $request): bool
-    {
-        return $request->user() && $request->user()->can('update monetory_value');
-    }
-
-    public function authorizedToDelete(Request $request): bool
-    {
-        return $request->user() && $request->user() && $request->user()->can('delete monetory_value');
-    }
-
-    public static function authorizedToViewAny(Request $request): bool
-    {
-        return $request->user() && $request->user()->can('view any monetory_value');
-    }
-
-    public function authorizedToView(Request $request): bool
-    {
-        return $request->user() && $request->user()->can('view monetory_value');
-    }
 }

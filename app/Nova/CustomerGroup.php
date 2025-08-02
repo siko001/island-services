@@ -2,13 +2,16 @@
 
 namespace App\Nova;
 
-use Illuminate\Http\Request;
+use App\Nova\Parts\Helpers\ResourcePolicies;
 use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Http\Requests\NovaRequest;
 
 class CustomerGroup extends Resource
 {
+    use ResourcePolicies;
+
+    public static string $policyKey = 'customer_group';
     /**
      * The model the resource corresponds to.
      * @var class-string<\App\Models\Customer\CustomerGroup>
@@ -74,30 +77,5 @@ class CustomerGroup extends Resource
     public function actions(NovaRequest $request): array
     {
         return [];
-    }
-
-    public static function authorizedToCreate(Request $request): bool
-    {
-        return $request->user() && $request->user()->can('create customer_group');
-    }
-
-    public function authorizedToUpdate(Request $request): bool
-    {
-        return $request->user() && $request->user()->can('update customer_group');
-    }
-
-    public function authorizedToDelete(Request $request): bool
-    {
-        return $request->user() && $request->user() && $request->user()->can('delete customer_group');
-    }
-
-    public static function authorizedToViewAny(Request $request): bool
-    {
-        return $request->user() && $request->user()->can('view any customer_group');
-    }
-
-    public function authorizedToView(Request $request): bool
-    {
-        return $request->user() && $request->user()->can('view customer_group');
     }
 }

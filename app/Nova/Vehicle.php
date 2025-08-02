@@ -2,6 +2,7 @@
 
 namespace App\Nova;
 
+use App\Nova\Parts\Helpers\ResourcePolicies;
 use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\BelongsToMany;
 use Laravel\Nova\Fields\Date;
@@ -11,6 +12,9 @@ use Laravel\Nova\Tabs\Tab;
 
 class Vehicle extends Resource
 {
+    use ResourcePolicies;
+
+    public static string $policyKey = 'vehicle';
     /**
      * The model the resource corresponds to.
      * @var class-string<\App\Models\General\Vehicle>
@@ -20,13 +24,13 @@ class Vehicle extends Resource
      * The single value that should be used to represent the resource when being displayed.
      * @var string
      */
-    public static $title = 'name';
+    public static $title = 'Registration Number';
     /**
      * The columns that should be searched.
      * @var array
      */
     public static $search = [
-        'name',
+        'Registration Number, Make, Model',
     ];
 
     /**

@@ -2,7 +2,7 @@
 
 namespace App\Nova;
 
-use Illuminate\Http\Request;
+use App\Nova\Parts\Helpers\ResourcePolicies;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Number;
 use Laravel\Nova\Fields\Text;
@@ -10,6 +10,9 @@ use Laravel\Nova\Http\Requests\NovaRequest;
 
 class Service extends Resource
 {
+    use ResourcePolicies;
+
+    public static string $policyKey = 'service';
     /**
      * The model the resource corresponds to.
      * @var class-string<\App\Models\General\Service>
@@ -88,31 +91,5 @@ class Service extends Resource
     public function actions(NovaRequest $request): array
     {
         return [];
-    }
-
-    //Resource authorization methods
-    public static function authorizedToCreate(Request $request): bool
-    {
-        return $request->user() && $request->user()->can('create service');
-    }
-
-    public function authorizedToUpdate(Request $request): bool
-    {
-        return $request->user() && $request->user()->can('update service');
-    }
-
-    public function authorizedToDelete(Request $request): bool
-    {
-        return $request->user() && $request->user() && $request->user()->can('delete service');
-    }
-
-    public static function authorizedToViewAny(Request $request): bool
-    {
-        return $request->user() && $request->user()->can('view any service');
-    }
-
-    public function authorizedToView(Request $request): bool
-    {
-        return $request->user() && $request->user()->can('view service');
     }
 }

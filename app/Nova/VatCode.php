@@ -2,7 +2,7 @@
 
 namespace App\Nova;
 
-use Illuminate\Http\Request;
+use App\Nova\Parts\Helpers\ResourcePolicies;
 use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\Number;
 use Laravel\Nova\Fields\Text;
@@ -10,6 +10,9 @@ use Laravel\Nova\Http\Requests\NovaRequest;
 
 class VatCode extends Resource
 {
+    use ResourcePolicies;
+
+    public static string $policyKey = 'vat_code';
     /**
      * The model the resource corresponds to.
      * @var class-string<\App\Models\General\VatCode>
@@ -93,30 +96,5 @@ class VatCode extends Resource
     public function actions(NovaRequest $request): array
     {
         return [];
-    }
-
-    public static function authorizedToCreate(Request $request): bool
-    {
-        return $request->user() && $request->user()->can('create vat_code');
-    }
-
-    public function authorizedToUpdate(Request $request): bool
-    {
-        return $request->user() && $request->user()->can('update vat_code');
-    }
-
-    public function authorizedToDelete(Request $request): bool
-    {
-        return $request->user() && $request->user() && $request->user()->can('delete vat_code');
-    }
-
-    public static function authorizedToViewAny(Request $request): bool
-    {
-        return $request->user() && $request->user()->can('view any vat_code');
-    }
-
-    public function authorizedToView(Request $request): bool
-    {
-        return $request->user() && $request->user()->can('view vat_code');
     }
 }

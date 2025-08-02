@@ -2,12 +2,15 @@
 
 namespace App\Nova;
 
-use Illuminate\Http\Request;
+use App\Nova\Parts\Helpers\ResourcePolicies;
 use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Http\Requests\NovaRequest;
 
 class ClientStatus extends Resource
 {
+    use ResourcePolicies;
+
+    public static string $policyKey = 'client_status';
     /**
      * The model the resource corresponds to.
      * @var class-string<\App\Models\Customer\ClientStatus>
@@ -79,31 +82,5 @@ class ClientStatus extends Resource
     public function actions(NovaRequest $request): array
     {
         return [];
-    }
-
-    //Resource authorization methods
-    public static function authorizedToCreate(Request $request): bool
-    {
-        return $request->user() && $request->user()->can('create client_status');
-    }
-
-    public function authorizedToUpdate(Request $request): bool
-    {
-        return $request->user() && $request->user()->can('update client_status');
-    }
-
-    public function authorizedToDelete(Request $request): bool
-    {
-        return $request->user() && $request->user() && $request->user()->can('delete client_status');
-    }
-
-    public static function authorizedToViewAny(Request $request): bool
-    {
-        return $request->user() && $request->user()->can('view any client_status');
-    }
-
-    public function authorizedToView(Request $request): bool
-    {
-        return $request->user() && $request->user()->can('view client_status');
     }
 }
