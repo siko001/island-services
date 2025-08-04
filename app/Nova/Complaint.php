@@ -2,13 +2,16 @@
 
 namespace App\Nova;
 
-use Illuminate\Http\Request;
+use App\Nova\Parts\Helpers\ResourcePolicies;
 use Laravel\Nova\Fields\Select;
 use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Http\Requests\NovaRequest;
 
 class Complaint extends Resource
 {
+    use ResourcePolicies;
+
+    public static string $policyKey = 'complaint';
     /**
      * The model the resource corresponds to.
      * @var class-string<\App\Models\General\Complaint>
@@ -76,31 +79,5 @@ class Complaint extends Resource
     public function actions(NovaRequest $request): array
     {
         return [];
-    }
-
-    //Resource authorization methods
-    public static function authorizedToCreate(Request $request): bool
-    {
-        return $request->user() && $request->user()->can('create complaint');
-    }
-
-    public function authorizedToUpdate(Request $request): bool
-    {
-        return $request->user() && $request->user()->can('update complaint');
-    }
-
-    public function authorizedToDelete(Request $request): bool
-    {
-        return $request->user() && $request->user() && $request->user()->can('delete complaint');
-    }
-
-    public static function authorizedToViewAny(Request $request): bool
-    {
-        return $request->user() && $request->user()->can('view any complaint');
-    }
-
-    public function authorizedToView(Request $request): bool
-    {
-        return $request->user() && $request->user()->can('view complaint');
     }
 }

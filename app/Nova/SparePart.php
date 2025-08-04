@@ -2,7 +2,7 @@
 
 namespace App\Nova;
 
-use Illuminate\Http\Request;
+use App\Nova\Parts\Helpers\ResourcePolicies;
 use Laravel\Nova\Fields\Date;
 use Laravel\Nova\Fields\Number;
 use Laravel\Nova\Fields\Text;
@@ -10,6 +10,9 @@ use Laravel\Nova\Http\Requests\NovaRequest;
 
 class SparePart extends Resource
 {
+    use ResourcePolicies;
+
+    public static string $policyKey = 'spare_part';
     /**
      * The model the resource corresponds to.
      * @var class-string<\App\Models\General\SparePart>
@@ -36,6 +39,7 @@ class SparePart extends Resource
     public function fields(NovaRequest $request): array
     {
         return [
+
             Text::make('Name')
                 ->rules('required', 'max:255')
                 ->sortable(),
@@ -71,6 +75,7 @@ class SparePart extends Resource
                 ->sortable()
                 ->rules('nullable', 'date')
                 ->hideFromIndex(),
+
         ];
     }
 
@@ -108,31 +113,5 @@ class SparePart extends Resource
     public function actions(NovaRequest $request): array
     {
         return [];
-    }
-
-    //Resource authorization methods
-    public static function authorizedToCreate(Request $request): bool
-    {
-        return $request->user() && $request->user()->can('create spare_part');
-    }
-
-    public function authorizedToUpdate(Request $request): bool
-    {
-        return $request->user() && $request->user()->can('update spare_part');
-    }
-
-    public function authorizedToDelete(Request $request): bool
-    {
-        return $request->user() && $request->user() && $request->user()->can('delete spare_part');
-    }
-
-    public static function authorizedToViewAny(Request $request): bool
-    {
-        return $request->user() && $request->user()->can('view any spare_part');
-    }
-
-    public function authorizedToView(Request $request): bool
-    {
-        return $request->user() && $request->user()->can('view spare_part');
     }
 }

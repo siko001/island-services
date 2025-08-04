@@ -35,9 +35,43 @@ document.addEventListener("DOMContentLoaded", function() {
 			secondItem.prepend(svgElement);
 		}
 	}
-
-
 	setTimeout(() => {
 		dynamicBrandingToNova();
 	}, 1)
 });
+
+//
+// // Customer billing address conditional display
+// const conditional = () => {
+// 	const checkbox = document.querySelector('[dusk="different_billing_details-update-customer-boolean-field"]')
+// 	const billingDetailsContainer = document.querySelector('[aria-label="Billing Details"]')
+// 	if(checkbox && billingDetailsContainer) {
+// 		checkbox.addEventListener('click', function(e) {
+// 			isShowing()
+// 		});
+// 		// Trigger the change event to set the initial state
+// 		checkbox.dispatchEvent(new Event('change'));
+//
+//
+// 		const isShowing = () => {
+//
+// 			if(checkbox.getAttribute('checkedvalue') === 'true') {
+// 				billingDetailsContainer.parentElement.parentElement.style.display = 'block';
+// 				checkbox.classList.add('custom-js-loaded')
+// 			} else {
+// 				billingDetailsContainer.parentElement.parentElement.style.display = 'none';
+// 				checkbox.classList.add('custom-js-loaded')
+// 			}
+//
+// 		}
+//
+// 		isShowing();
+// 	}
+// }
+// const checkboxConditionalInterval = setInterval(() => {
+// 	conditional();
+// 	if(document.querySelector('[dusk="different_billing_details-update-customer-boolean-field"]')?.classList.contains('custom-js-loaded')) {
+// 		clearInterval(checkboxConditionalInterval);
+// 		console.log('Custom JS for billing details loaded successfully.');
+// 	}
+// }, 10);

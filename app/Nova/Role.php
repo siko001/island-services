@@ -2,7 +2,7 @@
 
 namespace App\Nova;
 
-use Illuminate\Http\Request;
+use App\Nova\Parts\Helpers\ResourcePolicies;
 use Laravel\Nova\Fields\BelongsToMany;
 use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\ID;
@@ -12,6 +12,9 @@ use Vyuldashev\NovaPermission\PermissionBooleanGroup;
 
 class Role extends Resource
 {
+    use ResourcePolicies;
+
+    public static string $policyKey = 'role';
     /**
      * The model the resource corresponds to.
      * @var class-string<\App\Models\Admin\Role>
@@ -41,9 +44,11 @@ class Role extends Resource
             Text::make('Name')
                 ->sortable()
                 ->rules('required', 'max:255'),
+
             Boolean::make('Earns Commission')->help('Enable this to allow users with this role to have additional fields for commission when creating or updating users')->sortable(),
 
             PermissionBooleanGroup::make('Permissions', 'permissions')->hideFromIndex(),
+
             BelongsToMany::make('Users', 'users', User::class),
 
         ];
@@ -84,31 +89,5 @@ class Role extends Resource
     public function actions(NovaRequest $request): array
     {
         return [];
-    }
-
-    //Resource authorization methods
-    public static function authorizedToCreate(Request $request): bool
-    {
-        return $request->user() && $request->user()->can('create role');
-    }
-
-    public function authorizedToUpdate(Request $request): bool
-    {
-        return $request->user() && $request->user()->can('update role');
-    }
-
-    public function authorizedToDelete(Request $request): bool
-    {
-        return $request->user() && $request->user() && $request->user()->can('delete role');
-    }
-
-    public static function authorizedToViewAny(Request $request): bool
-    {
-        return $request->user() && $request->user()->can('view any role');
-    }
-
-    public function authorizedToView(Request $request): bool
-    {
-        return $request->user() && $request->user()->can('view role');
     }
 }
