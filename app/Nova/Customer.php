@@ -10,7 +10,6 @@ use App\Nova\Parts\Customer\OtherDetails;
 use App\Nova\Parts\Customer\SummerAddress;
 use App\Nova\Parts\Helpers\ResourcePolicies;
 use Laravel\Nova\Fields\Boolean;
-use Laravel\Nova\Fields\Date;
 use Laravel\Nova\Fields\DateTime;
 use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Http\Requests\NovaRequest;
@@ -58,22 +57,21 @@ class Customer extends Resource
                         ->maxlength(12)
                         ->rules('required', 'max:12'),
 
-                    Date::make('Created At', 'created_at')
+                    DateTime::make('Created At', 'created_at')
                         ->onlyOnDetail(),
 
                     DateTime::make('Updated At', 'updated_at')
                         ->onlyOnDetail(),
 
-                    //                    user that created
-                    Text::make('Created By', function() {
-                        return $this->createdBy?->name ?? 'N/A';
-                    })->onlyOnDetail(),
-
-                    Text::make('Updated By', function() {
-                        return $this->updatedBy?->name ?? 'N/A';
-                    })->onlyOnDetail(),
+                    //                    //                    user that created
+                    //                    Text::make('Created By', function() {
+                    //                        return $this->createdBy?->name ?? 'N/A';
+                    //                    })->onlyOnDetail(),
+                    //
+                    //                    Text::make('Updated By', function() {
+                    //                        return $this->updatedBy?->name ?? 'N/A';
+                    //                    })->onlyOnDetail(),
                 ]),
-
                 Tab::make('Additional Actions', [
                     Boolean::make('Different Billing Details'),
                     Boolean::make('Use Summer Address'),

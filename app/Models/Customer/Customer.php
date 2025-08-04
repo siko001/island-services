@@ -182,18 +182,20 @@ class Customer extends Model
         // Method to handle when creating
         static::creating(function($customer) {
             Log::info('creating');
+            //API CALL TO SAGE
         });
 
         static::updating(function($customer) {
             Log::info('updating');
+            //API CALL TO SAGE
         });
 
         static::saving(function($customer) {
-            // if the customer does not have different billing details, copy delivery details to billing details
+            //Pipeline calls Global
+            Log::info('saving', json_decode($customer->toJson(), true));
             if(!$customer->different_billing_details) {
                 $customer->copyDeliveryToBilling();
             }
-
         });
 
     }

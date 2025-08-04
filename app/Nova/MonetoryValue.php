@@ -37,15 +37,18 @@ class MonetoryValue extends Resource
     public function fields(NovaRequest $request): array
     {
         return [
+
             Text::make('Name')
                 ->rules('required', 'string', 'max:255')
                 ->textAlign('center')
                 ->sortable(),
+
             Number::make('Value')
                 ->sortable()
                 ->textAlign('left')
                 ->rules('required', 'numeric')
                 ->step(0.01)
+
         ];
     }
 

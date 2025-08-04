@@ -39,6 +39,7 @@ class SparePart extends Resource
     public function fields(NovaRequest $request): array
     {
         return [
+
             Text::make('Name')
                 ->rules('required', 'max:255')
                 ->sortable(),
@@ -74,6 +75,7 @@ class SparePart extends Resource
                 ->sortable()
                 ->rules('nullable', 'date')
                 ->hideFromIndex(),
+
         ];
     }
 
