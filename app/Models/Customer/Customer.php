@@ -7,6 +7,7 @@ use App\Models\General\Location;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Facades\Log;
 
 class Customer extends Model
 {
@@ -173,6 +174,28 @@ class Customer extends Model
     public function clientType(): BelongsTo
     {
         return $this->belongsTo(ClientType::class, 'client_types_id');
+    }
+
+    protected static function boot(): void
+    {
+        parent::boot();
+        // Method to handle when creating
+        static::creating(function($customer) {
+            Log::info('creating');
+        });
+
+        static::updating(function($customer) {
+            Log::info('updating');
+        });
+
+        static::saving(function($customer) {
+            // if the customer does not have different billing details, copy delivery details to billing details
+            if(!$customer->different_billing_details) {
+                $customer->copyDeliveryToBilling();
+            }
+
+        });
+
     }
 
     protected function copyDeliveryToBilling(): void

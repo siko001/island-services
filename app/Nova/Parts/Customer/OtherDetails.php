@@ -21,7 +21,7 @@ class OtherDetails
                 ->displayUsingLabels()
                 ->rules('required'),
 
-            Select::make('Client Status', 'client_status_id')
+            Select::make('Client Status', 'client_statuses_id')
                 ->options(\App\Models\Customer\ClientStatus::all()->pluck('name', 'id'))
                 ->default(\App\Models\Customer\ClientStatus::where('is_default', true)->value('id'))
                 ->displayUsingLabels()

@@ -11,7 +11,7 @@ use App\Nova\Parts\Customer\SummerAddress;
 use App\Nova\Parts\Helpers\ResourcePolicies;
 use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\Date;
-use Laravel\Nova\Fields\ID;
+use Laravel\Nova\Fields\DateTime;
 use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Http\Requests\NovaRequest;
 use Laravel\Nova\Panel;
@@ -47,7 +47,6 @@ class Customer extends Resource
     public function fields(NovaRequest $request): array
     {
         return [
-            ID::make()->sortable(),
 
             Tab::group('Client Details', [
                 Tab::make('Client Information', [
@@ -60,8 +59,20 @@ class Customer extends Resource
                         ->rules('required', 'max:12'),
 
                     Date::make('Created At', 'created_at')
-                        ->onlyOnIndex()
-                        ->sortable(),]),
+                        ->onlyOnDetail(),
+
+                    DateTime::make('Updated At', 'updated_at')
+                        ->onlyOnDetail(),
+
+                    //                    user that created
+                    Text::make('Created By', function() {
+                        return $this->createdBy?->name ?? 'N/A';
+                    })->onlyOnDetail(),
+
+                    Text::make('Updated By', function() {
+                        return $this->updatedBy?->name ?? 'N/A';
+                    })->onlyOnDetail(),
+                ]),
 
                 Tab::make('Additional Actions', [
                     Boolean::make('Different Billing Details'),
@@ -94,7 +105,7 @@ class Customer extends Resource
 
             ]),
 
-            Panel::make('Summer Residence Information', new SummerAddress())
+            Panel::make('Summer Residence Information', new SummerAddress)
         ];
 
     }
