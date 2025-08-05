@@ -78,7 +78,7 @@ class CentralController extends Controller
                 ]);
 
                 Artisan::call('db:seed', [
-                    '--class' => 'Database\\Seeders\\General\\RoleSeeder',
+                    '--class' => 'Database\\Seeders\\Admin\\RoleSeeder',
                     '--force' => true,
                 ]);
             });

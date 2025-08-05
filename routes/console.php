@@ -140,7 +140,7 @@ Artisan::command('custom-tenant:create', function(Request $request) {
 
                 // Seed roles and permissions
                 Artisan::call('db:seed', [
-                    '--class' => 'Database\\Seeders\\General\\RoleSeeder',
+                    '--class' => 'Database\\Seeders\\Admin\\RoleSeeder',
                     '--force' => true,
                 ]);
 

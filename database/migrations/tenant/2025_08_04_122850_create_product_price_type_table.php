@@ -17,7 +17,7 @@ return new class extends Migration {
             $table->foreignId('price_type_id')->constrained('price_types')->onDelete('cascade');
             $table->foreignId('vat_id')->constrained('vat_codes')->onDelete('cascade');
 
-            $table->decimal('unit_price', 10, 2)->default(0.00);
+            $table->decimal('unit_price', 10, 2)->default(0.00)->nullable();
             $table->decimal('yearly_rental', 10, 2)->default(0.00)->nullable();
             $table->timestamps();
 

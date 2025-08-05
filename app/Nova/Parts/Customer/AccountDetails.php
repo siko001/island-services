@@ -37,14 +37,18 @@ class AccountDetails
                 ->withMeta(['extraAttributes' => ['style' => 'max-height: 150px; min-height:100px']])
                 ->hideFromIndex(),
 
-            tap(BelongsTo::make('Area', $deliveryOrBilling . 'Area', Area::class)->hideFromIndex(), function($field) use ($deliveryOrBilling) {
-                if($deliveryOrBilling === 'billing')
+            tap(BelongsTo::make('Area', $deliveryOrBilling . 'Area', Area::class), function($field) use ($deliveryOrBilling) {
+                if($deliveryOrBilling === 'billing') {
                     $field->nullable();
+                    $field->hideFromIndex();
+                }
             }),
 
-            tap(BelongsTo::make('Location', $deliveryOrBilling . 'Locality', Location::class)->hideFromIndex(), function($field) use ($deliveryOrBilling) {
-                if($deliveryOrBilling === 'billing')
+            tap(BelongsTo::make('Location', $deliveryOrBilling . 'Locality', Location::class), function($field) use ($deliveryOrBilling) {
+                if($deliveryOrBilling === 'billing') {
                     $field->nullable();
+                    $field->hideFromIndex();
+                }
             }),
 
             Text::make("Post Code", $deliveryOrBilling . '_details_post_code')

@@ -5,12 +5,14 @@ namespace App\Models\Customer;
 use App\Models\General\Area;
 use App\Models\General\Location;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Support\Facades\Log;
 
 class Customer extends Model
 {
+    use HasFactory;
+
     protected $fillable = [
         'client',
         'account_number',
@@ -181,18 +183,15 @@ class Customer extends Model
         parent::boot();
         // Method to handle when creating
         static::creating(function($customer) {
-            Log::info('creating');
             //API CALL TO SAGE
         });
 
         static::updating(function($customer) {
-            Log::info('updating');
             //API CALL TO SAGE
         });
 
         static::saving(function($customer) {
             //Pipeline calls Global
-            Log::info('saving', json_decode($customer->toJson(), true));
             if(!$customer->different_billing_details) {
                 $customer->copyDeliveryToBilling();
             }

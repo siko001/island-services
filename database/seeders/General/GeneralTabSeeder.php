@@ -2,10 +2,11 @@
 
 namespace Database\Seeders\General;
 
+use Database\Seeders\Admin\RoleSeeder;
 use Database\Seeders\Admin\UserSeeder;
 use Illuminate\Database\Seeder;
 
-class GeneralSeeder extends Seeder
+class GeneralTabSeeder extends Seeder
 {
     /**
      * Run the database seeds.

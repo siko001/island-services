@@ -2,6 +2,7 @@
 
 namespace App\Nova;
 
+use App\Nova\Parts\Helpers\ResourcePolicies;
 use Laravel\Nova\Fields\BelongsToMany;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Number;
@@ -11,11 +12,14 @@ use Laravel\Nova\Http\Requests\NovaRequest;
 
 class Product extends Resource
 {
+    use ResourcePolicies;
+
+    public static string $policyKey = 'product';
     /**
      * The model the resource corresponds to.
-     * @var class-string<\App\Models\Product>
+     * @var class-string<\App\Models\Product\Product>
      */
-    public static $model = \App\Models\Product::class;
+    public static $model = \App\Models\Product\Product::class;
     /**
      * The single value that should be used to represent the resource when being displayed.
      * @var string
@@ -47,10 +51,53 @@ class Product extends Resource
 
             BelongsToMany::make('Price Type')
                 ->required()
+                ->rules('required')
                 ->fields(function() {
                     return [
-                        Number::make('Unit Price')->rules('required', 'numeric', 'min:0')->step(0.01),
-                        Number::make('Yearly Rental')->rules('nullable', 'numeric', 'min:0')->step(0.01),
+                        Number::make('Unit Price')
+                            ->dependsOn(
+                                ["priceType"],
+                                function($field, $request, $resource) {
+                                    $priceTypeID = $resource->priceType ?? null;
+                                    $priceTypeId = $resource->{'resource:price-types'} ?? $priceTypeID;
+                                    if($priceTypeId) {
+                                        $priceType = \App\Models\Product\PriceType::find($priceTypeId);
+                                        if($priceType && $priceType->is_rental == 1) {
+                                            $field->hide();
+                                            $field->rules('nullable', 'numeric', 'min:0');
+                                        } else {
+                                            $field->show();
+                                            $field->rules('required', 'numeric', 'min:0');
+                                        }
+                                    }
+                                }
+                            )
+                            ->textAlign('left')
+                            ->step(0.01),
+
+                        Number::make('Yearly Rental')
+                            ->dependsOn(
+                                ['priceType'],
+                                function($field, $request, $resource) {
+                                    $priceTypeID = $resource->priceType ?? null;
+                                    $priceTypeId = $resource->{'resource:price-types'} ?? $priceTypeID;
+                                    if($priceTypeId) {
+                                        $priceType = \App\Models\Product\PriceType::find($priceTypeId);
+                                        if($priceType && $priceType->is_rental == 1) {
+                                            $field->show();
+                                            $field->rules('required', 'numeric', 'min:0');
+                                        } else {
+                                            $field->hide();
+                                            $field->rules('nullable', 'numeric', 'min:0');
+                                        }
+
+                                    }
+                                }
+                            )
+                            ->textAlign('left')
+                            ->step(0.01)
+                        ,
+
                         Select::make('VAT', 'vat_id')->options(function() {
                             return \App\Models\General\VatCode::all()->pluck('name', 'id');
                         })->displayUsingLabels()->rules('required'),

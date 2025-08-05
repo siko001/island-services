@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\Product;
 
 use Illuminate\Database\Eloquent\Model;
 
@@ -24,8 +24,8 @@ class PriceType extends Model
 
     public function products()
     {
-        return $this->belongsToMany(\App\Models\Product::class, 'product_offer')
-            ->using(\App\Models\ProductPriceType::class)
+        return $this->belongsToMany(\App\Models\Product\Product::class, 'product_offer')
+            ->using(\App\Models\Product\ProductPriceType::class)
             ->withPivot(['unit_price', 'yearly_rental', 'vat_id'])
             ->withTimestamps();
     }

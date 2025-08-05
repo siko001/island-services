@@ -1,6 +1,6 @@
 <?php
 
-namespace Database\Seeders\General;
+namespace Database\Seeders\Admin;
 
 use App\Helpers\Data;
 use App\Helpers\HelperFunctions;

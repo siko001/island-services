@@ -3,6 +3,7 @@
 namespace App\Nova;
 
 use App\Helpers\HelperFunctions;
+use App\Nova\Parts\Helpers\ResourcePolicies;
 use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Text;
@@ -10,11 +11,14 @@ use Laravel\Nova\Http\Requests\NovaRequest;
 
 class PriceType extends Resource
 {
+    use ResourcePolicies;
+
+    public static string $policyKey = 'price_type';
     /**
      * The model the resource corresponds to.
-     * @var class-string<\App\Models\PriceType>
+     * @var class-string<\App\Models\Product\PriceType>
      */
-    public static $model = \App\Models\PriceType::class;
+    public static $model = \App\Models\Product\PriceType::class;
     /**
      * The single value that should be used to represent the resource when being displayed.
      * @var string
@@ -42,7 +46,7 @@ class PriceType extends Resource
                     return $request->viaRelationship();
                 }),
 
-            Boolean::make('rental?', 'is_rental')
+            Boolean::make('Rental Price Type', 'is_rental')
                 ->sortable()
                 ->hideFromIndex(function(NovaRequest $request) {
                     return $request->viaRelationship();

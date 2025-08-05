@@ -34,6 +34,8 @@ class SummerAddress
                 ->hideFromIndex(),
 
             Text::make('Country', 'summer_address_country')
+                ->nullable()
+                ->hideFromIndex(),
 
         ];
 
