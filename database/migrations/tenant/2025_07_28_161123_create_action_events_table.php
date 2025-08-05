@@ -10,12 +10,11 @@ class CreateActionEventsTable extends Migration
 {
     /**
      * Run the migrations.
-     *
      * @return void
      */
     public function up()
     {
-        Schema::create('action_events', function (Blueprint $table) {
+        Schema::create('action_events', function(Blueprint $table) {
             $table->id();
             $table->char('batch_id', 36);
             $table->foreignIdFor(Util::userModelOrFallback(), 'user_id')->index();
@@ -24,9 +23,9 @@ class CreateActionEventsTable extends Migration
             $table->morphs('target');
             $table->string('model_type');
 
-            if (Builder::$defaultMorphKeyType === 'uuid') {
+            if(Builder::$defaultMorphKeyType === 'uuid') {
                 $table->uuid('model_id')->nullable();
-            } elseif (Builder::$defaultMorphKeyType === 'ulid') {
+            } elseif(Builder::$defaultMorphKeyType === 'ulid') {
                 $table->ulid('model_id')->nullable();
             } else {
                 $table->unsignedBigInteger('model_id')->nullable();
@@ -36,18 +35,28 @@ class CreateActionEventsTable extends Migration
             $table->string('status', 25)->default('running');
             $table->text('exception');
             $table->timestamps();
-
+            $table->mediumText('original')->nullable();
+            $table->mediumText('changes')->nullable();
             $table->index(['batch_id', 'model_type', 'model_id']);
+        });
+
+        Schema::create('login_audits', function(Blueprint $table) {
+            $table->id();
+            $table->string('email');
+            $table->string('ip_address');
+            $table->boolean('success');
+            $table->timestamp('created_at')->nullable();
+            $table->timestamp('updated_at')->nullable();
         });
     }
 
     /**
      * Reverse the migrations.
-     *
      * @return void
      */
     public function down()
     {
         Schema::dropIfExists('action_events');
+        Schema::dropIfExists('login_audits');
     }
 }

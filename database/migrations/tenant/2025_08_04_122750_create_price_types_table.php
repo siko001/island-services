@@ -18,6 +18,19 @@ return new class extends Migration {
             $table->boolean('is_default')->default(false);
             $table->timestamps();
         });
+
+        Schema::create('product_price_type', function(Blueprint $table) {
+            $table->id();
+
+            $table->foreignId('product_id')->constrained('products')->onDelete('cascade');
+            $table->foreignId('price_type_id')->constrained('price_types')->onDelete('cascade');
+            $table->foreignId('vat_id')->constrained('vat_codes')->onDelete('cascade');
+
+            $table->decimal('unit_price', 10, 2)->default(0.00)->nullable();
+            $table->decimal('yearly_rental', 10, 2)->default(0.00)->nullable();
+            $table->timestamps();
+
+        });
     }
 
     /**
@@ -26,5 +39,6 @@ return new class extends Migration {
     public function down(): void
     {
         Schema::dropIfExists('price_types');
+        Schema::dropIfExists('product_offer');
     }
 };
