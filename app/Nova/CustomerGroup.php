@@ -2,6 +2,7 @@
 
 namespace App\Nova;
 
+use App\Helpers\HelperFunctions;
 use App\Nova\Parts\Helpers\ResourcePolicies;
 use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\Text;
@@ -39,7 +40,14 @@ class CustomerGroup extends Resource
         return [
             Text::make('Name')->sortable()->rules('required', 'max:255'),
             Text::make('Abbreviation')->rules('required', 'max:16')->maxlength(16)->sortable(),
-            Boolean::make('Default Group', 'is_default')->sortable(),
+            Boolean::make('Default Group', 'is_default')
+                ->hideWhenUpdating(function() {
+                    return HelperFunctions::otherDefaultExists($this::$model, $this->resource->id);
+                })
+                ->hideWhenCreating(function() {
+                    return HelperFunctions::otherDefaultExists($this::$model, $this->resource->id);
+                })
+                ->sortable(),
         ];
     }
 

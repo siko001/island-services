@@ -16,6 +16,8 @@ use App\Nova\MonetoryValue;
 use App\Nova\Offer;
 use App\Nova\OrderType;
 use App\Nova\Permission;
+use App\Nova\PriceType;
+use App\Nova\Product;
 use App\Nova\Role;
 use App\Nova\Service;
 use App\Nova\SparePart;
@@ -72,6 +74,8 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
             HearAbout::class,
             ClientType::class,
             Customer::class,
+            Product::class,
+            PriceType::class,
         ]);
 
         //Nav Menu
@@ -104,6 +108,11 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
                     MenuItem::resource(HearAbout::class),
                     MenuItem::resource(ClientType::class),
                 ])->icon('user-group')->collapsable(),
+
+                MenuSection::make('Stock', [
+                    MenuItem::resource(PriceType::class),
+                    MenuItem::resource(Product::class),
+                ])->icon('newspaper')->collapsable(),
 
                 //Admin Menu
                 MenuSection::make('Admin', [

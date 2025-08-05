@@ -120,4 +120,12 @@ class HelperFunctions
                 : print "An error occurred while generating CRUD permissions.\n";
         }
     }
+
+    public static function otherDefaultExists($model, $currentId)
+    {
+        // Replace ModelName with your actual model
+        return $model::where('is_default', true)
+            ->where('id', '!=', $currentId)
+            ->exists();
+    }
 }
