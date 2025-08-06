@@ -8,7 +8,7 @@ use App\Nova\Parts\Customer\DeliveryDetails;
 use App\Nova\Parts\Customer\FinancialDetails;
 use App\Nova\Parts\Customer\OtherDetails;
 use App\Nova\Parts\Customer\SummerAddress;
-use App\Nova\Parts\Helpers\ResourcePolicies;
+use App\Policies\ResourcePolicies;
 use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\DateTime;
 use Laravel\Nova\Fields\Text;

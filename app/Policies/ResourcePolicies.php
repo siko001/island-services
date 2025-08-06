@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Nova\Parts\Helpers;
+namespace App\Policies;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;

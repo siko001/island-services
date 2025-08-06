@@ -2,13 +2,17 @@
 
 namespace App\Nova;
 
-use App\Nova\Parts\Helpers\ResourcePolicies;
+use App\Nova\Parts\Product\AdditionalDetails;
+use App\Nova\Parts\Product\PriceTypeDynamicFields;
+use App\Nova\Parts\Product\StockInfo;
+use App\Policies\ResourcePolicies;
 use Laravel\Nova\Fields\BelongsToMany;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Number;
-use Laravel\Nova\Fields\Select;
+use Laravel\Nova\Fields\Repeater;
 use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Http\Requests\NovaRequest;
+use Laravel\Nova\Tabs\Tab;
 
 class Product extends Resource
 {
@@ -43,66 +47,39 @@ class Product extends Resource
             ID::make()->sortable(),
             Text::make('Name')
                 ->rules('required'),
-            Number::make('Product Price')
-                ->rules('required', 'numeric', 'min:0')
-                ->step('0.01')
+
+            Text::make('Abbreviation')
+                ->rules('required', 'max:16')
+                ->maxlength(16)
                 ->sortable()
                 ->hideFromIndex(),
 
+            Number::make('Product Price')
+                ->rules('required', 'numeric', 'min:0')
+                ->step('0.01')
+                ->textAlign('left')
+                ->sortable(),
+
+            Tab::group('Product Information', [
+                Tab::make('Stock Information', new StockInfo()),
+                Tab::make('Additional Details', new AdditionalDetails()),
+
+                Tab::make('Driver Commissions', [
+                    Repeater::make('Commissions', 'driver_commissions')
+                        ->repeatables([
+                            Repeaters\CommissionItem::make()->confirmRemoval(),
+                        ])->asJson(),
+                ]),
+
+                //Saleman Commission STILL-TODO
+
+            ]),
+
+            //Prices Types
             BelongsToMany::make('Price Type')
                 ->required()
                 ->rules('required')
-                ->fields(function() {
-                    return [
-                        Number::make('Unit Price')
-                            ->dependsOn(
-                                ["priceType"],
-                                function($field, $request, $resource) {
-                                    $priceTypeID = $resource->priceType ?? null;
-                                    $priceTypeId = $resource->{'resource:price-types'} ?? $priceTypeID;
-                                    if($priceTypeId) {
-                                        $priceType = \App\Models\Product\PriceType::find($priceTypeId);
-                                        if($priceType && $priceType->is_rental == 1) {
-                                            $field->hide();
-                                            $field->rules('nullable', 'numeric', 'min:0');
-                                        } else {
-                                            $field->show();
-                                            $field->rules('required', 'numeric', 'min:0');
-                                        }
-                                    }
-                                }
-                            )
-                            ->textAlign('left')
-                            ->step(0.01),
-
-                        Number::make('Yearly Rental')
-                            ->dependsOn(
-                                ['priceType'],
-                                function($field, $request, $resource) {
-                                    $priceTypeID = $resource->priceType ?? null;
-                                    $priceTypeId = $resource->{'resource:price-types'} ?? $priceTypeID;
-                                    if($priceTypeId) {
-                                        $priceType = \App\Models\Product\PriceType::find($priceTypeId);
-                                        if($priceType && $priceType->is_rental == 1) {
-                                            $field->show();
-                                            $field->rules('required', 'numeric', 'min:0');
-                                        } else {
-                                            $field->hide();
-                                            $field->rules('nullable', 'numeric', 'min:0');
-                                        }
-
-                                    }
-                                }
-                            )
-                            ->textAlign('left')
-                            ->step(0.01)
-                        ,
-
-                        Select::make('VAT', 'vat_id')->options(function() {
-                            return \App\Models\General\VatCode::all()->pluck('name', 'id');
-                        })->displayUsingLabels()->rules('required'),
-                    ];
-                }),
+                ->fields(new PriceTypeDynamicFields()),
         ];
     }
 

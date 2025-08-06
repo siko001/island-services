@@ -3,7 +3,7 @@
 namespace App\Nova;
 
 use App\Helpers\HelperFunctions;
-use App\Nova\Parts\Helpers\ResourcePolicies;
+use App\Policies\ResourcePolicies;
 use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Text;
@@ -41,7 +41,7 @@ class PriceType extends Resource
         return [
             ID::make()->sortable(),
             Text::make('Name')->sortable()->rules('required', 'max:255'),
-            Text::make('Abbreviation')->sortable()->rules('required', 'max:10')
+            Text::make('Abbreviation')->sortable()->rules('required', 'max:10')->maxlength(16)
                 ->hideFromIndex(function(NovaRequest $request) {
                     return $request->viaRelationship();
                 }),
