@@ -12,8 +12,9 @@ class ProductTabSeeder extends Seeder
     public function run(): void
     {
         $seeders = [
-            PriceTypeSeeder::class,
-            ProductSeeder::class,
+            PriceTypeSeeder::class, // Call this first to ensure price types exist before attaching them to products
+            ProductSeeder::class, // Call this first to ensure products exist before attaching price types
+            ProductPriceTypeSeeder::class, //Call this after ProductSeeder to ensure products exist and attach price types with product
         ];
 
         // Loop through each seeder and call it

@@ -2,10 +2,13 @@
 
 namespace App\Models\Product;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Product extends Model
 {
+    use HasFactory;
+
     protected $table = 'products';
     protected $fillable = [
         "name",
@@ -63,7 +66,7 @@ class Product extends Model
 
     public function priceType()
     {
-        return $this->belongsToMany(PriceType::class, 'product_price_type')
+        return $this->belongsToMany(PriceType::class, 'product_price_types')
             ->using(\App\Models\Product\ProductPriceType::class)
             ->withPivot(['unit_price', 'yearly_rental', 'vat_id'])
             ->withTimestamps();

@@ -19,7 +19,7 @@ return new class extends Migration {
             $table->timestamps();
         });
 
-        Schema::create('product_price_type', function(Blueprint $table) {
+        Schema::create('product_price_types', function(Blueprint $table) {
             $table->id();
 
             $table->foreignId('product_id')->constrained('products')->onDelete('cascade');

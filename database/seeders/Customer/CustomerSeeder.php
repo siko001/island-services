@@ -12,7 +12,7 @@ class CustomerSeeder extends Seeder
      */
     public function run(): void
     {
-        $this->command->info('Creating 200 Customers...');
+        $this->command->info('Creating 200 Customers and assigning values...');
         Customer::factory()->count(200)->create();
         $this->command->info('200 Customers created successfully.');
     }
