@@ -71,4 +71,22 @@ class Product extends Model
             ->withPivot(['unit_price', 'yearly_rental', 'vat_id'])
             ->withTimestamps();
     }
+
+    protected static function boot(): void
+    {
+        parent::boot();
+        // Method to handle when creating
+        static::creating(function($product) {
+            //API CALL TO SAGE and WEBSITE
+        });
+
+        static::updating(function($product) {
+            //API CALL TO SAGE and WEBSITE
+        });
+
+        static::saving(function($product) {
+            //
+        });
+
+    }
 }
