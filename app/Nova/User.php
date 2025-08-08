@@ -156,7 +156,10 @@ class User extends Resource
      */
     public function actions(NovaRequest $request): array
     {
-        return [];
+        return [
+            new \App\Nova\Actions\TerminateUser,
+
+        ];
     }
 
     //Method to filter the query for relatable resources (user -> vehicles) attachment
