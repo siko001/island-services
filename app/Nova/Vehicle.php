@@ -20,7 +20,7 @@ class Vehicle extends Resource
      * The single value that should be used to represent the resource when being displayed.
      * @var string
      */
-    public static $title = 'Registration Number';
+    public static $title = 'registration_number';
     /**
      * The columns that should be searched.
      * @var array

@@ -159,14 +159,15 @@ class User extends Resource
         return [];
     }
 
-    //Method to filter the query for relatable resources
+    //Method to filter the query for relatable resources (user -> vehicles) attachment
     public static function relatableQuery(NovaRequest $request, $query): Builder
     {
         // first check if the user is a driver and if the request is for vehicles via the drivers relationship
         if($request->resource === 'vehicles' && $request->viaRelationship === 'drivers') {
             return $query->whereHas('roles', function($q) {
                 $q->where('name', 'driver');
-            });
+            })->where('is_terminated', false); //return only non terminated users
+
         }
         return $query;
     }
