@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Nova\Actions;
+namespace App\Nova\Actions\User;
 
 use App\Models\User;
 use Illuminate\Bus\Queueable;
@@ -26,6 +26,9 @@ class TerminateUser extends Action
         $countVehicles = 0;
 
         foreach($models as $user) {
+            if($user->is_terminated) {
+                continue;
+            }
             $user->is_terminated = true;
             $user->gets_commission = false;
             $user->standard_commission = false;
@@ -42,8 +45,6 @@ class TerminateUser extends Action
             $user->save();
             $countUsers++;
         }
-
-        // Send a Nova notification to the CURRENT ADMIN running this action
 
         // Also display a toast notification after completion (optional redundancy)
         return Action::message(
@@ -67,19 +68,29 @@ class TerminateUser extends Action
      */
     public function authorizedToSee(\Illuminate\Http\Request $request)
     {
-        $allResourceIds = $request->resources;
+        if(!auth()->user()->can('terminate user')) {
+            return false;
+        }
 
-        if(!$allResourceIds) {
+        //hide the action if or for the users that have been already terminated
+        $selectedResourceIds = $request->resources ?? [];
+        $editViewResourceId = $request->{'resourceId'};
+
+        if(!$editViewResourceId && !$selectedResourceIds) {
             return true;
         }
 
-        $resources = User::whereIn('id', $allResourceIds)->get();
-        foreach($resources as $resource) {
-            if($resource->is_terminated) {
-                return false;
-            }
+        $resources = User::whereIn('id', $selectedResourceIds)->get();
+        if(!$editViewResourceId && $resources->isEmpty()) {
+            return false;
         }
 
-        return true;
+        if($editViewResourceId) {
+            $user = User::find($editViewResourceId);
+            return $user && !$user->is_terminated;
+        }
+
+        return $resources->contains(fn($r) => !$r->is_terminated);
+
     }
 }

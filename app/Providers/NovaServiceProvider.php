@@ -50,7 +50,7 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
         Nova::style('navbar-header', resource_path('css/navbar-header.css'));
 
         //JS
-        \Laravel\Nova\Nova::script('custom', public_path('nova.js'));
+        Nova::script('custom', public_path('nova.js'));
 
         //All Nova resources should be registered here (to generate the permissions)
         Nova::resources([
@@ -78,14 +78,36 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
             PriceType::class,
         ]);
 
-        //Nav Menu
+        //        Nova Main Menu
         Nova::mainMenu(function(Request $request) {
-            return [
-                //Company branding and central app
-                MenuItem::make('', '/')->data(["logopath" => tenancy()->tenant?->logo_path])->canSee(fn() => true)->name((tenancy()->tenant?->id)),
-                MenuItem::externalLink('Companies', env('APP_URL') . '/admin/get-companies'),
+            $user = auth()->user();
 
-                // General
+            $auditTrailItems = [];
+            $adminItems = [
+                MenuItem::resource(User::class),
+                MenuItem::resource(Role::class),
+                MenuItem::resource(Permission::class),
+            ];
+
+            if($user && $user->can('view audit_trail_login')) {
+                $auditTrailItems[] = MenuItem::make('Login', '/audit-trails/login');
+            }
+
+            if($user && $user->can('view audit_trail_system')) {
+                $auditTrailItems[] = MenuItem::make('System', '/audit-trails/system');
+            }
+
+            if(!empty($auditTrailItems)) {
+                $adminItems[] = MenuGroup::make('Audit Trails', $auditTrailItems)->collapsable();
+            }
+
+            $menu = [
+                MenuItem::make('', '/')->data(["logopath" => tenancy()->tenant?->logo_path])->name(tenancy()->tenant?->id),
+
+                ($user && $user->can('view other_companies')) ?
+                    MenuItem::externalLink('Companies', env('APP_URL') . '/admin/get-companies')->data(['hasPermissionToView'])
+                    : null,
+
                 MenuSection::make('General', [
                     MenuItem::resource(Area::class),
                     MenuItem::resource(Location::class),
@@ -114,21 +136,16 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
                     MenuItem::resource(Product::class),
                 ])->icon('newspaper')->collapsable(),
 
-                //Admin Menu
-                MenuSection::make('Admin', [
-                    MenuItem::resource(User::class),
-                    MenuItem::resource(Role::class),
-                    MenuItem::resource(Permission::class),
-
-                    MenuGroup::make('Audit Trails', [
-                        MenuItem::make("Login", '/audit-trails/login'),
-                        MenuItem::make("System", '/audit-trails/system'),
-                    ])->collapsable()
-
-                ])->icon('user')->collapsable(),
+                MenuSection::make('Admin', $adminItems)
+                    ->icon('user')
+                    ->collapsable(),
             ];
+
+            // Filter nulls so Nova doesn't try to render invalid menu items
+            return array_filter($menu);
         });
 
+        //        Nova Footer
         Nova::footer(function($request) {
             return Blade::render('nova/footer', [
                 'version' => env('APP_VERSION', '1.0.0'),

@@ -74,7 +74,7 @@ class HelperFunctions
             $slug = Str::snake($name);
 
             // Use limited actions for Permission model only
-            $actions = is_a($model, \Spatie\Permission\Models\Permission::class, true)
+            $actions = is_a($model, Permission::class, true)
                 ? $permissionModelActions
                 : $allActions;
 
@@ -93,6 +93,9 @@ class HelperFunctions
                 }
             }
         }
+
+        $createdCount = self::createStaticPermissions($output, $createdCount);
+        $createdCount = self::createActionPermissions($output, $createdCount);
 
         return $createdCount;
     }
@@ -119,6 +122,49 @@ class HelperFunctions
                 ? $output->writeln("<error>An error occurred while generating CRUD permissions.</error>")
                 : print "An error occurred while generating CRUD permissions.\n";
         }
+    }
+
+    public static function createStaticPermissions($output, $createdCount): int
+    {
+        $staticPermissions = [
+            'view audit_trail_login',
+            'view audit_trail_system',
+            'view other_companies',
+        ];
+        foreach($staticPermissions as $permission) {
+            if(!Permission::where('name', $permission)->exists()) {
+                Permission::create(['name' => $permission]);
+                $createdCount++;
+
+                if($output) {
+                    $output->writeln("Created static permission: {$permission}");
+                } else {
+                    echo "Created static permission: {$permission}\n";
+                }
+            }
+        }
+        return $createdCount;
+    }
+
+    public static function createActionPermissions($output, $createdCount): int
+    {
+        $actionPermissions = [
+            'terminate user',
+        ];
+
+        foreach($actionPermissions as $permission) {
+            $permissionName = "{$permission}";
+            if(!Permission::where('name', $permissionName)->exists()) {
+                Permission::create(['name' => $permissionName]);
+                $createdCount++;
+                if($output) {
+                    $output->writeln("Created action permission: {$permissionName}");
+                } else {
+                    echo "Created action permission: {$permissionName}\n";
+                }
+            }
+        }
+        return $createdCount;
     }
 
     public static function otherDefaultExists($model, $currentId): bool

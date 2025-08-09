@@ -157,7 +157,7 @@ class User extends Resource
     public function actions(NovaRequest $request): array
     {
         return [
-            new \App\Nova\Actions\TerminateUser,
+            new Actions\User\TerminateUser,
 
         ];
     }
