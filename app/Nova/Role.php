@@ -3,12 +3,12 @@
 namespace App\Nova;
 
 use App\Policies\ResourcePolicies;
+use IslandServices\GroupedPermissions\GroupedPermissions;
 use Laravel\Nova\Fields\BelongsToMany;
 use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Http\Requests\NovaRequest;
-use Vyuldashev\NovaPermission\PermissionBooleanGroup;
 
 class Role extends Resource
 {
@@ -47,7 +47,16 @@ class Role extends Resource
 
             Boolean::make('Earns Commission')->help('Enable this to allow users with this role to have additional fields for commission when creating or updating users')->sortable(),
 
-            PermissionBooleanGroup::make('Permissions', 'permissions')->hideFromIndex(),
+            // Edit version (only on forms)
+            GroupedPermissions::make('Permissions')
+                ->onlyOnForms()->hideFromIndex(),
+
+            // Detail version (read-only)
+            GroupedPermissions::make('Permissions')
+                ->resolveUsing(function($value, $model, $attribute) {
+                    return $model->getAllPermissions()->pluck('name')->toArray();
+                })
+                ->onlyOnDetail()->hideFromIndex(),
 
             BelongsToMany::make('Users', 'users', User::class),
 

@@ -5,6 +5,7 @@ namespace App\Nova;
 use App\Helpers\HelperFunctions;
 use App\Policies\ResourcePolicies;
 use Illuminate\Contracts\Database\Eloquent\Builder;
+use IslandServices\GroupedPermissions\GroupedPermissions;
 use Laravel\Nova\Auth\PasswordValidationRules;
 use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\ID;
@@ -13,7 +14,6 @@ use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Http\Requests\NovaRequest;
 use Laravel\Nova\Panel;
 use Laravel\Nova\Tabs\Tab;
-use Vyuldashev\NovaPermission\PermissionBooleanGroup;
 use Vyuldashev\NovaPermission\RoleBooleanGroup;
 
 class User extends Resource
@@ -115,7 +115,11 @@ class User extends Resource
                 ]),
 
                 Tab::make('Permissions', [
-                    PermissionBooleanGroup::make('Permissions', 'permissions')->hideFromIndex(),
+                    GroupedPermissions::make('Permissions', 'permissions')
+                        ->resolveUsing(function($value, $model, $attribute) {
+                            return $model->getAllPermissions()->pluck('name')->toArray();
+                        })
+                        ->hideFromIndex(),
                 ]),
 
             ]),
