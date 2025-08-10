@@ -10,7 +10,11 @@
         <div v-for="(perms, group) in groupedPermissions" :key="group" class="rounded border overflow-hidden shadow bg-white dark:bg-gray-900">
           <!-- Accordion Header -->
           <button type="button" @click="toggle(group)" class="flex justify-between items-center w-full px-2 py-1.5 font-bold capitalize text-gray-800 dark:text-gray-200 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition focus:outline-none">
-            <span>{{ formatGroupName(group) }}</span> <span>{{ isOpen(group) ? '▲' : '▼' }}</span>
+            <span>{{ formatGroupName(group) }}
+              <span class="ml-2 text-sm text-gray-500">
+                ({{ countSelected(perms) }}/{{ perms.length }})
+              </span>
+            </span> <span>{{ isOpen(group) ? '▲' : '▼' }}</span>
           </button>
           <!-- Accordion Body -->
           <transition name="fade">
@@ -98,12 +102,18 @@ export default {
     isOpen(group) {
       return this.openGroups.includes(group)
     },
+
+    countSelected(perms) {
+      return perms.length;
+    },
+
     formatGroupName(group) {
       if(group === 'audit_trail') {
         return 'Audit Trails';
       }
       return group.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
-    }
+    },
+
   }
 }
 </script>

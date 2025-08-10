@@ -47,16 +47,11 @@ class Role extends Resource
 
             Boolean::make('Earns Commission')->help('Enable this to allow users with this role to have additional fields for commission when creating or updating users')->sortable(),
 
-            // Edit version (only on forms)
-            GroupedPermissions::make('Permissions')
-                ->onlyOnForms()->hideFromIndex(),
-
-            // Detail version (read-only)
             GroupedPermissions::make('Permissions')
                 ->resolveUsing(function($value, $model, $attribute) {
                     return $model->getAllPermissions()->pluck('name')->toArray();
                 })
-                ->onlyOnDetail()->hideFromIndex(),
+                ->hideFromIndex(),
 
             BelongsToMany::make('Users', 'users', User::class),
 
