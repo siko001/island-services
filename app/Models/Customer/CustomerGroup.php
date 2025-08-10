@@ -14,4 +14,22 @@ class CustomerGroup extends Model
         'created_at' => 'datetime',
         'updated_at' => 'datetime'
     ];
+
+    protected static function boot(): void
+    {
+        parent::boot();
+        // Method to handle when creating
+        static::creating(function($customerGroup) {
+            //API CALL TO SAGE
+        });
+
+        static::updating(function($customerGroup) {
+            //API CALL TO SAGE
+        });
+
+        static::saving(function($customerGroup) {
+            //
+        });
+
+    }
 }

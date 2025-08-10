@@ -8,7 +8,7 @@ use App\Nova\Parts\Customer\DeliveryDetails;
 use App\Nova\Parts\Customer\FinancialDetails;
 use App\Nova\Parts\Customer\OtherDetails;
 use App\Nova\Parts\Customer\SummerAddress;
-use App\Nova\Parts\Helpers\ResourcePolicies;
+use App\Policies\ResourcePolicies;
 use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\DateTime;
 use Laravel\Nova\Fields\Text;
@@ -36,7 +36,7 @@ class Customer extends Resource
      * @var array
      */
     public static $search = [
-        'client',
+        'client', 'account_number'
     ];
 
     /**
@@ -73,14 +73,14 @@ class Customer extends Resource
                     //                    })->onlyOnDetail(),
                 ]),
                 Tab::make('Additional Actions', [
-                    Boolean::make('Different Billing Details'),
-                    Boolean::make('Use Summer Address'),
-                    Boolean::make('Issue Invoices'),
-                    Boolean::make('Barter Client'),
-                    Boolean::make('Pet Client'),
-                    Boolean::make('Stop Statement'),
-                    Boolean::make('Stop Deliveries'),
-                    Boolean::make('Account Closed'),
+                    Boolean::make('Different Billing Details')->sortable(),
+                    Boolean::make('Use Summer Address')->sortable(),
+                    Boolean::make('Issue Invoices')->sortable(),
+                    Boolean::make('Barter Client')->hideFromIndex(),
+                    Boolean::make('Pet Client')->hideFromIndex(),
+                    Boolean::make('Stop Statement')->hideFromIndex(),
+                    Boolean::make('Stop Deliveries')->sortable(),
+                    Boolean::make('Account Closed')->sortable(),
                 ]),
 
                 Tab::make('Other Details', new OtherDetails),

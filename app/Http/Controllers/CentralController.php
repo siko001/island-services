@@ -78,7 +78,7 @@ class CentralController extends Controller
                 ]);
 
                 Artisan::call('db:seed', [
-                    '--class' => 'Database\\Seeders\\General\\RoleSeeder',
+                    '--class' => 'Database\\Seeders\\Admin\\RoleSeeder',
                     '--force' => true,
                 ]);
             });
@@ -132,9 +132,6 @@ class CentralController extends Controller
     {
         try {
             $tenant = Tenant::findOrFail($tenantId);
-
-            // Future enhancement: optionally run down migration/clean tenant folder
-
             $tenant->domains()->delete();
             $tenant->delete();
 

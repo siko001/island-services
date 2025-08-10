@@ -2,7 +2,7 @@
 
 namespace App\Nova;
 
-use App\Nova\Parts\Helpers\ResourcePolicies;
+use App\Policies\ResourcePolicies;
 use Laravel\Nova\Fields\Date;
 use Laravel\Nova\Fields\Number;
 use Laravel\Nova\Fields\Text;

@@ -2,7 +2,8 @@
 
 namespace App\Nova;
 
-use App\Nova\Parts\Helpers\ResourcePolicies;
+use App\Helpers\HelperFunctions;
+use App\Policies\ResourcePolicies;
 use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Http\Requests\NovaRequest;
@@ -46,7 +47,14 @@ class ClientType extends Resource
                 ->maxlength(16)
                 ->sortable(),
 
-            Boolean::make('Default', 'is_default')->sortable()
+            Boolean::make('Default', 'is_default')
+                ->hideWhenUpdating(function() {
+                    return HelperFunctions::otherDefaultExists($this::$model, $this->resource->id);
+                })
+                ->hideWhenCreating(function() {
+                    return HelperFunctions::otherDefaultExists($this::$model, $this->resource->id);
+                })
+                ->sortable()
         ];
     }
 

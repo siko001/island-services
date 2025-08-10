@@ -2,7 +2,8 @@
 
 namespace App\Nova;
 
-use App\Nova\Parts\Helpers\ResourcePolicies;
+use App\Helpers\HelperFunctions;
+use App\Policies\ResourcePolicies;
 use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\Number;
 use Laravel\Nova\Fields\Text;
@@ -38,11 +39,33 @@ class Classes extends Resource
     public function fields(NovaRequest $request): array
     {
         return [
-            Text::make('Name')->sortable()->rules('required', 'max:255'),
-            Text::make('Abbreviation')->rules('required', 'max:16')->maxlength(16)->sortable(),
-            Boolean::make('Default Class', 'is_default')->sortable(),
-            Number::make('Flat Rate')->rules('required', 'numeric', 'min:0')->default(0.00)->step(0.01)->hideFromIndex(),
-            Number::make('Deliveries Exceeding')->default(0)->hideFromIndex(),
+            Text::make('Name')
+                ->sortable()
+                ->rules('required', 'max:255'),
+
+            Text::make('Abbreviation')
+                ->rules('required', 'max:16')
+                ->maxlength(16)
+                ->sortable(),
+
+            Boolean::make('Default Class', 'is_default')
+                ->hideWhenUpdating(function() {
+                    return HelperFunctions::otherDefaultExists($this::$model, $this->resource->id);
+                })
+                ->hideWhenCreating(function() {
+                    return HelperFunctions::otherDefaultExists($this::$model, $this->resource->id);
+                })
+                ->sortable(),
+
+            Number::make('Flat Rate')
+                ->rules('required', 'numeric', 'min:0')
+                ->default(0.00)
+                ->step(0.01)
+                ->hideFromIndex(),
+
+            Number::make('Deliveries Exceeding')
+                ->default(0)
+                ->hideFromIndex(),
         ];
     }
 

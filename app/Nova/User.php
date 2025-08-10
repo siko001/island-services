@@ -3,8 +3,9 @@
 namespace App\Nova;
 
 use App\Helpers\HelperFunctions;
-use App\Nova\Parts\Helpers\ResourcePolicies;
+use App\Policies\ResourcePolicies;
 use Illuminate\Contracts\Database\Eloquent\Builder;
+use IslandServices\GroupedPermissions\GroupedPermissions;
 use Laravel\Nova\Auth\PasswordValidationRules;
 use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\ID;
@@ -13,7 +14,6 @@ use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Http\Requests\NovaRequest;
 use Laravel\Nova\Panel;
 use Laravel\Nova\Tabs\Tab;
-use Vyuldashev\NovaPermission\PermissionBooleanGroup;
 use Vyuldashev\NovaPermission\RoleBooleanGroup;
 
 class User extends Resource
@@ -115,7 +115,11 @@ class User extends Resource
                 ]),
 
                 Tab::make('Permissions', [
-                    PermissionBooleanGroup::make('Permissions', 'permissions')->hideFromIndex(),
+                    GroupedPermissions::make('Permissions', 'permissions')
+                        ->resolveUsing(function($value, $model, $attribute) {
+                            return $model->getAllPermissions()->pluck('name')->toArray();
+                        })
+                        ->hideFromIndex(),
                 ]),
 
             ]),
@@ -156,17 +160,21 @@ class User extends Resource
      */
     public function actions(NovaRequest $request): array
     {
-        return [];
+        return [
+            new Actions\User\TerminateUser,
+
+        ];
     }
 
-    //Method to filter the query for relatable resources
+    //Method to filter the query for relatable resources (user -> vehicles) attachment
     public static function relatableQuery(NovaRequest $request, $query): Builder
     {
         // first check if the user is a driver and if the request is for vehicles via the drivers relationship
         if($request->resource === 'vehicles' && $request->viaRelationship === 'drivers') {
             return $query->whereHas('roles', function($q) {
                 $q->where('name', 'driver');
-            });
+            })->where('is_terminated', false); //return only non terminated users
+
         }
         return $query;
     }

@@ -2,7 +2,8 @@
 
 namespace App\Nova;
 
-use App\Nova\Parts\Helpers\ResourcePolicies;
+use App\Helpers\HelperFunctions;
+use App\Policies\ResourcePolicies;
 use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Http\Requests\NovaRequest;
@@ -47,6 +48,13 @@ class ClientStatus extends Resource
                 ->sortable(),
 
             Boolean::make('Is Default')
+                ->hideWhenUpdating(function() {
+                    return HelperFunctions::otherDefaultExists($this::$model, $this->resource->id);
+                })
+                ->hideWhenCreating(function() {
+                    return HelperFunctions::otherDefaultExists($this::$model, $this->resource->id);
+                })
+                ->sortable(),
 
         ];
     }
