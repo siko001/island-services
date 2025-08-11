@@ -85,6 +85,12 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
                     ->icon('newspaper')
                     ->collapsable(),
 
+                //Post Section
+                MenuSection::make('Post',
+                    collect(NovaResources::postResources())->map(fn($resource) => MenuItem::resource($resource))->toArray())
+                    ->icon('cog-8-tooth')
+                    ->collapsable(),
+
                 //Admin Section
                 MenuSection::make('Admin', $adminItems)
                     ->icon('user')

@@ -56,22 +56,28 @@ class NovaResources
         ];
     }
 
-    public static function adminResources(): array
-    {
-
-        return
-            [
-                User::class,
-                Role::class,
-                Permission::class,
-            ];
-    }
-
     public static function stockResources(): array
     {
         return [
             Product::class,
             PriceType::class,
         ];
+    }
+
+    public static function postResources(): array
+    {
+        return [
+
+        ];
+    }
+
+    public static function adminResources(): array
+    {
+        return
+            [
+                User::class,
+                Role::class,
+                Permission::class,
+            ];
     }
 }
