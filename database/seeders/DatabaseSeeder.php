@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\User;
 use Database\Seeders\Customer\CustomerTabSeeder;
 use Database\Seeders\General\GeneralTabSeeder;
+use Database\Seeders\Post\PostTabSeeder;
 use Database\Seeders\Product\ProductTabSeeder;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
@@ -43,6 +44,6 @@ class DatabaseSeeder extends Seeder
         $this->call(GeneralTabSeeder::class);  //Call the GeneralTabSeeder  to seed the General  Tab Data
         $this->call(CustomerTabSeeder::class); //Call the CustomerTabSeeder to seed the Customer Tab Data
         $this->call(ProductTabSeeder::class);  //Call the ProductTabSeeder  to seed the Products Tab Data
-
+        $this->call(PostTabSeeder::class); //Call the PostTabSeeder to seed the Post Tab Data
     }
 }
