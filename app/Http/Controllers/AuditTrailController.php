@@ -21,7 +21,9 @@ class AuditTrailController extends Controller
                 ->orderBy('created_at', 'desc')
                 ->paginate(50);
 
-            return view('audit-trails.login', ['logs' => $logs]);
+            $user = auth()->user();
+            return view('audit-trails.login', ['logs' => $logs, "user" => $user]);
+
         } catch(\Throwable $e) {
             Log::error('Failed to load login audit trail.', [
                 'message' => $e->getMessage(),
@@ -45,8 +47,9 @@ class AuditTrailController extends Controller
                 )
                 ->orderBy('action_events.created_at', 'desc')
                 ->paginate(50);
+            $user = auth()->user();
 
-            return view('audit-trails.system', ['logs' => $logs]);
+            return view('audit-trails.system', ['logs' => $logs, "user" => $user]);
         } catch(\Throwable $e) {
             Log::error('Failed to load system audit trail.', [
                 'message' => $e->getMessage(),

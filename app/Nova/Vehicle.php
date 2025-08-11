@@ -2,9 +2,10 @@
 
 namespace App\Nova;
 
+use App\Helpers\Data;
+use App\Nova\Parts\General\VehicleDetails;
 use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\BelongsToMany;
-use Laravel\Nova\Fields\Date;
 use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Http\Requests\NovaRequest;
 use Laravel\Nova\Tabs\Tab;
@@ -55,68 +56,7 @@ class Vehicle extends Resource
                     BelongsTo::make('Area', 'area', Area::class)
                 ]),
 
-                Tab::make("Vehicle Details", [
-                    Text::make('Body Type')
-                        ->sortable()
-                        ->hidefromIndex()
-                        ->rules('max:255'),
-
-                    Text::make('Engine No')
-                        ->sortable()
-                        ->hidefromIndex()
-                        ->rules('max:255'),
-
-                    Text::make('Chassis No')
-                        ->sortable()
-                        ->hidefromIndex()
-                        ->rules('max:255'),
-
-                    Text::make('Color')
-                        ->sortable()
-                        ->hidefromIndex()
-                        ->rules('max:255'),
-
-                    Date::make('Purchase Date')
-                        ->sortable()
-                        ->hidefromIndex()
-                        ->rules('max:255'),
-
-                    Text::make('Purchase Price')
-                        ->sortable()
-                        ->hidefromIndex()
-                        ->rules('max:255'),
-
-                    Text::make('CC')
-                        ->sortable()
-                        ->hidefromIndex()
-                        ->rules('max:255'),
-
-                    Text::make('Year of Manufacture', 'manufacture_year')
-                        ->sortable()
-                        ->hidefromIndex()
-                        ->rules('max:255'),
-
-                    Text::make('CC')
-                        ->sortable()
-                        ->hidefromIndex()
-                        ->rules('max:255'),
-
-                    Text::make('Tonnage')
-                        ->sortable()
-                        ->hidefromIndex()
-                        ->rules('max:255'),
-
-                    Text::make('Fuel Type')
-                        ->sortable()
-                        ->hidefromIndex()
-                        ->rules('max:255'),
-
-                    Text::make('Tank Capacity')
-                        ->sortable()
-                        ->hidefromIndex()
-                        ->rules('max:255'),
-
-                ])
+                Tab::make("Vehicle Details", new VehicleDetails())
             ]),
 
             BelongsToMany::make('Drivers', 'drivers', User::class)
@@ -126,7 +66,7 @@ class Vehicle extends Resource
                         function($attribute, $value, $fail) {
                             $vehicleId = request()->route('resourceId');
                             $vehicle = Vehicle::find($vehicleId);
-                            if($vehicle && $vehicle->drivers()->count() >= \App\Helpers\Data::$MAX_DRIVER_COUNT) {
+                            if($vehicle && $vehicle->drivers()->count() >= Data::$MAX_DRIVER_COUNT) {
                                 $fail('This vehicle already has the maximum number of 2 drivers.');
                             }
                         }

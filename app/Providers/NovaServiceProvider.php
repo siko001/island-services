@@ -2,28 +2,8 @@
 
 namespace App\Providers;
 
-use App\Nova\Area;
-use App\Nova\Classes;
-use App\Nova\ClientStatus;
-use App\Nova\ClientType;
-use App\Nova\Complaint;
-use App\Nova\Customer;
-use App\Nova\CustomerGroup;
-use App\Nova\DocumentControl;
-use App\Nova\HearAbout;
-use App\Nova\Location;
-use App\Nova\MonetoryValue;
-use App\Nova\Offer;
-use App\Nova\OrderType;
-use App\Nova\Permission;
-use App\Nova\PriceType;
-use App\Nova\Product;
-use App\Nova\Role;
-use App\Nova\Service;
-use App\Nova\SparePart;
+use App\Helpers\NovaResources;
 use App\Nova\User;
-use App\Nova\VatCode;
-use App\Nova\Vehicle;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Gate;
@@ -48,55 +28,36 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
         parent::boot();
         //CSS
         Nova::style('navbar-header', resource_path('css/navbar-header.css'));
-
         //JS
         Nova::script('custom', public_path('nova.js'));
 
-        //All Nova resources should be registered here (to generate the permissions)
-        Nova::resources([
-            Area::class,
-            Location::class,
-            User::class,
-            Role::class,
-            Permission::class,
-            OrderType::class,
-            SparePart::class,
-            Service::class,
-            Complaint::class,
-            Vehicle::class,
-            VatCode::class,
-            DocumentControl::class,
-            MonetoryValue::class,
-            Offer::class,
-            CustomerGroup::class,
-            Classes::class,
-            ClientStatus::class,
-            HearAbout::class,
-            ClientType::class,
-            Customer::class,
-            Product::class,
-            PriceType::class,
-        ]);
+        Nova::resources(
+            array_merge(
+                NovaResources::generalResources(),
+                NovaResources::customerResources(),
+                NovaResources::adminResources(),
+                NovaResources::stockResources()
+            )
+        );
 
         //        Nova Main Menu
         Nova::mainMenu(function(Request $request) {
             $user = auth()->user();
 
             $auditTrailItems = [];
-            $adminItems = [
-                MenuItem::resource(User::class),
-                MenuItem::resource(Role::class),
-                MenuItem::resource(Permission::class),
-            ];
 
+            foreach(NovaResources::adminResources() as $adminItem) {
+                $adminItems[] = MenuItem::resource($adminItem);
+            }
+            //Login Audit trail
             if($user && $user->can('view audit_trail_login')) {
                 $auditTrailItems[] = MenuItem::make('Login', '/audit-trails/login');
             }
 
+            //System Audit Trail
             if($user && $user->can('view audit_trail_system')) {
                 $auditTrailItems[] = MenuItem::make('System', '/audit-trails/system');
             }
-
             if(!empty($auditTrailItems)) {
                 $adminItems[] = MenuGroup::make('Audit Trails', $auditTrailItems)->collapsable();
             }
@@ -104,38 +65,27 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
             $menu = [
                 MenuItem::make('', '/')->data(["logopath" => tenancy()->tenant?->logo_path])->name(tenancy()->tenant?->id),
 
+                //Other Companies
                 ($user && $user->can('view other_companies')) ?
                     MenuItem::externalLink('Companies', env('APP_URL') . '/admin/get-companies')->data(['hasPermissionToView'])
                     : null,
 
-                MenuSection::make('General', [
-                    MenuItem::resource(Area::class),
-                    MenuItem::resource(Location::class),
-                    MenuItem::resource(Vehicle::class),
-                    MenuItem::resource(OrderType::class),
-                    MenuItem::resource(SparePart::class),
-                    MenuItem::resource(Service::class),
-                    MenuItem::resource(Complaint::class),
-                    MenuItem::resource(MonetoryValue::class),
-                    MenuItem::resource(VatCode::class),
-                    MenuItem::resource(Offer::class),
-                    MenuItem::resource(DocumentControl::class),
-                ])->collapsable(),
+                //General Section
+                MenuSection::make('General', collect(NovaResources::generalResources())->map(fn($resource) => MenuItem::resource($resource))->toArray())
+                    ->collapsable(),
 
-                MenuSection::make('Customers', [
-                    MenuItem::resource(CustomerGroup::class),
-                    MenuItem::resource(Customer::class),
-                    MenuItem::resource(Classes::class),
-                    MenuItem::resource(ClientStatus::class),
-                    MenuItem::resource(HearAbout::class),
-                    MenuItem::resource(ClientType::class),
-                ])->icon('user-group')->collapsable(),
+                //Customer Section
+                MenuSection::make('Customers', collect(NovaResources::customerResources())->map(fn($resource) => MenuItem::resource($resource))->toArray())
+                    ->icon('user-group')
+                    ->collapsable(),
 
-                MenuSection::make('Stock', [
-                    MenuItem::resource(PriceType::class),
-                    MenuItem::resource(Product::class),
-                ])->icon('newspaper')->collapsable(),
+                //Stock Section
+                MenuSection::make('Stock',
+                    collect(NovaResources::customerResources())->map(fn($resource) => MenuItem::resource($resource))->toArray())
+                    ->icon('newspaper')
+                    ->collapsable(),
 
+                //Admin Section
                 MenuSection::make('Admin', $adminItems)
                     ->icon('user')
                     ->collapsable(),

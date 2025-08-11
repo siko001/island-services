@@ -3,6 +3,7 @@
 namespace App\Nova;
 
 use App\Helpers\HelperFunctions;
+use App\Nova\Parts\General\WeekdaysFields;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\BelongsToMany;
 use Laravel\Nova\Fields\Boolean;
@@ -127,15 +128,7 @@ class Area extends Resource
                                 ];
                             }),
 
-                        Panel::make('Delivery Days', [
-                            Boolean::make('Monday')->sortable(),
-                            Boolean::make('Tuesday')->sortable(),
-                            Boolean::make('Wednesday')->sortable(),
-                            Boolean::make('Thursday')->sortable(),
-                            Boolean::make('Friday')->sortable(),
-                            Boolean::make('Saturday')->sortable(),
-                            Boolean::make('Sunday')->sortable(),
-                        ])
+                        Panel::make('Delivery Days', new WeekdaysFields())
                     ];
                 }),
 
