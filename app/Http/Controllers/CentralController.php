@@ -34,40 +34,41 @@ class CentralController extends Controller
     }
 
     //Creat info and migrations and store tenant
+
     public function store(Request $request): \Illuminate\Http\RedirectResponse
     {
-        try {
-            // Validate the request
-            $request->validate([
-                'tenant_id' => 'required|string|alpha_numeric_spaces|unique:tenants,id',
-                'admin_email' => 'required|email|unique:users,email',
-                'admin_password' => 'required|string|min:8',
-                'logo_path' => 'nullable|image',
-            ], [
-                'tenant_id.alpha_numeric_spaces' => 'The tenant ID may only contain letters, numbers and spaces.',
-            ]);
+        // ✅ Let Laravel handle validation failures automatically
+        $request->validate([
+            'tenant_id' => ['required', 'string', 'regex:/^[a-zA-Z0-9\s]+$/', 'unique:tenants,id'],
+            'admin_email' => 'required|email|unique:users,email',
+            'admin_password' => 'required|string|min:8',
+            'logo_path' => 'nullable|image',
+        ], [
+            'tenant_id.regex' => 'The tenant ID may only contain letters, numbers and spaces.',
+        ]);
 
-            // Create tenant
+        try {
+            // Create tenant record
             $tenant = Tenant::create(['id' => $request->tenant_id]);
 
+            // Create domain
             $tenant->domains()->create([
-                'domain' => $request->tenant_id . '.' . config('tenancy.central_domains')[0]
+                'domain' => str_replace(' ', '-', strtolower($request->tenant_id)) . '.' . config('tenancy.central_domains')[0]
             ]);
 
             // Handle logo upload
             if($request->hasFile('logo_path')) {
                 $file = $request->file('logo_path');
-                $filename = str_replace(" ", "-", $request->tenant_id) . '.' . $file->getClientOriginalExtension();
+                $filename = str_replace(' ', '-', $request->tenant_id) . '.' . $file->getClientOriginalExtension();
                 $destination = public_path('media/images');
                 $file->move($destination, $filename);
                 $tenant->logo_path = '/media/images/' . $filename;
             } else {
                 $tenant->logo_path = '/media/images/isl-logo.svg';
             }
-
             $tenant->save();
 
-            // Perform tenant-internal setup
+            // Run tenant migrations and seeders
             $tenant->run(function() use ($tenant, $request) {
                 Artisan::call('tenants:migrate', ['--tenants' => $tenant->id]);
 
@@ -83,13 +84,19 @@ class CentralController extends Controller
                 ]);
             });
 
-            return redirect()->route('central.index')->with('message', 'Tenant created successfully.');
+            return redirect()->route('central.index')
+                ->with('message', 'Tenant created successfully.');
+
         } catch(\Throwable $e) {
+            // Unexpected runtime error
             Log::error("Tenant creation failed: " . $e->getMessage(), [
                 'trace' => $e->getTraceAsString(),
                 'input' => $request->all(),
             ]);
-            return back()->withInput()->with('error', 'An error occurred while creating the tenant. Please check logs.');
+
+            return back()
+                ->withInput()
+                ->with('error', 'An unexpected error occurred while creating the tenant. Please check logs.');
         }
     }
 
