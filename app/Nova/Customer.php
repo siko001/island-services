@@ -62,15 +62,6 @@ class Customer extends Resource
 
                     DateTime::make('Updated At', 'updated_at')
                         ->onlyOnDetail(),
-
-                    //                    //                    user that created
-                    //                    Text::make('Created By', function() {
-                    //                        return $this->createdBy?->name ?? 'N/A';
-                    //                    })->onlyOnDetail(),
-                    //
-                    //                    Text::make('Updated By', function() {
-                    //                        return $this->updatedBy?->name ?? 'N/A';
-                    //                    })->onlyOnDetail(),
                 ]),
                 Tab::make('Additional Actions', [
                     Boolean::make('Different Billing Details')->sortable(),

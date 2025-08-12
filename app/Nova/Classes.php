@@ -41,7 +41,10 @@ class Classes extends Resource
         return [
             Text::make('Name')
                 ->sortable()
-                ->rules('required', 'max:255'),
+                ->rules('required', 'max:255')
+                ->readonly(function() {
+                    return !auth()->user()->can('edit this resource field');
+                }),
 
             Text::make('Abbreviation')
                 ->rules('required', 'max:16')

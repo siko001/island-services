@@ -77,6 +77,7 @@ class User extends Authenticatable
         return $salesmen;
     }
 
+
     //    protected static function boot(): void
     //    {
     //        parent::boot();
