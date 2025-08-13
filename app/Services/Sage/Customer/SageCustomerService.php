@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services;
+namespace App\Services\Sage\Customer;
 
 use App\Models\Customer\Customer;
 use Illuminate\Support\Facades\Crypt;

@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Jobs;
+namespace App\Jobs\Sage\Customer;
 
 use App\Models\Customer\Customer;
-use App\Services\SageCustomerService;
+use App\Services\Sage\Customer\SageCustomerService;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Foundation\Queue\Queueable;

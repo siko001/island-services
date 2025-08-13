@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Observers;
+namespace App\Observers\Customer;
 
-use App\Jobs\CreateSageCustomerJob;
-use App\Jobs\UpdateSageCustomerJob;
+use App\Jobs\Sage\Customer\CreateSageCustomerJob;
+use App\Jobs\Sage\Customer\UpdateSageCustomerJob;
 use App\Models\Customer\Customer;
 
 class CustomerObserver

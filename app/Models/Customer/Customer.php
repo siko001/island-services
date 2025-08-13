@@ -5,7 +5,7 @@ namespace App\Models\Customer;
 use App\Models\General\Area;
 use App\Models\General\Location;
 use App\Models\User;
-use App\Observers\CustomerObserver;
+use App\Observers\Customer\CustomerObserver;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
