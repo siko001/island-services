@@ -10,6 +10,7 @@ class SageConnection
     public function handle(array $context, Closure $next)
     {
         try {
+            Log::info('Checking Sage Connection');
             $tenant = tenancy()->tenant;
             //            if(!$tenant || !$tenant->sage_api_username || !$tenant->sage_api_password) {
             //                Log::error('Missing Sage API credentials for tenant.', ['tenant' => $tenant]);
@@ -24,11 +25,11 @@ class SageConnection
             ];
 
             // Log credentials for debugging (remove in production)
-            Log::debug('Sage API credentials retrieved.', [
-                //                'username' => $credentials['username'],
-                'tenant_id' => $tenant->id,
-                'api_url' => $credentials['api_url']
-            ]);
+            //            Log::debug('Sage API credentials retrieved.', [
+            //                //                'username' => $credentials['username'],
+            //                'tenant_id' => $tenant->id,
+            //                'api_url' => $credentials['api_url']
+            //            ]);
 
             // Double-check they are valid
             //            if(!$credentials['username'] || !$credentials['password'] || !$credentials['api_url']) {

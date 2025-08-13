@@ -11,6 +11,7 @@ class FormatDataForSage
     public function handle(Customer $customer, Closure $next)
     {
 
+        Log::info('Formating Data for Sage');
         // Build initials from client name
         $initials = strtoupper(
             collect(explode(' ', trim($customer->client)))

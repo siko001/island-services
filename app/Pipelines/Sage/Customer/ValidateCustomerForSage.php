@@ -10,6 +10,8 @@ class ValidateCustomerForSage
 {
     public function handle(Customer $customer, Closure $next)
     {
+
+        Log::info('Validate Customer for Sage');
         if(empty($customer->account_number)) {
             Log::info('Required Sage customer fields are missing.', ['customer' => $customer, 'account_number' => $customer->account_number]);
             throw new \InvalidArgumentException('Missing required Sage customer fields.');
