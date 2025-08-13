@@ -6,7 +6,6 @@ use App\Models\Customer\Customer;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
-use function PHPUnit\Framework\isEmpty;
 
 class SageCustomerService
 {
@@ -171,44 +170,49 @@ class SageCustomerService
     public function createInSage(Customer $customer) //POST || Create a new customer || /Freedom.Core/Freedom Database/SDK/CustomerInsert{CUSTOMER}
     {
         try {
-            if(empty($customer->account_number) || empty($customer->delivery_details_name)) {
-                Log::info('Required Sage customer fields are missing.', ['customer' => $customer]);
+            if(empty($customer->account_number)) {
+                Log::info('Required Sage customer fields are missing.', ['customer' => $customer, 'account_number' => $customer->account_number]);
+                throw new \InvalidArgumentException('Missing required Sage customer fields.');
+            }
+
+            $data = $this->formatData($customer);
+            if(empty($data['Code']) || empty($data['Description'])) {
+                Log::info('Required Sage customer fields are missing.', ['customer' => $customer, 'customer-code' => $data['Code'], 'customer-description' => $data['Description']]);
                 throw new \InvalidArgumentException('Missing required Sage customer fields.');
             }
 
             // TODO: Perform actual POST request to Sage to create customer
-            $data = $this->formatData($customer);
-            if(isEmpty($data)) {
-                Log::info('Formatted data for Sage customer is empty.', ['customer' => $customer]);
-                throw new \InvalidArgumentException('Formatted data for Sage customer is empty.');
-            }
 
-            $credentials = $this->getSageAPICredentials();
-            if(!$credentials['username'] || !$credentials['password'] || !$credentials['base_url']) {
-                Log::info('Sage API credentials are not set.');
-                throw new \InvalidArgumentException('Missing Sage API credentials.');
-            }
-
-            $url = $credentials['base_url'] . '/Freedom.Core/Freedom Database/SDK/CustomerInsert' . $customer; //CUSTOMER: Instance of a customer object
-
-            $response = Http::withBasicAuth($credentials['username'], $credentials['password'])->post($url, $data);
-
-            if($response->successful()) {
-                Log::info('Customer created successfully in Sage.', ['customer' => $customer]);
-                return $response->json();
-            } else {
-                Log::error('Failed to create customer in Sage.', [
-                    'status' => $response->status(),
-                    'body' => $response->body(),
-                    'customer' => $customer
-                ]);
-
-                throw new \Exception('Failed to create customer in Sage: ' . $response->body());
-            }
+            //            $credentials = $this->getSageAPICredentials();
+            //            if(!$credentials['username'] || !$credentials['password'] || !$credentials['base_url']) {
+            //                Log::info('Sage API credentials are not set.');
+            //                throw new \InvalidArgumentException('Missing Sage API credentials.');
+            //            }
+            //
+            //            $url = $credentials['base_url'] . '/Freedom.Core/Freedom Database/SDK/CustomerInsert' . $customer; //CUSTOMER: Instance of a customer object
+            //
+            //            $response = Http::withBasicAuth($credentials['username'], $credentials['password'])->post($url, $data);
+            //
+            //            if($response->successful()) {
+            //                Log::info('Customer created successfully in Sage.', ['customer' => $customer]);
+            //                return $response->json();
+            //            } else {
+            //                Log::error('Failed to create customer in Sage.', [
+            //                    'status' => $response->status(),
+            //                    'body' => $response->body(),
+            //                    'customer' => $customer
+            //                ]);
+            //
+            //                throw new \Exception('Failed to create customer in Sage: ' . $response->body());
+            //            }
+            Log::info('Sage API createInSage called', ['customer_id' => $customer->id]);
 
         } catch(\Exception $err) {
-            Log::error('Error creating customer in Sage: ' . $err->getMessage());
-            throw new \Exception('Failed to create customer in Sage.');
+            Log::error('Error creating customer in Sage: ' . $err->getMessage(), [
+                'exception' => $err,
+                'customer_id' => $customer->id,
+            ]);
+            throw $err;  // Re-throw original exception for full stack trace and message in logs
         }
 
     }
@@ -216,41 +220,44 @@ class SageCustomerService
     public function updateInSage(Customer $customer) //POST || Update an existing customer ||/Freedom.Core/Freedom Database/SDK/CustomerUpdate{CUSTOMER}
     {
         try {
+
             if(empty($customer->account_number)) {
-                Log::info('Required Sage customer fields are missing.', ['customer' => $customer]);
+                Log::info('Required Sage customer account number are missing.', ['customer' => $customer, 'account_number' => $customer->account_number]);
+                throw new \InvalidArgumentException('Missing required Sage customer fields.');
+            }
+
+            $data = $this->formatData($customer);
+            if(empty($data['Code'])) {
+                Log::info('Required Sage customer code field is missing.', ['customer' => $customer, 'customer-code' => $data['Code']]);
                 throw new \InvalidArgumentException('Missing required Sage customer fields.');
             }
 
             // TODO: Perform actual POST request to Sage to create customer
-            $data = $this->formatData($customer);
-            if(isEmpty($data)) {
-                Log::info('Formatted data for Sage customer is empty.', ['customer' => $customer]);
-                throw new \InvalidArgumentException('Formatted data for Sage customer is empty.');
-            }
-            $credentials = $this->getSageAPICredentials();
-            if(!$credentials['username'] || !$credentials['password'] || !$credentials['base_url']) {
-                Log::info('Sage API credentials are not set.');
-                throw new \InvalidArgumentException('Missing Sage API credentials.');
-            }
+            //
+            //            $credentials = $this->getSageAPICredentials();
+            //            $url = $credentials['base_url'] . '/Freedom.Core/Freedom Database/SDK/CustomerUpdate' . $customer; //CUSTOMER: Instance of a customer object
+            //            $response = Http::withBasicAuth($credentials['username'], $credentials['password'])->post($url, $data);
+            //
+            //            if($response->successful()) {
+            //                Log::info('Customer updated successfully in Sage.', ['customer' => $customer]);
+            //                return $response->json();
+            //            } else {
+            //                Log::error('Failed to update customer in Sage.', [
+            //                    'status' => $response->status(),
+            //                    'body' => $response->body(),
+            //                    'customer' => $customer
+            //                ]);
+            //
+            //                throw new \Exception('Failed to update customer in Sage: ' . $response->body());
+            //            }
 
-            $url = $credentials['base_url'] . '/Freedom.Core/Freedom Database/SDK/CustomerUpdate' . $customer; //CUSTOMER: Instance of a customer object
-            $response = Http::withBasicAuth($credentials['username'], $credentials['password'])->post($url, $data);
-
-            if($response->successful()) {
-                Log::info('Customer updated successfully in Sage.', ['customer' => $customer]);
-                return $response->json();
-            } else {
-                Log::error('Failed to update customer in Sage.', [
-                    'status' => $response->status(),
-                    'body' => $response->body(),
-                    'customer' => $customer
-                ]);
-
-                throw new \Exception('Failed to update customer in Sage: ' . $response->body());
-            }
+            Log::info('Sage API updateInSage called', ['customer_id' => $customer->id]);
         } catch(\Exception $err) {
-            Log::error('Error updating customer in Sage: ' . $err->getMessage());
-            throw new \Exception('Failed to update customer in Sage.');
+            Log::error('Error creating customer in Sage: ' . $err->getMessage(), [
+                'exception' => $err,
+                'customer_id' => $customer->id,
+            ]);
+            throw $err;  // Re-throw original exception for full stack trace and message in logs
         }
 
     }
