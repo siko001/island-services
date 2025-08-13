@@ -6,6 +6,7 @@ use App\Models\Customer\Customer;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use function PHPUnit\Framework\isEmpty;
 
 class SageCustomerService
 {
@@ -59,7 +60,7 @@ class SageCustomerService
         //        ✘ => Optional field
 
         return [
-            'code' => $data->account_number,                        //String ||  The customer’s code || ✔
+            'Code' => $data->account_number,                        //String ||  The customer’s code || ✔
             'Description' => $data->client,                         //String || The customer’s description || (✔ when creating | ✘ when updating)
             "Active" => $data->account_closed,                      //Boolean|| Is the customer account active?  || ✘
             'AccountBalance' => $data->balance_del,                 //Decimal || The customer’s account balance || ✘
@@ -105,18 +106,27 @@ class SageCustomerService
         ];
     }
 
+    /**
+     * @throws \Exception
+     */
     public function getSageAPICredentials(): array
     {
-        $tenant = tenancy()->tenant;
-        if(!$tenant || !$tenant->sage_api_username || !$tenant->sage_api_password) {
-            throw new \InvalidArgumentException('Missing Sage API credentials for tenant.');
-        }
+        try {
+            $tenant = tenancy()->tenant;
+            if(!$tenant || !$tenant->sage_api_username || !$tenant->sage_api_password) {
+                Log::error('Missing Sage API credentials for tenant.', ['tenant' => $tenant]);
+                throw new \InvalidArgumentException('Missing Sage API credentials for tenant.');
+            }
 
-        return [
-            'api_url' => config('services.sage.api_url'),
-            'username' => $tenant->sage_api_username,
-            'password' => Crypt::decryptString($tenant->sage_api_password),
-        ];
+            return [
+                'api_url' => config('services.sage.api_url'),
+                'username' => $tenant->sage_api_username,
+                'password' => Crypt::decryptString($tenant->sage_api_password),
+            ];
+        } catch(\Exception $err) {
+            Log::error('Error retrieving Sage API credentials: ' . $err->getMessage());
+            throw new \Exception('Failed to retrieve Sage API credentials.');
+        }
     }
 
     public function checkIfExistsInSage(Customer $customer): bool
@@ -135,8 +145,20 @@ class SageCustomerService
             }
 
             // TODO: Perform actual GET request to Sage to verify existence
+            $url = $credentials['base_url'] . '/Freedom.Core/Freedom Database/SDK/CustomerExists/' . $customer->account_number;
+            $response = Http::withBasicAuth($credentials['username'], $credentials['password'])->get($url);
+            if($response->successful()) {
+                Log::info('Customer existence check successful in Sage.', ['customer' => $customer]);
+                return $response->json()['exists'] ?? false;
+            } else {
+                Log::error('Failed to check customer existence in Sage.', [
+                    'status' => $response->status(),
+                    'body' => $response->body(),
+                    'customer' => $customer
+                ]);
+                throw new \Exception('Failed to check customer existence in Sage: ' . $response->body());
+            }
 
-            return true; // Placeholder
         } catch(\Exception $err) {
             Log::error('Error checking if customer exists in Sage: ' . $err->getMessage());
             throw new \Exception('Failed to check customer existence in Sage.');
@@ -148,15 +170,25 @@ class SageCustomerService
      */
     public function createInSage(Customer $customer) //POST || Create a new customer || /Freedom.Core/Freedom Database/SDK/CustomerInsert{CUSTOMER}
     {
-
         try {
             if(empty($customer->account_number) || empty($customer->delivery_details_name)) {
                 Log::info('Required Sage customer fields are missing.', ['customer' => $customer]);
                 throw new \InvalidArgumentException('Missing required Sage customer fields.');
             }
 
+            // TODO: Perform actual POST request to Sage to create customer
             $data = $this->formatData($customer);
+            if(isEmpty($data)) {
+                Log::info('Formatted data for Sage customer is empty.', ['customer' => $customer]);
+                throw new \InvalidArgumentException('Formatted data for Sage customer is empty.');
+            }
+
             $credentials = $this->getSageAPICredentials();
+            if(!$credentials['username'] || !$credentials['password'] || !$credentials['base_url']) {
+                Log::info('Sage API credentials are not set.');
+                throw new \InvalidArgumentException('Missing Sage API credentials.');
+            }
+
             $url = $credentials['base_url'] . '/Freedom.Core/Freedom Database/SDK/CustomerInsert' . $customer; //CUSTOMER: Instance of a customer object
 
             $response = Http::withBasicAuth($credentials['username'], $credentials['password'])->post($url, $data);
@@ -185,13 +217,23 @@ class SageCustomerService
     {
         try {
             if(empty($customer->account_number)) {
+                Log::info('Required Sage customer fields are missing.', ['customer' => $customer]);
                 throw new \InvalidArgumentException('Missing required Sage customer fields.');
             }
 
+            // TODO: Perform actual POST request to Sage to create customer
             $data = $this->formatData($customer);
+            if(isEmpty($data)) {
+                Log::info('Formatted data for Sage customer is empty.', ['customer' => $customer]);
+                throw new \InvalidArgumentException('Formatted data for Sage customer is empty.');
+            }
             $credentials = $this->getSageAPICredentials();
-            $url = $credentials['base_url'] . '/Freedom.Core/Freedom Database/SDK/CustomerUpdate' . $customer; //CUSTOMER: Instance of a customer object
+            if(!$credentials['username'] || !$credentials['password'] || !$credentials['base_url']) {
+                Log::info('Sage API credentials are not set.');
+                throw new \InvalidArgumentException('Missing Sage API credentials.');
+            }
 
+            $url = $credentials['base_url'] . '/Freedom.Core/Freedom Database/SDK/CustomerUpdate' . $customer; //CUSTOMER: Instance of a customer object
             $response = Http::withBasicAuth($credentials['username'], $credentials['password'])->post($url, $data);
 
             if($response->successful()) {
