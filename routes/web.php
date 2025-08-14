@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\CentralController;
+use App\Http\Controllers\Admin\CentralController;
 use Illuminate\Support\Facades\Route;
 
 foreach(config('tenancy.central_domains') as $domain) {

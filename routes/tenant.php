@@ -2,7 +2,8 @@
 
 declare(strict_types=1);
 
-use App\Http\Controllers\AuditTrailController;
+use App\Http\Controllers\Admin\AuditTrailController;
+use App\Http\Controllers\Api\CustomerApiController;
 use Illuminate\Support\Facades\Route;
 use Stancl\Tenancy\Middleware\InitializeTenancyByDomain;
 use Stancl\Tenancy\Middleware\PreventAccessFromCentralDomains;
@@ -19,6 +20,7 @@ use Stancl\Tenancy\Middleware\PreventAccessFromCentralDomains;
 |
 */
 
+//WEB ROUTES
 Route::middleware([
     'web',
     InitializeTenancyByDomain::class,
@@ -37,4 +39,15 @@ Route::middleware([
     Route::get('/login', function() {
         return redirect('/admin/dashboards/main');
     })->name('login');
+});
+
+//API ROUTES
+Route::middleware([
+    'api',
+    InitializeTenancyByDomain::class,
+    PreventAccessFromCentralDomains::class
+])->group(function() {
+    Route::group(['prefix' => 'api/v1'], function() {
+        Route::get('/customer/create', [CustomerApiController::class, "store"])->name('customer.create');
+    });
 });
