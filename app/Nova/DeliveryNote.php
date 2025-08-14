@@ -81,7 +81,7 @@ class DeliveryNote extends Resource
                     $areaId = $formData->get('area');
 
                     if($areaId && $locationId) {
-                        $areaLocation = \App\Models\AreaLocation::where('area_id', $areaId)
+                        $areaLocation = \App\Models\General\AreaLocation::where('area_id', $areaId)
                             ->where('location_id', $locationId)
                             ->first();
 
@@ -159,7 +159,7 @@ class DeliveryNote extends Resource
                     $areaId = $formData->get('area');
                     $locationId = $formData->get('location');
                     if($customerId && $areaId && $locationId) {
-                        $nextDeliveryDate = \App\Models\AreaLocation::getNextDeliveryDate($areaId, $locationId, $customerId);
+                        $nextDeliveryDate = \App\Models\General\AreaLocation::getNextDeliveryDate($areaId, $locationId, $customerId);
                         if($nextDeliveryDate) {
                             $nextDeliveryDate = \Carbon\Carbon::parse($nextDeliveryDate)->format('Y-m-d');
                             $field->withMeta(['value' => $nextDeliveryDate]);
