@@ -81,4 +81,27 @@ class HelperFunctions
             ->where('id', '!=', $currentId)
             ->exists();
     }
+
+    public static function fillFromDependentField($field, $formData, $model, $fieldName, $defaultFieldName, $summerAddressConditional = false, $summerInfo = null): void
+    {
+        $id = $formData->{$fieldName} ?? null;
+        if(!$summerAddressConditional && $id) {
+            $value = $model::find($id)->{$defaultFieldName} ?? '';
+            $field->default($value);
+        } else {
+            if($id && $summerAddressConditional) {
+                $useSummerAddress = $model::find($id)->use_summer_address;
+                if($useSummerAddress) {
+                    $value = $model::find($id)->{$summerInfo} ?? '';
+                    $field->help('Customer Using Summer Address');
+                } else {
+                    $value = $model::find($id)->{$defaultFieldName} ?? '';
+                }
+                $field->default($value);
+            } else {
+                $field->default('');
+            }
+        }
+
+    }
 }

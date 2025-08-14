@@ -21,7 +21,7 @@ class CustomerFactory extends Factory
     {
         return [
             'client' => $this->faker->company,
-            'account_number' => $this->faker->optional()->bankAccountNumber,
+            'account_number' => strtoupper($this->faker->bothify('??########')),
             'issue_invoices' => $this->faker->boolean,
             'different_billing_details' => $this->faker->boolean,
             'use_summer_address' => $this->faker->boolean,

@@ -27,7 +27,9 @@ class Vehicle extends Resource
      * @var array
      */
     public static $search = [
-        'Registration Number, Make, Model',
+        'registration_number',
+        'make',
+        'model',
     ];
 
     /**

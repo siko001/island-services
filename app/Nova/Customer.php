@@ -55,22 +55,13 @@ class Customer extends Resource
 
                     Text::make('Account Number')
                         ->maxlength(12)
-                        ->rules('required', 'max:12'),
+                        ->rules('required', 'max:12', 'unique:customers,account_number,{{resourceId}}'),
 
                     DateTime::make('Created At', 'created_at')
                         ->onlyOnDetail(),
 
                     DateTime::make('Updated At', 'updated_at')
                         ->onlyOnDetail(),
-
-                    //                    //                    user that created
-                    //                    Text::make('Created By', function() {
-                    //                        return $this->createdBy?->name ?? 'N/A';
-                    //                    })->onlyOnDetail(),
-                    //
-                    //                    Text::make('Updated By', function() {
-                    //                        return $this->updatedBy?->name ?? 'N/A';
-                    //                    })->onlyOnDetail(),
                 ]),
                 Tab::make('Additional Actions', [
                     Boolean::make('Different Billing Details')->sortable(),

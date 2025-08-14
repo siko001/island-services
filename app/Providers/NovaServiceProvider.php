@@ -81,7 +81,7 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
 
                 //Stock Section
                 MenuSection::make('Stock',
-                    collect(NovaResources::customerResources())->map(fn($resource) => MenuItem::resource($resource))->toArray())
+                    collect(NovaResources::stockResources())->map(fn($resource) => MenuItem::resource($resource))->toArray())
                     ->icon('newspaper')
                     ->collapsable(),
 

@@ -5,6 +5,7 @@ namespace App\Models\Customer;
 use App\Models\General\Area;
 use App\Models\General\Location;
 use App\Models\User;
+use App\Observers\Customer\CustomerObserver;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -181,14 +182,7 @@ class Customer extends Model
     protected static function boot(): void
     {
         parent::boot();
-        // Method to handle when creating
-        static::creating(function($customer) {
-            //API CALL TO SAGE
-        });
-
-        static::updating(function($customer) {
-            //API CALL TO SAGE
-        });
+        Customer::observe(CustomerObserver::class);
 
         static::saving(function($customer) {
             //Pipeline calls Global

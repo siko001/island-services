@@ -26,7 +26,10 @@
         @endif
         
         
+        
+        
         @foreach($logs as $index => $log)
+            
             <div class="bg-white shadow rounded-lg p-6 mb-4 border border-gray-200 ">
                 <div class="flex items-center justify-between mb-2">
                     <h3 class="text-lg font-semibold text-gray-800">
@@ -42,8 +45,7 @@
                         <div>
                         <span class="font-medium">
                             Batch ID:
-                        </span>
-                            {{ $log->batch_id }}
+                        </span> #{{ $log->batch_id }}
                         </div>
                         <div>
                         <span class="font-medium">
@@ -53,7 +55,7 @@
                         </div>
                         <div>
                         <span class="font-medium">
-                            User Name:
+                            User Performing Action:
                         </span>
                             {{ $log->username }}
                         </div>
@@ -61,7 +63,9 @@
                         <span class="font-medium">
                             Actionable:
                         </span>
-                            {{ class_basename($log->actionable_type) }} #{{ $log->actionable_id }}
+                            {{ class_basename($log->actionable_type) }}  {{ class_basename($log->actionable_type) == "Role" ?  \App\Models\Admin\Role::findById
+                            ($log->actionable_id)->name : null }} #{{
+                            $log->actionable_id }}
                         </div>
                         <div>
                         <span class="font-medium">
@@ -73,7 +77,7 @@
                         <span class="font-medium">
                             Data:
                         </span>
-                            {{ class_basename($log->model_type) }} #{{ $log->model_id }}
+                            {{ class_basename($log->model_type) }} {{ $log->model_id ? '#'.$log->model_id : '' }}
                         </div>
                     </div>
                     <div>
@@ -100,12 +104,21 @@
                         $changes = is_array($log->changes) ? $log->changes : json_decode($log->changes, true);
                     @endphp
                     <div class="mt-4">
-                        <div class="font-semibold text-gray-800 mb-1">Changes:</div>
+                        @if($log->name == "Create")
+                            <div class="font-semibold text-gray-800 mb-1">Details:</div>
+                        @elseif($log->name == "Delete")
+                            <div class="font-semibold text-gray-800 mb-1">Deleted Details:</div>
+                        @elseif($log->name == "Attach")
+                            <div class="font-semibold text-gray-800 mb-1">Attached Details:</div>
+                        @else
+                            <div class="font-semibold text-gray-800 mb-1">Changes:</div>
+                        @endif
+                        
                         <div class="bg-gray-50 rounded p-3 text-xs">
                             <ul class="list-disc pl-5 space-y-1">
                                 @foreach($changes as $key => $value)
                                     <li>
-                                        <span class="font-medium">{{ ucfirst($key) }}:</span> <span class="text-gray-700">
+                                        <span class="font-medium">{{ str_replace('_',' ',ucfirst($key)) }}:</span> <span class="text-gray-700">
                                     @if(is_bool($value))
                                                 {{ $value ? 'true' : 'false' }}
                                             @else

@@ -51,13 +51,23 @@ class FinancialDetails
         $billingAlwaysVisible = [];
         if($deliveryOrBilling === 'billing') {
             $billingAlwaysVisible = [
-                Number::make('Credit Limit', 'credit_limit_dep')
-                    ->help('Credit limit for billing')
+                Number::make('Credit Limit on Delivery', 'credit_limit_del')
+                    ->help('On Delivery')
                     ->default(0)
                     ->hideFromIndex(),
 
-                Number::make('Balance', 'balance_dep')
-                    ->help('Current balance for billing')
+                Number::make('Credit Limit on Deposit', 'credit_limit_dep')
+                    ->help('On Deposit')
+                    ->default(0)
+                    ->hideFromIndex(),
+
+                Number::make('Balance on Deposit', 'balance_dep')
+                    ->help('On Deposit')
+                    ->default(0)
+                    ->hideFromIndex(),
+
+                Number::make('Balance on Delivery', 'balance_del')
+                    ->help('On Delivery')
                     ->default(0)
                     ->hideFromIndex(),
 

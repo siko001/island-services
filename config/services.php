@@ -35,4 +35,9 @@ return [
         ],
     ],
 
+    //TODO - Replace with actual Sage API credentials
+    'sage' => [
+        'api_url' => env('SAGE_API_URL', 'https://api.sage.com'),
+    ],
+
 ];
