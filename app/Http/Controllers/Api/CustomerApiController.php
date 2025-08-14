@@ -3,7 +3,11 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\Customer\Customer;
+use App\Pipelines\Website\Customer\FormatDataForApp;
+use App\Pipelines\Website\Customer\ValidateRequestData;
 use Illuminate\Http\Request;
+use Illuminate\Pipeline\Pipeline;
 
 class CustomerApiController extends Controller
 {
@@ -20,10 +24,18 @@ class CustomerApiController extends Controller
      */
     public function store(Request $request)
     {
-        return response()->json([
-            'status' => 'success',
-            'message' => 'Customer created successfully!'
-        ]);
+
+        $attributes = app(Pipeline::class)
+            ->send($request)
+            ->through([
+                ValidateRequestData::class,
+                FormatDataForApp::class,
+            ])
+            ->thenReturn();
+
+        $customer = Customer::create($attributes);
+
+        return response()->json($customer);
     }
 
     /**

@@ -55,7 +55,7 @@ class Customer extends Resource
 
                     Text::make('Account Number')
                         ->maxlength(12)
-                        ->rules('required', 'max:12'),
+                        ->rules('required', 'max:12', 'unique:customers,account_number,{{resourceId}}'),
 
                     DateTime::make('Created At', 'created_at')
                         ->onlyOnDetail(),

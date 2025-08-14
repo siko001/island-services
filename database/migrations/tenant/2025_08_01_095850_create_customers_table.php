@@ -50,11 +50,11 @@ return new class extends Migration {
             //Credit
             $table->integer('credit_terms_current')->nullable()->default(0);
             $table->integer('credit_terms_default')->nullable()->default(40);
-            $table->decimal('credit_limit_del', 10, 2)->nullable();
-            $table->decimal('credit_limit_dep', 10, 2)->nullable();
-            $table->decimal('balance_del', 10, 2)->nullable();
-            $table->decimal('balance_dep', 10, 2)->nullable();
-            $table->decimal('turnover', 10, 2)->nullable();
+            $table->decimal('credit_limit_del', 10, 2)->nullable()->default(0);
+            $table->decimal('credit_limit_dep', 10, 2)->nullable()->default(0);
+            $table->decimal('balance_del', 10, 2)->nullable()->default(0);
+            $table->decimal('balance_dep', 10, 2)->nullable()->default(0);
+            $table->decimal('turnover', 10, 2)->nullable()->default(0);
 
             //Billing details
             $table->string('billing_details_name')->nullable();
@@ -92,7 +92,7 @@ return new class extends Migration {
             $table->foreignId('classes_id')->constrained('classes')->onDelete('cascade');
             $table->foreignId('client_statuses_id')->constrained('client_statuses')->onDelete('cascade');
             $table->foreignId('hear_about_id')->nullable()->constrained('hear_abouts')->onDelete('cascade');
-            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
+            $table->foreignId('user_id')->nullable()->constrained('users')->onDelete('cascade');
             $table->foreignId('client_types_id')->constrained('client_types')->onDelete('cascade');
             $table->string('deliver_instruction')->nullable();
             $table->string('directions')->nullable();

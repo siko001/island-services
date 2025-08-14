@@ -48,6 +48,6 @@ Route::middleware([
     PreventAccessFromCentralDomains::class
 ])->group(function() {
     Route::group(['prefix' => 'api/v1'], function() {
-        Route::get('/customer/create', [CustomerApiController::class, "store"])->name('customer.create');
+        Route::post('/customer/create', [CustomerApiController::class, "store"])->name('customer.create');
     });
 });
