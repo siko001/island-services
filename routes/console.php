@@ -117,6 +117,9 @@ Artisan::command('custom-tenant:create', function(Request $request) {
             'domain' => $tenantDomain . '.' . config('tenancy.central_domains')[0],
         ]);
         $tenant->logo_path = $tenantLogo;
+
+        $tenant->api_token = str_replace(' ', '-', strtolower($tenantDomain)) . "_" . bin2hex(random_bytes(18));
+
         $tenant->save();
 
         DB::commit();

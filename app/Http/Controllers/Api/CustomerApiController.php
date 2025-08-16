@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Customer\Customer;
+use App\Pipelines\Website\Customer\AuthenticateRequest;
 use App\Pipelines\Website\Customer\FormatDataForApp;
 use App\Pipelines\Website\Customer\ValidateRequestData;
 use Illuminate\Http\Request;
@@ -24,18 +25,37 @@ class CustomerApiController extends Controller
      */
     public function store(Request $request)
     {
+        try {
+            $attributes = app(Pipeline::class)
+                ->send($request)
+                ->through([
+                    AuthenticateRequest::class,
+                    ValidateRequestData::class,
+                    FormatDataForApp::class,
+                ])
+                ->thenReturn();
 
-        $attributes = app(Pipeline::class)
-            ->send($request)
-            ->through([
-                ValidateRequestData::class,
-                FormatDataForApp::class,
-            ])
-            ->thenReturn();
+            if($attributes) {
+                $customer = Customer::create($attributes);
+                return response()->json([
+                    "message" => "customer created successfully",
+                    "error" => false,
+                    'customer' => $customer,
+                ]);
 
-        $customer = Customer::create($attributes);
+            } else {
+                return response()->json([
+                    "message" => "customer not created",
+                    'error' => true
+                ]);
+            }
 
-        return response()->json($customer);
+        } catch(\Exception $e) {
+            return response()->json([
+                "message" => $e->getMessage(),
+                "error" => true,
+            ], 400);
+        }
     }
 
     /**
