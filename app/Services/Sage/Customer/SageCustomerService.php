@@ -42,7 +42,7 @@ class SageCustomerService
     public function updateInSage(Customer $customer) //POST || Update an existing customer ||/Freedom.Core/Freedom Database/SDK/CustomerUpdate{CUSTOMER}
     {
         try {
-            $customer = app(Pipeline::class)
+            $context = app(Pipeline::class)
                 ->send($customer)
                 ->through([
                     ValidateCustomerForSage::class,
@@ -52,11 +52,11 @@ class SageCustomerService
                     SendCreationRequest::class,
                 ])->thenReturn();
 
-            Log::info('Sage API updateInSage called', ['customer_id' => $customer->id]);
+            Log::info('Sage API updateInSage called', ['customer_id' => $customer->id, 'context' => $context]);
+
         } catch(\Exception $err) {
             Log::error('Error creating customer in Sage: ' . $err->getMessage(), [
                 'exception' => $err,
-                'customer_id' => $customer->id,
             ]);
             throw $err;
         }

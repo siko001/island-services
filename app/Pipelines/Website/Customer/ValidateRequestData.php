@@ -3,14 +3,13 @@
 namespace App\Pipelines\Website\Customer;
 
 use Closure;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
 class ValidateRequestData
 {
-    public function handle(Request $request, Closure $next)
+    public function handle($data, Closure $next)
     {
-
+        $request = $data['request'];
         Log::info('Validating Data Form API to Dashboard');
 
         $attributes = $request->validate([
@@ -62,6 +61,8 @@ class ValidateRequestData
             'directions' => 'nullable|string|max:255',
             'remarks' => 'nullable|string|max:255',
         ]);
+
+        $attributes['is_update'] = $data['is_update'];
 
         return $next($attributes);
     }
