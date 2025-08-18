@@ -41,11 +41,35 @@ class ProductFactory extends Factory
             ];
         });
 
+        $productNames = [
+            '10Ltr H2Only',
+            '10Ltr Water for Pets',
+            '10Ltr Cooler Cap H2Only',
+            '10Ltr Empty Bottle',
+            '12Ltr H2Only Refill',
+            '19Ltr H2Only Refill',
+            '1Ltr H2Only - 6 Pack',
+            '1Ltr Sparkling H2Only - 6 Pack',
+            '2Ltr Empty Bottle',
+            '2Ltr H2Only Replacement - 6 Pack',
+            '2Ltr H2Only - 6 Pack',
+            '3.3Ltr H2Only x 3',
+            '33cl H2Only water',
+            '33cl Sparkling H2Only water - 12pack',
+            '65ml Bottle',
+        ];
+
+        $name = $this->name ?? $faker->words(3, true);
+
+        $abbreviation = collect(explode(' ', $name))
+            ->map(fn($word) => strtoupper(substr($word, 0, 1)))
+            ->join('');
+
         return [
-            'name' => $faker->words(3, true),
-            'abbreviation' => $faker->optional()->lexify(strtoupper('???')),
-            'product_price' => $faker->randomFloat(2, 10, 500),
-            'stock' => $faker->numberBetween(0, 100),
+            'name' => $name,
+            'abbreviation' => $abbreviation,
+            'product_price' => $faker->randomFloat(2, 3.50, 20),
+            'stock' => $faker->numberBetween(0, 2000),
             'stock_new' => $faker->numberBetween(0, 50),
             'stock_used' => $faker->numberBetween(0, 30),
             'stock_available' => $faker->numberBetween(0, 100),
@@ -65,7 +89,7 @@ class ProductFactory extends Factory
             'spare_part_cost' => $faker->optional()->randomFloat(2, 1, 100),
             'qty_per_palette' => $faker->numberBetween(0, 100),
             'is_accessory' => $faker->boolean(),
-            'bcrs_deposit' => $faker->optional()->randomFloat(2, 0, 10),
+            'bcrs_deposit' => $faker->randomFloat(2, 0, 3),
             'eco_tax' => $faker->optional()->randomFloat(2, 0, 5),
 
             // Here's the updated JSON properly structured for Nova

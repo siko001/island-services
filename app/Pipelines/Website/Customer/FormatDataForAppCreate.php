@@ -2,10 +2,10 @@
 
 namespace App\Pipelines\Website\Customer;
 
+use App\Helpers\HelperFunctions;
 use App\Models\Customer\Classes;
 use App\Models\Customer\ClientStatus;
 use App\Models\Customer\ClientType;
-use App\Models\Customer\Customer;
 use App\Models\Customer\CustomerGroup;
 use App\Pipelines\PipelineHelpers;
 use Closure;
@@ -13,28 +13,6 @@ use Illuminate\Support\Facades\Log;
 
 class FormatDataForAppCreate
 {
-    protected function getInitials(string $name, string $surname): string
-    {
-        $initials = '';
-        $words = array_merge(
-            preg_split('/\s+/', trim($name)),
-            preg_split('/\s+/', trim($surname))
-        );
-        foreach($words as $word) {
-            if(!empty($word)) {
-                $initials .= strtoupper(substr($word, 0, 1));
-            }
-        }
-
-        return $initials;
-    }
-
-    protected function generateAccountNumber(?string $name, ?string $surname): string
-    {
-        $initials = $this->getInitials($name ?? '', $surname ?? '');
-        return strtoupper($initials) . '-' . str_pad(count(Customer::all()) + 1, 4, '0', STR_PAD_LEFT);
-    }
-
     protected function getDefaultModel($model)
     {
         return $model::all()->where('is_default', 1)->value('id');
@@ -59,7 +37,7 @@ class FormatDataForAppCreate
 
         $customer = [
             'client' => $data['name'] ?? null . " " . $data['surname'] ?? null,
-            'account_number' => $this->generateAccountNumber($data['name'] ?? '', $data['surname'] ?? ''),
+            'account_number' => HelperFunctions::generateAccountNumber($data['name'] ?? '', $data['surname'] ?? ''),
             'issue_invoices' => true,
             'different_billing_details' => $data['different_billing_details'] ?? false,
             'use_summer_address' => $data['use_summer_address'] ?? false,

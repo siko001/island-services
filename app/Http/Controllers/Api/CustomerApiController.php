@@ -4,12 +4,14 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Customer\Customer;
+use App\Models\User;
 use App\Pipelines\Website\Customer\AuthenticateRequest;
 use App\Pipelines\Website\Customer\FormatDataForAppCreate;
 use App\Pipelines\Website\Customer\FormatDataForAppUpdate;
 use App\Pipelines\Website\Customer\ValidateRequestData;
 use Illuminate\Http\Request;
 use Illuminate\Pipeline\Pipeline;
+use Laravel\Nova\Notifications\NovaNotification;
 
 class CustomerApiController extends Controller
 {
@@ -89,7 +91,7 @@ class CustomerApiController extends Controller
                 ->send($pipelineData)
                 ->through([
                     // ValidateCustomer::class,
-                    //                    AuthenticateRequest::class,
+                    // AuthenticateRequest::class,
                     ValidateRequestData::class,
                     FormatDataForAppUpdate::class,
                 ])
@@ -100,11 +102,23 @@ class CustomerApiController extends Controller
                 // Update customer with the new attributes
                 $customer->update($attributes);
 
+                $admins = User::role('super admin')->get();
+                foreach($admins as $admin) {
+                    $admin->notify(
+                        NovaNotification::make()
+                            ->message("Customer " . ($customer->client) . ' updated his details from website.')
+                            ->icon('user')
+                    );
+                }
+
                 return response()->json([
                     "message" => "customer updated successfully",
                     "error" => false,
                     "customer" => $customer,
                 ]);
+
+                //                send a nova notification
+
             } else {
                 return response()->json([
                     "message" => "customer not updated - missing attributes or ID",

@@ -108,4 +108,48 @@ class HelperFunctions
         }
 
     }
+
+    protected static int $seedingCounter = 0;
+
+    protected static function getInitials(string $name, string $surname): string
+    {
+        $initials = '';
+        $words = array_merge(
+            preg_split('/\s+/', trim($name)),
+            preg_split('/\s+/', trim($surname))
+        );
+        foreach($words as $word) {
+            if(!empty($word)) {
+                $initials .= strtoupper(substr($word, 0, 1));
+            }
+        }
+        return $initials;
+    }
+
+    /**
+     * Generates an account number.
+     * @param string|null $name
+     * @param string|null $surname
+     * @param int|null $startNumber Number to start from (optional, useful for seeding offsets)
+     * @return string
+     */
+    public static function generateAccountNumber(?string $name, ?string $surname, ?int $startNumber = null): string
+    {
+        $initials = self::getInitials($name ?? '', $surname ?? '');
+
+        if($startNumber !== null) {
+            // Increment static counter starting at given offset
+            if(self::$seedingCounter < $startNumber) {
+                self::$seedingCounter = $startNumber;
+            }
+            self::$seedingCounter++;
+            $number = str_pad(self::$seedingCounter, 4, '0', STR_PAD_LEFT);
+        } else {
+            // Normal runtime: just generate a random unique-ish fallback number (or count from DB if you want)
+            // For simplicity, here just generate random 4-digit number (replace with DB logic if needed)
+            $number = str_pad(random_int(1, 9999), 4, '0', STR_PAD_LEFT);
+        }
+
+        return strtoupper($initials) . '-' . $number;
+    }
 }
