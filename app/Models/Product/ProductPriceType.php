@@ -26,6 +26,12 @@ class ProductPriceType extends Pivot
         return $this->belongsTo(VatCode::class, 'id');
     }
 
+    public function priceType()
+    {
+
+        return $this->belongsTo(PriceType::class, 'price_type_id');
+    }
+
     protected static function booted()
     {
         static::saving(function($model) {

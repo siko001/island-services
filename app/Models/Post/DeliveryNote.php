@@ -6,6 +6,7 @@ use App\Models\Customer\Customer;
 use App\Models\General\Area;
 use App\Models\General\Location;
 use App\Models\General\OrderType;
+use App\Models\Product\PriceType;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 
@@ -78,6 +79,16 @@ class DeliveryNote extends Model
     public function location()
     {
         return $this->belongsTo(Location::class, 'customer_location');
+    }
+
+    public function deliveryNoteProducts()
+    {
+        return $this->hasMany(DeliveryNoteProduct::class);
+    }
+
+    public function priceType()
+    {
+        return $this->belongsTo(PriceType::class, 'price_type_id');
     }
 
     public static function generateDeliveryNoteNumber()

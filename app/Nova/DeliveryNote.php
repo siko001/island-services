@@ -10,6 +10,7 @@ use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\Date;
 use Laravel\Nova\Fields\FormData;
+use Laravel\Nova\Fields\HasMany;
 use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Http\Requests\NovaRequest;
 use Laravel\Nova\Tabs\Tab;
@@ -78,8 +79,119 @@ class DeliveryNote extends Resource
 
                 Tab::make("Additional Details", new AdditionalDetails()),
             ]),
-        ];
+            //
+            //            HasMany::make("Products", 'deliveryNoteProduct')->fields(function() {
+            //                return [
+            //
+            //                    Select::make('Price Type', 'price_type_id')
+            //                        ->searchable()
+            //                        ->hide()
+            //                        ->dependsOn(['deliveryNoteProduct'], function($field, $request, $formData) {
+            //                            $productId = $formData['deliveryNoteProduct'] ?? null;
+            //                            if($productId) {
+            //                                $field->required();
+            //                                $field->show();
+            //                                $priceTypes = \App\Models\Product\ProductPriceType::where('product_id', $productId)->with('priceType')->get();
+            //                                $options = $priceTypes->mapWithKeys(function($ppt) {
+            //                                    return [$ppt->price_type_id => $ppt->priceType->name];
+            //                                })->toArray();
+            //
+            //                                $field->options($options);
+            //                            }
+            //                        })
+            //                        ->displayUsingLabels(),
+            //                    Number::make('Quantity')
+            //                        ->rules('numeric', "min:1")
+            //                        ->step(1)
+            //                        ->default(1)
+            //                        ->hide()
+            //                        ->dependsOn(['deliveryNoteProduct', 'price_type_id'], function($field, $request, $formData) {
+            //                            $productId = $formData['deliveryNoteProduct'] ?? null;
+            //                            $price_type_id = $formData['price_type_id'] ?? null;
+            //                            if($productId && $price_type_id) {
+            //                                $field->show();
+            //                            }
+            //                        }),
+            //
+            //                    Number::make('Unit Price', 'unit_price')
+            //                        ->dependsOn(['price_type_id', 'deliveryNoteProduct'], function($field, $request, $formData) {
+            //                            $priceTypeId = $formData['price_type_id'] ?? null;
+            //                            $productId = $formData['deliveryNoteProduct'] ?? null;
+            //                            if($priceTypeId && $productId) {
+            //                                $productPriceType = \App\Models\Product\ProductPriceType::where('product_id', $productId)
+            //                                    ->where('price_type_id', $priceTypeId)
+            //                                    ->first();
+            //                                if($productPriceType) {
+            //                                    $field->show();
+            //                                    $field->value = $productPriceType->unit_price;
+            //                                    $field->default($productPriceType->unit_price);
+            //                                }
+            //                            }
+            //                        })
+            //                        ->hide()
+            //                        ->rules('numeric', 'min:1')
+            //                        ->step(0.01),
+            //
+            //                    Number::make('Total Price', 'total_price')
+            //                        ->readonly()
+            //                        ->hide()
+            //                        ->dependsOn(['price_type_id', 'deliveryNoteProduct', 'quantity', 'unit_price'], function($field, $request, $formData) {
+            //                            $priceTypeId = $formData['price_type_id'] ?? null;
+            //                            $productId = $formData['deliveryNoteProduct'] ?? null;
+            //                            $quantity = $formData['quantity'] ?? null;
+            //                            $unitPriceForm = $formData->get('unit_price');
+            //
+            //                            if($priceTypeId && $productId) {
+            //                                $productPriceType = \App\Models\Product\ProductPriceType::where('product_id', $productId)
+            //                                    ->where('price_type_id', $priceTypeId)
+            //                                    ->first();
+            //                                if($productPriceType && $unitPriceForm == '') {
+            //                                    $unitPrice = $productPriceType->unit_price;
+            //                                    $field->value = round($quantity * $unitPrice, 2);
+            //                                    $field->show();
+            //                                    $field->readOnly();
+            //                                } else {
+            //                                    if($unitPriceForm !== "") {
+            //                                        $field->value = round($quantity * $unitPriceForm, 2);
+            //                                        $field->show();
+            //                                        $field->readOnly();
+            //                                    }
+            //                                }
+            //                            }
+            //                        }),
+            //
+            //                    Select::make('Vat Code', 'vat_code_id')
+            //                        ->dependsOn(['deliveryNoteProduct', 'price_type_id'], function($field, $request, $formData) {
+            //                            $priceTypeId = $formData['price_type_id'] ?? null;
+            //                            $productId = $formData['deliveryNoteProduct'] ?? null;
+            //                            if($priceTypeId && $productId) {
+            //                                $productPriceType = \App\Models\Product\ProductPriceType::where('product_id', $productId)
+            //                                    ->where('price_type_id', $priceTypeId)
+            //                                    ->first();
+            //                                $vatCodeId = $productPriceType->vat_id ?? null;
+            //
+            //                                // Now get the single VAT code record
+            //                                if($vatCodeId) {
+            //                                    $vatCode = \App\Models\General\VatCode::find($vatCodeId);
+            //                                    if($vatCode) {
+            //                                        $field->options([
+            //                                            $vatCode->id => $vatCode->name,
+            //                                        ]);
+            //                                        // Pre-select it in the form
+            //                                        $field->value = $vatCode->id;
+            //                                    }
+            //                                }
+            //                            }
+            //                        })
+            //                        ->displayUsingLabels()
+            //                        ->rules('required')
 
+            //                ];
+            //            }),
+
+            HasMany::make('Products', 'deliveryNoteProducts', DeliveryNoteProduct::class),
+
+        ];
         //        Still to do load-sheet number (when in a load sheet) Products has many rel
     }
 
