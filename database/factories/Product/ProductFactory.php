@@ -74,7 +74,7 @@ class ProductFactory extends Factory
             'stock_used' => $faker->numberBetween(0, 30),
             'stock_available' => $faker->numberBetween(0, 100),
             'cost' => $faker->optional()->randomFloat(2, 5, 400),
-            'deposit' => $faker->optional()->randomFloat(2, 1, 50),
+            'deposit' => $faker->optional()->randomFloat(2, 1, 4.95),
             'packing_details' => $faker->sentence(),
             'on_order' => $faker->optional()->numberBetween(0, 50),
             'purchase_date' => $faker->optional()->date(),

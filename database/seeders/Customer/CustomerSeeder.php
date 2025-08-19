@@ -21,7 +21,7 @@ class CustomerSeeder extends Seeder
             $startNumber = $lastCustomer->id ?: 0;
         }
 
-        $customersToCreate = 2000;
+        $customersToCreate = 200;
         $counter = $startNumber;
 
         $this->command->info('Creating ' . $customersToCreate . ' Customers and assigning values...');
