@@ -3,7 +3,7 @@
 namespace App\Nova;
 
 use App\Policies\ResourcePolicies;
-use Laravel\Nova\Fields\ID;
+use Laravel\Nova\Fields\HasMany;
 use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Http\Requests\NovaRequest;
 
@@ -37,10 +37,11 @@ class Offer extends Resource
     public function fields(NovaRequest $request): array
     {
         return [
-            ID::make()->sortable(),
-            Text::make('Offer', 'name')
+            Text::make('Offer Name', 'name')
                 ->sortable()
                 ->rules('required', 'max:255'),
+
+            HasMany::make('Products', 'offerProducts', OfferProduct::class),
         ];
     }
 

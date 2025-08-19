@@ -82,6 +82,13 @@ class AdditionalDetails
                 ->default(false)
                 ->hideFromIndex(),
 
+            Number::make('Deposit')
+                ->withMeta(['extraAttributes' => ['style' => 'max-width: 225px; min-width:150px']])
+                ->rules('nullable', 'numeric', 'min:0')
+                ->step(0.01)
+                ->default(0.00)
+                ->hideFromIndex(),
+
             Number::make('ECO TAX €', 'eco_tax')
                 ->withMeta(['extraAttributes' => ['style' => 'max-width: 225px; min-width:150px']])
                 ->rules('nullable', 'numeric', 'min:0')
