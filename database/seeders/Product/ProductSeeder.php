@@ -4,28 +4,47 @@ namespace Database\Seeders\Product;
 
 use App\Models\Product\Product;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\Log;
 
 class ProductSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
+        $productNames = [
+            '10Ltr H2Only',
+            '10Ltr Water for Pets',
+            '10Ltr Cooler Cap H2Only',
+            '10Ltr Empty Bottle',
+            '12Ltr H2Only Refill',
+            '19Ltr H2Only Refill',
+            '1Ltr H2Only - 6 Pack',
+            '1Ltr Sparkling H2Only - 6 Pack',
+            '2Ltr Empty Bottle',
+            '2Ltr H2Only Replacement - 6 Pack',
+            '2Ltr H2Only - 6 Pack',
+            '3.3Ltr H2Only x 3',
+            '33cl H2Only water',
+            '33cl Sparkling H2Only water - 12pack',
+            '65ml Bottle',
+        ];
 
-        $this->command->info('Creating 200 Products with different values...');
-        try {
-            $created = Product::factory()->count(200)->create();
-            if($created->count() < 200) {
-                $this->command->warn('⚠️ Not all products were created.');
-            } else {
-                $this->command->info('✅ 200 Products created successfully.');
+        $total = 200;
+        $customCount = count($productNames);
+        $fakerCount = $total - $customCount;
+
+        $this->command->info("Creating {$total} Products with names assigned to last {$customCount}...");
+
+        $states = collect(range(0, $total - 1))->map(function($index) use ($fakerCount, $productNames) {
+            if($index >= $fakerCount) {
+                return ['name' => $productNames[$index - $fakerCount]];
             }
+            return [];
+        })->toArray();
 
-        } catch(\Exception $e) {
-            $this->command->error('❌ Failed to create products: ' . $e->getMessage());
-            Log::error('[ProductSeeder] Error creating products: ' . $e->getMessage());
-        }
+        Product::factory()
+            ->count($total)
+            ->sequence(...$states)
+            ->create();
+
+        $this->command->info("✅ {$total} Products created successfully.");
     }
 }

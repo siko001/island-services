@@ -49,5 +49,6 @@ Route::middleware([
 ])->group(function() {
     Route::group(['prefix' => 'api/v1'], function() {
         Route::post('/customer/create', [CustomerApiController::class, "store"])->name('customer.create');
+        Route::put('/customer/update/{accountNumber}', [CustomerApiController::class, "update"])->name('customer.update');
     });
 });

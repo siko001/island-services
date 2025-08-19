@@ -67,6 +67,8 @@ class CentralController extends Controller
             } else {
                 $tenant->logo_path = '/media/images/isl-logo.svg';
             }
+
+            $tenant->api_token = str_replace(' ', '-', strtolower($request->tenant_id)) . "_" . bin2hex(random_bytes(18));
             $tenant->save();
 
             // Run tenant migrations and seeders

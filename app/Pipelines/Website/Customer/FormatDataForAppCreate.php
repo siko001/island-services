@@ -2,86 +2,17 @@
 
 namespace App\Pipelines\Website\Customer;
 
+use App\Helpers\HelperFunctions;
 use App\Models\Customer\Classes;
 use App\Models\Customer\ClientStatus;
 use App\Models\Customer\ClientType;
-use App\Models\Customer\Customer;
 use App\Models\Customer\CustomerGroup;
-use App\Models\General\AreaLocation;
-use App\Models\General\Location;
+use App\Pipelines\PipelineHelpers;
 use Closure;
 use Illuminate\Support\Facades\Log;
 
-class FormatDataForApp
+class FormatDataForAppCreate
 {
-    protected function getInitials(string $name, string $surname): string
-    {
-        $initials = '';
-        $words = array_merge(
-            preg_split('/\s+/', trim($name)),
-            preg_split('/\s+/', trim($surname))
-        );
-        foreach($words as $word) {
-            if(!empty($word)) {
-                $initials .= strtoupper(substr($word, 0, 1));
-            }
-        }
-
-        return $initials;
-    }
-
-    protected function generateAccountNumber(?string $name, ?string $surname): string
-    {
-        $initials = $this->getInitials($name ?? '', $surname ?? '');
-        return strtoupper($initials) . '-' . str_pad(count(Customer::all()) + 1, 4, '0', STR_PAD_LEFT);
-    }
-
-    protected function mapLocalityToAppLocation(string $enteredLocation): ?int
-    {
-        $normalizedInput = $this->normalizeLocationName($enteredLocation);
-        $allLocations = Location::all();
-        $matchedLocation = $allLocations->first(function($location) use ($normalizedInput) {
-            return $this->normalizeLocationName($location->name) === $normalizedInput;
-        });
-        return $matchedLocation?->id;
-    }
-
-    /**
-     * Clean and normalize names for comparison
-     */
-    protected function normalizeLocationName(string $name): string
-    {
-        $name = mb_strtolower(trim($name), 'UTF-8');
-        $name = str_replace(
-            ["Ġ", "ġ", "Ż", "ż", "Ħ", "ħ", "ċ", "Ċ"],
-            ["g", "g", "z", "z", "h", "h", "c", "c"],
-            $name
-        );
-        return str_replace(["'", ".", "’"], '', $name);
-    }
-
-    protected function mapAreaFromLocations(int $locationId): ?int
-    {
-        // Query the pivot to find the area with most delivery days for this location
-        $bestAreaId = AreaLocation::where('location_id', $locationId)
-            ->select('area_id')
-            ->selectRaw("
-            (CASE WHEN monday=1 THEN 1 ELSE 0 END +
-             CASE WHEN tuesday=1 THEN 1 ELSE 0 END +
-             CASE WHEN wednesday=1 THEN 1 ELSE 0 END +
-             CASE WHEN thursday=1 THEN 1 ELSE 0 END +
-             CASE WHEN friday=1 THEN 1 ELSE 0 END +
-             CASE WHEN saturday=1 THEN 1 ELSE 0 END +
-             CASE WHEN sunday=1 THEN 1 ELSE 0 END
-            ) AS delivery_count
-        ")
-            ->orderByDesc('delivery_count')
-            ->orderBy('area_id')
-            ->value('area_id');
-
-        return $bestAreaId ?: null;
-    }
-
     protected function getDefaultModel($model)
     {
         return $model::all()->where('is_default', 1)->value('id');
@@ -89,24 +20,24 @@ class FormatDataForApp
 
     public function handle(array $data, Closure $next)
     {
-
+        Log::info("FormatDataForAppCreate: is_update = " . ($data['is_update'] ? "Yes" : "No"));
         Log::info('Formating Data Form API to Dashboard');
 
-        $matchedLocationId = $this->mapLocalityToAppLocation($data['delivery_details_locality']);
-        $matchedArea = $this->mapAreaFromLocations($matchedLocationId);
+        $matchedLocationId = PipelineHelpers::mapLocalityToAppLocation($data['delivery_details_locality']);
+        $matchedArea = PipelineHelpers::mapAreaFromLocations($matchedLocationId);
 
         if(isset($data['billing_details_locality'])) {
-            $matchedBillingLocationId = $this->mapLocalityToAppLocation($data['billing_details_locality']);
+            $matchedBillingLocationId = PipelineHelpers::mapLocalityToAppLocation($data['billing_details_locality']);
         }
 
         if(isset($data['summer_address_locality'])) {
-            $matchedSummerLocationId = $this->mapLocalityToAppLocation($data['summer_address_locality']);
-            $matchedSummerArea = $this->mapAreaFromLocations($matchedSummerLocationId);
+            $matchedSummerLocationId = PipelineHelpers::mapLocalityToAppLocation($data['summer_address_locality']);
+            $matchedSummerArea = PipelineHelpers::mapAreaFromLocations($matchedSummerLocationId);
         }
 
         $customer = [
-            'client' => $data['name'] ?? null . " " . $data['surname'] ?? null,
-            'account_number' => $this->generateAccountNumber($data['name'] ?? '', $data['surname'] ?? ''),
+            'client' => ($data['name'] ?? null . " " . $data['surname'] ?? null),
+            'account_number' => HelperFunctions::generateAccountNumber($data['name'] ?? '', $data['surname'] ?? ''),
             'issue_invoices' => true,
             'different_billing_details' => $data['different_billing_details'] ?? false,
             'use_summer_address' => $data['use_summer_address'] ?? false,
