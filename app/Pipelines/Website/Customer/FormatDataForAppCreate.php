@@ -36,7 +36,7 @@ class FormatDataForAppCreate
         }
 
         $customer = [
-            'client' => $data['name'] ?? null . " " . $data['surname'] ?? null,
+            'client' => ($data['name'] ?? null . " " . $data['surname'] ?? null),
             'account_number' => HelperFunctions::generateAccountNumber($data['name'] ?? '', $data['surname'] ?? ''),
             'issue_invoices' => true,
             'different_billing_details' => $data['different_billing_details'] ?? false,

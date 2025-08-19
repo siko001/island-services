@@ -5,7 +5,6 @@ namespace App\Models\Post;
 use App\Models\General\VatCode;
 use App\Models\Product\PriceType;
 use App\Models\Product\Product;
-use App\Models\Product\ProductPriceType;
 use Illuminate\Database\Eloquent\Model;
 
 class DeliveryNoteProduct extends Model
@@ -16,7 +15,7 @@ class DeliveryNoteProduct extends Model
         "product_id",
         "price_type_id",
         "quantity",
-        "quantity",
+        'unit_price',
         'deposit_price',
         'timestamps',
         'vat_code_id',
@@ -38,11 +37,6 @@ class DeliveryNoteProduct extends Model
     public function product()
     {
         return $this->belongsTo(Product::class);
-    }
-
-    public function productPriceType()
-    {
-        return $this->belongsTo(ProductPriceType::class);
     }
 
     public function priceType()

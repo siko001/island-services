@@ -12,6 +12,8 @@ class PostTabSeeder extends Seeder
     public function run(): void
     {
         $seeders = [
+            DeliveryNoteSeeder::class,
+            DeliveryNoteProductSeeder::class,
         ];
 
         // Loop through each seeder and call it

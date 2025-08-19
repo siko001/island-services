@@ -3,6 +3,7 @@
 namespace App\Helpers;
 
 use App\Models\Admin\Role;
+use App\Models\Customer\Customer;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
@@ -147,7 +148,7 @@ class HelperFunctions
         } else {
             // Normal runtime: just generate a random unique-ish fallback number (or count from DB if you want)
             // For simplicity, here just generate random 4-digit number (replace with DB logic if needed)
-            $number = str_pad(random_int(1, 9999), 4, '0', STR_PAD_LEFT);
+            $number = str_pad(Customer::orderBy('id', 'desc')->first()->id, 4, '0', STR_PAD_LEFT);
         }
 
         return strtoupper($initials) . '-' . $number;

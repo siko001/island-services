@@ -6,7 +6,6 @@ use App\Models\Customer\Customer;
 use App\Models\General\Area;
 use App\Models\General\Location;
 use App\Models\General\OrderType;
-use App\Models\Product\PriceType;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 
@@ -86,14 +85,14 @@ class DeliveryNote extends Model
         return $this->hasMany(DeliveryNoteProduct::class);
     }
 
-    public function priceType()
-    {
-        return $this->belongsTo(PriceType::class, 'price_type_id');
-    }
+    //    public function priceType()
+    //    {
+    //        return $this->belongsTo(PriceType::class, 'price_type_id');
+    //    }
 
     public static function generateDeliveryNoteNumber()
     {
-        $lastDeliveryNote = self::orderBy('created_at', 'desc')->first();
+        $lastDeliveryNote = self::orderBy('id', 'desc')->first();
         if($lastDeliveryNote) {
             $lastNumber = (int)substr($lastDeliveryNote->delivery_note_number, -4);
             $newNumber = str_pad($lastNumber + 1, 4, '0', STR_PAD_LEFT);

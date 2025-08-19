@@ -13,6 +13,7 @@ class CustomerSeeder extends Seeder
      */
     public function run(): void
     {
+
         $lastCustomer = Customer::orderByDesc('id')->first();
 
         $startNumber = 0 - 1;
@@ -20,7 +21,7 @@ class CustomerSeeder extends Seeder
             $startNumber = $lastCustomer->id ?: 0;
         }
 
-        $customersToCreate = 200;
+        $customersToCreate = 2000;
         $counter = $startNumber;
 
         $this->command->info('Creating ' . $customersToCreate . ' Customers and assigning values...');

@@ -14,11 +14,11 @@ return new class extends Migration {
             $table->id();
             $table->foreignId('delivery_note_id')->constrained()->onDelete('cascade');
             $table->foreignId('product_id')->constrained('products')->onDelete('cascade');
-            $table->foreignId('price_type_id')->constrained('product_price_types')->onDelete('cascade');
+            $table->foreignId('price_type_id')->constrained('price_types')->onDelete('cascade');
             $table->integer('quantity')->default(1);
             $table->decimal('unit_price', 10, 2)->nullable();
             $table->decimal('deposit_price', 10, 2)->nullable();
-            $table->foreignId('vat_code_id')->constrained('product_price_types')->onDelete('cascade');
+            $table->foreignId('vat_code_id')->constrained('vat_codes')->onDelete('cascade');
             $table->decimal('total_price', 10, 2)->nullable();
             $table->decimal('bcrs_price', 10, 2)->nullable();
             $table->timestamps();
