@@ -44,6 +44,16 @@ class CustomerApiController extends Controller
 
             if($attributes) {
                 $customer = Customer::create($attributes);
+
+                $admins = User::role('super admin')->get();
+                foreach($admins as $admin) {
+                    $admin->notify(
+                        NovaNotification::make()
+                            ->message("Customer " . ($customer->client) . ' created and linked to ' . ($customer->delivery_area_id) . ' from website')
+                            ->icon('user')
+                    );
+                }
+
                 return response()->json([
                     "message" => "customer created successfully",
                     "error" => false,

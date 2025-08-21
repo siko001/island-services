@@ -1,20 +1,19 @@
 <?php
 
-namespace App\Pipelines\Sage\Customer;
+namespace App\Pipelines\Website\Product;
 
 use Closure;
 use Illuminate\Support\Facades\Log;
 
-class CheckCustomerExists
+class CheckProductExistsWebsite
 {
     public function handle($context, Closure $next)
     {
 
         //        TODO
-        Log::info('Checking if customer exists in Sage');
-        // Unpack context variables passed from previous pipes
-        //        $customer = $context['customer'];
-        //        $credentials = $context['credentials'];
+        Log::info('Checking if Product exists in Website');
+        $customer = $context['product'];
+        $credentials = $context['credentials'];
 
         //        $url = $credentials['base_url'] . '/Freedom.Core/Freedom Database/SDK/CustomerExists/' . $customer->account_number;
         //        $response = Http::withBasicAuth($credentials['username'], $credentials['password'])->get($url);

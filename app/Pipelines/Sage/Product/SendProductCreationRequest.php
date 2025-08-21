@@ -1,18 +1,20 @@
 <?php
 
-namespace App\Pipelines\Sage\Customer;
+namespace App\Pipelines\Sage\Product;
 
 use Closure;
 use Illuminate\Support\Facades\Log;
 
-class SendCreationRequest
+class SendProductCreationRequest
 {
-    public function handle(array $context, Closure $next)
+    public function handle($context, Closure $next)
     {
 
-        Log::info('Send Creation Request for Sage');
+        //        TODO
+
+        Log::info('Send Product Creation Request for Sage');
         // Unpack context variables passed from previous pipes
-        $customer = $context['customer'];
+        $customer = $context['product'];
         $payload = $context['payload'];
         $credentials = $context['credentials'];
 

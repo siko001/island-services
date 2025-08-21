@@ -3,6 +3,7 @@
 namespace App\Models\Product;
 
 use App\Models\General\OfferProduct;
+use App\Observers\ProductObserver;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -82,18 +83,6 @@ class Product extends Model
     protected static function boot(): void
     {
         parent::boot();
-        // Method to handle when creating
-        static::creating(function($product) {
-            //API CALL TO SAGE and WEBSITE
-        });
-
-        static::updating(function($product) {
-            //API CALL TO SAGE and WEBSITE
-        });
-
-        static::saving(function($product) {
-            //
-        });
-
+        Product::observe(ProductObserver::class);
     }
 }

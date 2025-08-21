@@ -1,18 +1,18 @@
 <?php
 
-namespace App\Pipelines\Sage;
+namespace App\Pipelines\Website;
 
 use Closure;
 use Illuminate\Support\Facades\Log;
 
-class SageConnection
+class WebsiteConnection
 {
     public function handle($context, Closure $next)
     {
 
         //        TODO
         try {
-            Log::info('Checking Sage Connection');
+            Log::info('Checking Website Connection');
             $tenant = tenancy()->tenant;
             //            if(!$tenant || !$tenant->sage_api_username || !$tenant->sage_api_password) {
             //                Log::error('Missing Sage API credentials for tenant.', ['tenant' => $tenant]);
@@ -21,7 +21,7 @@ class SageConnection
 
             // Build credentials array
             $credentials = [
-                'api_url' => config('services.sage.api_url'),
+                //                'api_url' => config('services.sage.api_url'),
                 //                'username' => $tenant->sage_api_username,
                 //                'password' => Crypt::decryptString($tenant->sage_api_password),
             ];
@@ -41,11 +41,12 @@ class SageConnection
 
             // Add to pipeline context
             $context['credentials'] = $credentials;
+
             return $next($context);
 
         } catch(\Exception $err) {
-            Log::error('Error retrieving Sage API credentials: ' . $err->getMessage());
-            throw new \Exception('Failed to retrieve Sage API credentials.');
+            Log::error('Error retrieving Website API credentials: ' . $err->getMessage());
+            throw new \Exception('Failed to retrieve Website API credentials.');
         }
     }
 }

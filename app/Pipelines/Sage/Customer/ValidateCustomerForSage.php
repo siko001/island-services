@@ -2,13 +2,12 @@
 
 namespace App\Pipelines\Sage\Customer;
 
-use App\Models\Customer\Customer;
 use Closure;
 use Illuminate\Support\Facades\Log;
 
 class ValidateCustomerForSage
 {
-    public function handle(Customer $customer, Closure $next)
+    public function handle($customer, Closure $next)
     {
 
         Log::info('Validate Customer for Sage');
