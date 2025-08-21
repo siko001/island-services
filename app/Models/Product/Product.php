@@ -2,8 +2,10 @@
 
 namespace App\Models\Product;
 
+use App\Models\General\OfferProduct;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Product extends Model
 {
@@ -70,6 +72,11 @@ class Product extends Model
             ->using(\App\Models\Product\ProductPriceType::class)
             ->withPivot(['unit_price', 'yearly_rental', 'vat_id'])
             ->withTimestamps();
+    }
+
+    public function offer(): hasMany
+    {
+        return $this->hasMany(OfferProduct::class);
     }
 
     protected static function boot(): void

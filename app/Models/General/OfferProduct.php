@@ -6,6 +6,7 @@ use App\Models\Product\PriceType;
 use App\Models\Product\Product;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class OfferProduct extends Model
 {
@@ -33,7 +34,7 @@ class OfferProduct extends Model
     /**
      * Get the offer that owns the product.
      */
-    public function offer()
+    public function offer(): BelongsTo
     {
         return $this->belongsTo(Offer::class);
     }
@@ -41,7 +42,7 @@ class OfferProduct extends Model
     /**
      * Get the product that belongs to the offer.
      */
-    public function product()
+    public function product(): BelongsTo
     {
         return $this->belongsTo(Product::class);
     }
@@ -49,7 +50,7 @@ class OfferProduct extends Model
     /**
      * Get the price type that belongs to the offer product.
      */
-    public function priceType()
+    public function priceType(): BelongsTo
     {
         return $this->belongsTo(PriceType::class);
     }
@@ -57,7 +58,7 @@ class OfferProduct extends Model
     /**
      * Get the VAT code that belongs to the offer product.
      */
-    public function vatCode()
+    public function vatCode(): BelongsTo
     {
         return $this->belongsTo(VatCode::class);
     }

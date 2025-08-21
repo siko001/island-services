@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Customer\Customer;
 use App\Models\User;
-use App\Pipelines\Website\Customer\AuthenticateRequest;
+use App\Pipelines\Website\AuthenticateRequest;
 use App\Pipelines\Website\Customer\FormatDataForAppCreate;
 use App\Pipelines\Website\Customer\FormatDataForAppUpdate;
 use App\Pipelines\Website\Customer\ValidateRequestData;
@@ -20,7 +20,6 @@ class CustomerApiController extends Controller
      */
     public function index()
     {
-        //
     }
 
     /**

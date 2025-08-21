@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Http\Controllers\Api\CustomerApiController;
+use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\Tenants\AuditTrailController;
 use Illuminate\Support\Facades\Route;
 use Stancl\Tenancy\Middleware\InitializeTenancyByDomain;
@@ -48,7 +49,16 @@ Route::middleware([
     PreventAccessFromCentralDomains::class
 ])->group(function() {
     Route::group(['prefix' => 'api/v1'], function() {
-        Route::post('/customer/create', [CustomerApiController::class, "store"])->name('customer.create');
-        Route::put('/customer/update/{accountNumber}', [CustomerApiController::class, "update"])->name('customer.update');
+
+        Route::group(['prefix' => 'customer'], function() {
+            Route::post('/create', [CustomerApiController::class, "store"])->name('customer.create');
+            Route::put('/update/{accountNumber}', [CustomerApiController::class, "update"])->name('customer.update');
+        });
+
+        Route::group(['prefix' => 'product'], function() {
+            Route::get('/all', [ProductController::class, "getAllProductPricesAndOffers"])->name('product.all');
+            Route::get('/{id}', [ProductController::class, "getProductPricesAndOffers"])->name('product');
+        });
+
     });
 });

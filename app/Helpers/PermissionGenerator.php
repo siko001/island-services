@@ -10,10 +10,19 @@ class PermissionGenerator
 {
     public static function generatePermissions($output): int
     {
+        $createdCount = 0;
+        $createdCount = self::createResourcePermissions($output, $createdCount);
+        $createdCount = self::createStaticPermissions($output, $createdCount);
+        $createdCount = self::createActionPermissions($output, $createdCount);
+
+        return $createdCount;
+    }
+
+    public static function createResourcePermissions($output, $createdCount): int
+    {
         $resources = Nova::$resources;
         $allActions = ['view', 'view any', 'create', 'update', 'delete'];
         $permissionModelActions = ['view', 'view any'];
-        $createdCount = 0;
 
         foreach($resources as $resourceClass) {
             $model = $resourceClass::$model ?? null;
@@ -43,10 +52,6 @@ class PermissionGenerator
                 }
             }
         }
-
-        $createdCount = self::createStaticPermissions($output, $createdCount);
-        $createdCount = self::createActionPermissions($output, $createdCount);
-
         return $createdCount;
     }
 
@@ -56,19 +61,7 @@ class PermissionGenerator
             'terminate user',
         ];
 
-        foreach($actionPermissions as $permission) {
-            $permissionName = "{$permission}";
-            if(!Permission::where('name', $permissionName)->exists()) {
-                Permission::create(['name' => $permissionName]);
-                $createdCount++;
-                if($output) {
-                    $output->writeln("Created action permission: {$permissionName}");
-                } else {
-                    echo "Created action permission: {$permissionName}\n";
-                }
-            }
-        }
-        return $createdCount;
+        return self::PermissionLoop($actionPermissions, $output, $createdCount);
     }
 
     public static function createStaticPermissions($output, $createdCount): int
@@ -79,7 +72,13 @@ class PermissionGenerator
             'view other_companies',
         ];
 
-        foreach($staticPermissions as $permission) {
+        return self::PermissionLoop($staticPermissions, $output, $createdCount);
+    }
+
+    public static function PermissionLoop($permissionArray, $output, $createdCount): int
+    {
+
+        foreach($permissionArray as $permission) {
             if(!Permission::where('name', $permission)->exists()) {
                 Permission::create(['name' => $permission]);
                 $createdCount++;

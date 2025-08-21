@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Pipelines\Website\Customer;
+namespace App\Pipelines\Website;
 
 use Closure;
 use Illuminate\Support\Facades\Log;
