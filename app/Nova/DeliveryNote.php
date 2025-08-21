@@ -6,6 +6,7 @@ use App\Helpers\HelperFunctions;
 use App\Nova\Parts\Post\DeliveryNote\AdditionalDetails;
 use App\Nova\Parts\Post\DeliveryNote\DeliveryDetails;
 use App\Nova\Parts\Post\DeliveryNote\FinancialDetails;
+use App\Policies\ResourcePolicies;
 use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\Date;
@@ -17,6 +18,9 @@ use Laravel\Nova\Tabs\Tab;
 
 class DeliveryNote extends Resource
 {
+    use ResourcePolicies;
+
+    public static string $policyKey = 'delivery_note';
     /**
      * The model the resource corresponds to.
      * @var class-string<\App\Models\Post\DeliveryNote>
