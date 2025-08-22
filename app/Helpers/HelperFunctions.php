@@ -135,7 +135,7 @@ class HelperFunctions
      */
     public static function generateAccountNumber(?string $name, ?string $surname, ?int $startNumber = null): string
     {
-        $initials = self::getInitials($name ?? 'I', $surname ?? 'S');
+        $initials = self::getInitials($name ?? '', $surname ?? '');
 
         if($startNumber !== null) {
             // Increment static counter starting at given offset

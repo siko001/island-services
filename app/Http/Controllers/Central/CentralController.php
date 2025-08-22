@@ -38,7 +38,6 @@ class CentralController extends Controller
 
     public function store(Request $request): \Illuminate\Http\RedirectResponse
     {
-        // ✅ Let Laravel handle validation failures automatically
         $request->validate([
             'tenant_id' => ['required', 'string', 'regex:/^[a-zA-Z0-9\s]+$/', 'unique:tenants,id'],
             'admin_email' => 'required|email|unique:users,email',
@@ -109,10 +108,10 @@ class CentralController extends Controller
             $tenant = Tenant::query()->findOrFail($tenantId);
 
             $request->validate([
-                'tenant_id' => 'required|alpha_numeric_spaces|string|unique:tenants,id,' . $tenant->id,
+                'tenant_id' => ['required', 'string', 'regex:/^[a-zA-Z0-9\s]+$/', 'unique:tenants,id'],
                 'logo_path' => 'nullable|image',
             ], [
-                'tenant_id.alpha_numeric_spaces' => 'The tenant ID may only contain letters, numbers and spaces.',
+                'tenant_id.regex' => 'The tenant ID may only contain letters, numbers and spaces.',
             ]);
 
             if($request->hasFile('logo_path')) {

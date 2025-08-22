@@ -2,6 +2,7 @@
 
 namespace App\Nova;
 //  Select::make('Locality', 'tag_id')->searchable()->options(\App\Models\General\Location::all()->pluck('name', 'id'))->displayUsingLabels(),
+use App\Helpers\HelperFunctions;
 use App\Nova\Parts\Customer\AccountDetails;
 use App\Nova\Parts\Customer\CommunicationDetails;
 use App\Nova\Parts\Customer\DeliveryDetails;
@@ -9,6 +10,7 @@ use App\Nova\Parts\Customer\FinancialDetails;
 use App\Nova\Parts\Customer\OtherDetails;
 use App\Nova\Parts\Customer\SummerAddress;
 use App\Policies\ResourcePolicies;
+use Laravel\Nova\Actions\ExportAsCsv;
 use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\DateTime;
 use Laravel\Nova\Fields\Text;
@@ -21,6 +23,9 @@ class Customer extends Resource
     use ResourcePolicies;
 
     public static string $policyKey = 'customer';
+    //    public static $showPollingToggle = true;
+    //    public static $polling = true;
+    //    public static $pollingInterval = 1;
     /**
      * The model the resource corresponds to.
      * @var class-string<\App\Models\Customer\Customer>
@@ -49,13 +54,22 @@ class Customer extends Resource
 
             Tab::group('Client Details', [
                 Tab::make('Client Information', [
-                    Text::make('Client Name', 'client')
+                    Text::make('Client', 'client')
                         ->sortable()
                         ->rules('required', 'max:255'),
 
                     Text::make('Account Number')
-                        ->maxlength(12)
-                        ->rules('required', 'max:12', 'unique:customers,account_number,{{resourceId}}'),
+                        ->maxlength(16)
+                        ->rules('required', 'max:16', 'unique:customers,account_number,{{resourceId}}')
+                        ->help('Automatically generated from client <span class="text-blue-500">initials</span> or delivery details <span class="text-blue-500">name</span> and <span class="text-blue-500">surname</span>')
+                        ->withMeta(['extraAttributes' => ['readOnly' => true]])
+                        ->dependsOn(['client', 'delivery_details_name', 'delivery_details_surname'], function($field, $request, $formData) {
+                            $acNumb = $formData->get('client');
+                            $name = $formData->get('delivery_details_name');
+                            $surname = $formData->get('delivery_details_surname');
+                            $acNumb && $field->value = HelperFunctions::generateAccountNumber($acNumb, null);
+                            ($name && $surname) && $field->value = HelperFunctions::generateAccountNumber($name, $surname);
+                        }),
 
                     DateTime::make('Created At', 'created_at')
                         ->onlyOnDetail(),
@@ -132,6 +146,8 @@ class Customer extends Resource
      */
     public function actions(NovaRequest $request): array
     {
-        return [];
+        return [
+            ExportAsCsv::make(),
+        ];
     }
 }
