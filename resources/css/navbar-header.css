@@ -42,3 +42,7 @@
         margin-top: 0 !important;
     }
 }
+
+td:not(.phpdebugbar td) {
+    background: #f9fafb;
+}
