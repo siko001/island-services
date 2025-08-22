@@ -2,16 +2,15 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Helpers\Notifications;
 use App\Http\Controllers\Controller;
 use App\Models\Customer\Customer;
-use App\Models\User;
 use App\Pipelines\Website\AuthenticateRequest;
 use App\Pipelines\Website\Customer\FormatDataForAppCreate;
 use App\Pipelines\Website\Customer\FormatDataForAppUpdate;
 use App\Pipelines\Website\Customer\ValidateRequestData;
 use Illuminate\Http\Request;
 use Illuminate\Pipeline\Pipeline;
-use Laravel\Nova\Notifications\NovaNotification;
 
 class CustomerApiController extends Controller
 {
@@ -44,15 +43,16 @@ class CustomerApiController extends Controller
 
             if($attributes) {
                 $customer = Customer::create($attributes);
-
-                $admins = User::role('super admin')->get();
-                foreach($admins as $admin) {
-                    $admin->notify(
-                        NovaNotification::make()
-                            ->message("Customer " . ($customer->client) . ' created and linked to ' . ($customer->delivery_area_id) . ' from website')
-                            ->icon('user')
-                    );
-                }
+                Notifications::notifyAdmins(
+                    $customer,
+                    [
+                        'client' => $customer->client,
+                        'delivery_area' => $customer->deliveryArea ? $customer->deliveryArea->name : $customer->delivery_details_area_id,
+                        'delivery_locality' => $customer->deliveryLocality ? $customer->deliveryLocality->name : $customer->delivery_details_locality_id,
+                    ],
+                    'created',
+                    "Customer {client} created and linked to Area: {delivery_area}, Location: {delivery_locality} from the website"
+                );
 
                 return response()->json([
                     "message" => "customer created successfully",
@@ -61,10 +61,21 @@ class CustomerApiController extends Controller
                 ]);
 
             } else {
+
+                Notifications::notifyAdmins(
+                    $attributes,
+                    [
+                        'client' => $attributes->client,
+                    ],
+                    'created',
+                    "Customer {client} failed to insert in system from website"
+                );
+
                 return response()->json([
                     "message" => "customer not created",
                     'error' => true
                 ]);
+
             }
 
         } catch(\Exception $e) {
@@ -111,14 +122,12 @@ class CustomerApiController extends Controller
                 // Update customer with the new attributes
                 $customer->update($attributes);
 
-                $admins = User::role('super admin')->get();
-                foreach($admins as $admin) {
-                    $admin->notify(
-                        NovaNotification::make()
-                            ->message("Customer " . ($customer->client) . ' updated his details from website.')
-                            ->icon('user')
-                    );
-                }
+                Notifications::notifyAdmins(
+                    $customer,
+                    ['client' => $customer->client,],
+                    'created',
+                    "Customer {client} updated his details from the website successfully."
+                );
 
                 return response()->json([
                     "message" => "customer updated successfully",
@@ -126,9 +135,14 @@ class CustomerApiController extends Controller
                     "customer" => $customer,
                 ]);
 
-                //                send a nova notification
-
             } else {
+                //Failed Request
+                Notifications::notifyAdmins(
+                    $attributes,
+                    ['client' => $attributes->client,],
+                    'created',
+                    "Customer {client} failed to updated his details from the website."
+                );
                 return response()->json([
                     "message" => "customer not updated - missing attributes or ID",
                     "error" => true,

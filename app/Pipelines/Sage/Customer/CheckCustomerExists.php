@@ -13,8 +13,8 @@ class CheckCustomerExists
         //        TODO
         Log::info('Checking if customer exists in Sage');
         // Unpack context variables passed from previous pipes
-        //        $customer = $context['customer'];
-        //        $credentials = $context['credentials'];
+        $customer = $context['customer'];
+        $credentials = $context['credentials'];
 
         //        $url = $credentials['base_url'] . '/Freedom.Core/Freedom Database/SDK/CustomerExists/' . $customer->account_number;
         //        $response = Http::withBasicAuth($credentials['username'], $credentials['password'])->get($url);

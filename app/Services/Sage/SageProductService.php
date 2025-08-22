@@ -2,6 +2,7 @@
 
 namespace App\Services\Sage;
 
+use App\Helpers\Notifications;
 use App\Models\Product\Product;
 use App\Pipelines\Sage\Product\CheckProductExists;
 use App\Pipelines\Sage\Product\FormatProductDataForSage;
@@ -31,11 +32,24 @@ class SageProductService
                 ->thenReturn();
             Log::info('Sage API createInSage called for Product', ['product_id' => $product->id, 'context' => $context]);
 
-            //            Notify the admin
+            Notifications::notifyAdmins(
+                $product,
+                ['product' => $product->name],
+                'created',
+                "Product {product} created successfully in Sage"
+            );
         } catch(\Exception $err) {
             Log::error('Error creating customer in Sage: ' . $err->getMessage(), [
                 'exception' => $err,
             ]);
+
+            Notifications::notifyAdmins(
+                $product,
+                ['product' => $product->name],
+                'created',
+                "Product {product} failed to create in Sage"
+            );
+
             throw $err;
         }
 
@@ -54,9 +68,23 @@ class SageProductService
                     //Send Update request   //TODO -  update based on previous value?
                 ])
                 ->thenReturn();
-            Log::info('Sage API createInSage called', ['product_id' => $product->id, 'context' => $context]);
+
+            Notifications::notifyAdmins(
+                $product,
+                ['product' => $product->name],
+                'update',
+                "Product {product} updated successfully in Sage"
+            );
+            Log::info('Sage API update In Sage called', ['product_id' => $product->id, 'context' => $context]);
         } catch(\Exception $err) {
-            Log::error('Error creating customer in Sage: ' . $err->getMessage(), [
+
+            Notifications::notifyAdmins(
+                $product,
+                ['product' => $product->name],
+                'update',
+                "Product {product} failed to update in Sage"
+            );
+            Log::error('Error update customer in Sage: ' . $err->getMessage(), [
                 'exception' => $err,
             ]);
             throw $err;

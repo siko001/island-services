@@ -2,6 +2,7 @@
 
 namespace App\Services\Website;
 
+use App\Helpers\Notifications;
 use App\Models\Product\Product;
 use App\Pipelines\Website\Product\CheckProductExistsWebsite;
 use App\Pipelines\Website\Product\FormatProductDataForWebsite;
@@ -55,10 +56,24 @@ class WebsiteProductService
                 ->thenReturn();
             Log::info('Website API createInSage called for Product', ['product_id' => $product->id, 'context' => $context]);
 
+            Notifications::notifyAdmins(
+                $product,
+                ['product' => $product->name],
+                'created',
+                "Product {product} created successfully in Website"
+            );
+
         } catch(\Exception $err) {
             Log::error('Error Creating Product in Website: ' . $err->getMessage(), [
                 'exception' => $err,
             ]);
+
+            Notifications::notifyAdmins(
+                $product,
+                ['product' => $product->name],
+                'created',
+                "Product {product} created successfully in Website"
+            );
             throw $err;
         }
 
@@ -85,6 +100,13 @@ class WebsiteProductService
             Log::error('Error Updating product in Website: ' . $err->getMessage(), [
                 'exception' => $err,
             ]);
+
+            Notifications::notifyAdmins(
+                $product,
+                ['product' => $product->name],
+                'update',
+                "Product {product} failed to update in Website"
+            );
             throw $err;
         }
 

@@ -2,6 +2,7 @@
 
 namespace App\Services\Sage;
 
+use App\Helpers\Notifications;
 use App\Models\Customer\Customer;
 use App\Pipelines\Sage\Customer\CheckCustomerExists;
 use App\Pipelines\Sage\Customer\FormatCustomerDataForSage;
@@ -24,16 +25,31 @@ class SageCustomerService
                 ->through([
                     ValidateCustomerForSage::class,
                     FormatCustomerDataForSage::class,
-                    //                    SageConnection::class,
+                    SageConnection::class,
                     CheckCustomerExists::class,
                     SendCustomerCreationRequest::class,
                 ])
                 ->thenReturn();
+
+            Notifications::notifyAdmins(
+                $customer,
+                ['client' => $customer->client],
+                'created',
+                "Customer {client} created successfully in Sage"
+            );
+
             Log::info('Sage API createInSage called', ['customer_id' => $customer->id, 'context' => $context]);
         } catch(\Exception $err) {
             Log::error('Error creating customer in Sage: ' . $err->getMessage(), [
                 'exception' => $err,
             ]);
+
+            Notifications::notifyAdmins(
+                $customer,
+                ['client' => $customer->client],
+                'created',
+                "Customer {client} failed to create in Sage"
+            );
             throw $err;
         }
 
@@ -50,9 +66,17 @@ class SageCustomerService
                     SageConnection::class,
                     //TODO
                     CheckCustomerExists::class,
+                    SendCustomerCreationRequest::class
                     //make sure customer is already there
                     //Send Update request   //TODO - creation or update?
                 ])->thenReturn();
+
+            Notifications::notifyAdmins(
+                $customer,
+                ['client' => $customer->client],
+                'created',
+                "Customer {client} details updated successfully in Sage"
+            );
 
             Log::info('Sage API updateInSage called', ['customer_id' => $customer->id, 'context' => $context]);
 
@@ -60,6 +84,14 @@ class SageCustomerService
             Log::error('Error creating customer in Sage: ' . $err->getMessage(), [
                 'exception' => $err,
             ]);
+
+            Notifications::notifyAdmins(
+                $customer,
+                ['client' => $customer->client],
+                'created',
+                "Customer {client} failed to updated in Sage"
+            );
+
             throw $err;
         }
 
