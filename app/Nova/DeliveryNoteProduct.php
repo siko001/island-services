@@ -2,7 +2,6 @@
 
 namespace App\Nova;
 
-use Illuminate\Support\Facades\Log;
 use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\Number;
 use Laravel\Nova\Fields\Select;
@@ -83,7 +82,6 @@ class DeliveryNoteProduct extends Resource
                     }
                     if($productId && $price_type_id) {
                         $field->show();
-                        Log::info(json_encode($field));
                     }
                 }),
 

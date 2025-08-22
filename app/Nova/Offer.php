@@ -41,6 +41,9 @@ class Offer extends Resource
                 ->sortable()
                 ->rules('required', 'max:255'),
 
+            Text::make('Total Price (Ex. Vat)', fn() => number_format($this->offerProducts->sum('total_price'), 2))
+                ->readonly(),
+
             HasMany::make('Products', 'offerProducts', OfferProduct::class),
         ];
     }

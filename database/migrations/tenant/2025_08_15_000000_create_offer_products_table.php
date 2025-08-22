@@ -23,8 +23,6 @@ return new class extends Migration {
             $table->decimal('total_price', 10, 2);
             $table->timestamps();
 
-            // Ensure each product can only be added once per offer
-            $table->unique(['offer_id', 'product_id']);
         });
     }
 

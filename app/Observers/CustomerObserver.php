@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Observers\Customer;
+namespace App\Observers;
 
 use App\Jobs\Sage\Customer\CreateSageCustomerJob;
 use App\Jobs\Sage\Customer\UpdateSageCustomerJob;

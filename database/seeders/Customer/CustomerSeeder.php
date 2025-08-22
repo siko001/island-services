@@ -16,13 +16,13 @@ class CustomerSeeder extends Seeder
 
         $lastCustomer = Customer::orderByDesc('id')->first();
 
-        $startNumber = 0 - 1;
+        $startNumber = 0;
         if($lastCustomer) {
             $startNumber = $lastCustomer->id ?: 0;
         }
 
         $customersToCreate = 200;
-        $counter = $startNumber;
+        $counter = $startNumber - 1;
 
         $this->command->info('Creating ' . $customersToCreate . ' Customers and assigning values...');
         Customer::factory()->count($customersToCreate)

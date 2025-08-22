@@ -36,7 +36,8 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
                 NovaResources::generalResources(),
                 NovaResources::customerResources(),
                 NovaResources::adminResources(),
-                NovaResources::stockResources()
+                NovaResources::stockResources(),
+                NovaResources::postResources()
             )
         );
 

@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Jobs\Sage\Customer;
+namespace App\Jobs\Website\Product;
 
-use App\Models\Customer\Customer;
-use App\Services\Sage\SageCustomerService;
+use App\Models\Product\Product;
+use App\Services\Website\WebsiteProductService;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Foundation\Queue\Queueable;
@@ -11,36 +11,34 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
 
-class CreateSageCustomerJob implements ShouldQueue
+class CreateWebsiteProductJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    protected Customer $customer;
+    protected Product $product;
 
     /**
      * Create a new job instance.
      */
-    public function __construct(Customer $customer)
+    public function __construct(Product $product)
     {
-        $this->customer = $customer;
+        $this->product = $product;
     }
 
     /**
      * Execute the job.
      * @throws \Exception
      */
-
-    public function handle(SageCustomerService $sageService): void
+    public function handle(WebsiteProductService $websiteService): void
     {
         try {
-            $sageService->createInSage($this->customer);
+            $websiteService->createInWebsite($this->product);
         } catch(\Throwable $e) {
-            Log::error('Create Sage Customer Job failed: ' . $e->getMessage(), [
-                'product_id' => $this->customer->id,
+            Log::error('Create Website Product Job failed: ' . $e->getMessage(), [
+                'product_id' => $this->product->id,
                 'exception' => $e,
             ]);
             throw $e;
         }
-
     }
 }
