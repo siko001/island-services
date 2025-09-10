@@ -17,7 +17,7 @@ class SageProductService
     /**
      * @throws \Exception
      */
-    public function createInSage(Product $product): void //POST || Create a new customer || /Freedom.Core/Freedom Database/SDK/CustomerInsert{CUSTOMER}
+    public function createInSage(Product $product): void //POST || Create a new product || /Freedom.Core/Freedom Database/SDK/InventoryItemInsert{ITEM}
     {
         try {
             $context = app(Pipeline::class)
@@ -38,6 +38,7 @@ class SageProductService
                 'created',
                 "Product {product} created successfully in Sage"
             );
+
         } catch(\Exception $err) {
             Log::error('Error creating customer in Sage: ' . $err->getMessage(), [
                 'exception' => $err,
@@ -55,8 +56,9 @@ class SageProductService
 
     }
 
-    public function updateInSage(Product $product): void //POST || Update an existing customer ||/Freedom.Core/Freedom Database/SDK/CustomerUpdate{CUSTOMER}
+    public function updateInSage(Product $product): void //POST || Update an existing product ||/Freedom.Core/Freedom Database/SDK/InventoryItemInsert{ITEM}
     {
+        Log::info("Starting Pipelines for sage: " . json_encode($product));
         try {
             $context = app(Pipeline::class)
                 ->send($product)
@@ -65,7 +67,7 @@ class SageProductService
                     FormatProductDataForSage::class,
                     SageConnection::class,
                     CheckProductExists::class, //TODO - pass a variable to next view??
-                    //Send Update request   //TODO -  update based on previous value?
+                    SendProductCreationRequest::class
                 ])
                 ->thenReturn();
 

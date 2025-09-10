@@ -64,7 +64,6 @@ class SageCustomerService
                     ValidateCustomerForSage::class,
                     FormatCustomerDataForSage::class,
                     SageConnection::class,
-                    //TODO
                     CheckCustomerExists::class,
                     SendCustomerCreationRequest::class
                     //make sure customer is already there

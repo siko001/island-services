@@ -6,6 +6,7 @@ use App\Models\Admin\Role;
 use App\Models\Customer\Customer;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 
 class HelperFunctions
 {
@@ -149,5 +150,27 @@ class HelperFunctions
         }
 
         return strtoupper($initials) . '-' . $number;
+    }
+
+    /**
+     * Retain the name of the uploaded image.
+     * @param object| $request
+     * @param string|null $pathDestination
+     * @return string
+     */
+    public static function retainFileName(object $request, ?string $pathDestination): string
+    {
+        $file = $request->image_path;
+        $originalName = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
+        $extension = $file->getClientOriginalExtension();
+        $filename = $originalName . '.' . $extension;
+
+        $i = 1;
+        while(Storage::disk('public')->exists(" $pathDestination/$filename")) {
+            $filename = $originalName . '-' . $i . '.' . $extension;
+            $i++;
+        }
+
+        return $filename;
     }
 }

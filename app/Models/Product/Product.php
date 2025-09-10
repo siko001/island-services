@@ -12,6 +12,7 @@ class Product extends Model
 {
     use HasFactory;
 
+    //    TODO - Images,  Descriptions
     protected $table = 'products';
     protected $fillable = [
         "name",
@@ -39,7 +40,11 @@ class Product extends Model
         "is_accessory",
         "bcrs_deposit",
         "eco_tax",
-        "commissions"
+        "commissions",
+        'image_path',
+        'short_description',
+        'detailed_description',
+        'gallery'
     ];
     protected $casts = [
         "product_price" => "decimal:2",
@@ -64,7 +69,8 @@ class Product extends Model
         "eco_tax" => "decimal:2",
         "driver_commissions" => "json",
         "purchase_date" => "date",
-        "last_service_date" => "date"
+        "last_service_date" => "date",
+        'gallery' => 'json'
     ];
 
     public function priceType()

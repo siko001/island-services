@@ -5,6 +5,7 @@ namespace App\Nova;
 use App\Nova\Parts\Product\AdditionalDetails;
 use App\Nova\Parts\Product\PriceTypeDynamicFields;
 use App\Nova\Parts\Product\StockInfo;
+use App\Nova\Parts\Product\WebsiteInfo;
 use App\Policies\ResourcePolicies;
 use Laravel\Nova\Fields\BelongsToMany;
 use Laravel\Nova\Fields\ID;
@@ -62,6 +63,7 @@ class Product extends Resource
 
             Tab::group('Product Information', [
                 Tab::make('Stock Information', new StockInfo()),
+                Tab::make('Website Details', new WebsiteInfo()),
                 Tab::make('Additional Details', new AdditionalDetails()),
 
                 Tab::make('Driver Commissions', [

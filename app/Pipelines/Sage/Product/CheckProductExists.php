@@ -10,23 +10,23 @@ class CheckProductExists
     public function handle($context, Closure $next)
     {
 
-        //        TODO
+        $context['exists'] = false; //TODO - implement actual check
         Log::info('Checking if Product exists in Sage');
         //        $product = $context['product'];
         //        $credentials = $context['credentials'];
-
-        //        $url = $credentials['base_url'] . '/Freedom.Core/Freedom Database/SDK/CustomerExists/' . $customer->account_number;
+        //
+        //        $url = $credentials['base_url'] . '/Freedom.Core/Freedom Database/SDK/InventoryItemFind/' . $product->id;
         //        $response = Http::withBasicAuth($credentials['username'], $credentials['password'])->get($url);
         //        if($response->successful()) {
-        //            Log::info('Customer existence check successful in Sage.', ['customer' => $customer]);
-        //            return $response->json()['exists'] ?? false;
+        //            Log::info('Product existence check successful in Sage.', ['product' => $product]);
+        //            $context['exists'] = $response->json()['exists'] ?? false;
         //        } else {
         //            Log::error('Failed to check customer existence in Sage.', [
         //                'status' => $response->status(),
         //                'body' => $response->body(),
-        //                'customer' => $customer
+        //                'product' => $product
         //            ]);
-        //            throw new \Exception('Failed to check customer existence in Sage: ' . $response->body());
+        //            throw new \Exception('Failed to check product existence in Sage: ' . $response->body());
         //        }
         return $next($context);
 
