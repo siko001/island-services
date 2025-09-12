@@ -12,7 +12,7 @@ class FormatCustomerGroupDataForSage
         $customerGroup = $context;
         Log::info('Formating Customer Group Data for Sage');
 
-        // Build Sage payload
+        // Build Sage payloa
         $payload = [
             "Code" => $customerGroup->abbreviation,
             "Description" => $customerGroup->name,
@@ -29,8 +29,8 @@ class FormatCustomerGroupDataForSage
         ];
 
         if(empty($payload['Code']) || empty($payload['Description'])) {
-            Log::info('Required Sage customer group fields are missing.', ['customer_group' => $customerGroup, 'customerGroup-code' => $payload['Code'], 'customerGroup-description' => $payload['Description']]);
-            throw new \InvalidArgumentException('Missing required Sage customer group fields.');
+            Log::info('Required Sage customer group fields are missing.', ['customer_group' => $customerGroup, 'customerGroup-code' => $payload['Code'], 'customer-description' => $payload['Description']]);
+            throw new \InvalidArgumentException('Missing required Sage customer fields.');
         }
 
         // Pass the context to the next pipe

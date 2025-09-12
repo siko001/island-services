@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Pipelines\Sage\CustomerGroup;
+namespace App\Pipelines\Sage\Area;
 
 use Closure;
 use Illuminate\Support\Facades\Log;
