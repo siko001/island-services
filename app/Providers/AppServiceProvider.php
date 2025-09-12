@@ -12,7 +12,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
     }
 
     /**
@@ -27,5 +26,6 @@ class AppServiceProvider extends ServiceProvider
         Validator::extend('alpha_numeric_spaces', function($attribute, $value) {
             return preg_match('/^[\pL\pN\s]+$/u', $value);
         });
+
     }
 }

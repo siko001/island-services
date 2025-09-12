@@ -3,9 +3,8 @@
 namespace App\Nova\Parts\Product;
 
 use App\Helpers\HelperFunctions;
-use App\Nova\Repeaters\GalleryItem;
+use Ardenthq\ImageGalleryField\ImageGalleryField;
 use Laravel\Nova\Fields\File;
-use Laravel\Nova\Fields\Repeater;
 use Laravel\Nova\Fields\Textarea;
 
 class WebsiteInfo
@@ -13,7 +12,6 @@ class WebsiteInfo
     public function __invoke(): array
     {
         return [
-
             Textarea::make('Short Description')
                 ->withMeta(['extraAttributes' => ['style' => 'max-height: 150px; min-height:100px']])
                 ->rules('max:255')
@@ -39,11 +37,16 @@ class WebsiteInfo
                 ->hideFromIndex()
                 ->help('Upload the Product Featured Image here.'),
 
-            Repeater::make('Gallery')
-                ->repeatables([
-                    GalleryItem::make()->confirmRemoval(),
-                ]),
-
+            ImageGalleryField::make('Gallery')
+            //                ->dependsOn(["gallery"], function($field, $request, $formData) {
+            //                    Log::info(json_encode($field));
+            //                    Log::info(json_encode($formData));
+            //                    Log::info(json_encode($request));
+            //                })
+            //                ->resolveUsing(function($value) {
+            //                    $value = json_decode($value, true);
+            //                    Log::info($value);
+            //                })
         ];
 
     }

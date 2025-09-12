@@ -40,6 +40,7 @@ Route::middleware([
     Route::get('/login', function() {
         return redirect('/admin/dashboards/main');
     })->name('login');
+
 });
 
 //API ROUTES

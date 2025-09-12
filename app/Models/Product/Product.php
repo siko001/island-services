@@ -7,12 +7,13 @@ use App\Observers\ProductObserver;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 
-class Product extends Model
+class Product extends Model implements HasMedia
 {
-    use HasFactory;
+    use HasFactory, InteractsWithMedia;
 
-    //    TODO - Images,  Descriptions
     protected $table = 'products';
     protected $fillable = [
         "name",
@@ -70,7 +71,6 @@ class Product extends Model
         "driver_commissions" => "json",
         "purchase_date" => "date",
         "last_service_date" => "date",
-        'gallery' => 'json'
     ];
 
     public function priceType()
@@ -90,5 +90,11 @@ class Product extends Model
     {
         parent::boot();
         Product::observe(ProductObserver::class);
+
+    }
+
+    public function registerMediaCollections(): void
+    {
+        $this->addMediaCollection('gallery');
     }
 }
