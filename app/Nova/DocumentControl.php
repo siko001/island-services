@@ -2,6 +2,7 @@
 
 namespace App\Nova;
 
+use App\Helpers\HelperFunctions;
 use App\Policies\ResourcePolicies;
 use Laravel\Nova\Fields\File;
 use Laravel\Nova\Fields\Select;
@@ -49,6 +50,10 @@ class DocumentControl extends Resource
                 ->rules('required', 'string', 'max:255'),
 
             File::make('Document', "file_path")
+                ->storeAs(function($request) {
+                    return HelperFunctions::retainFileName($request, 'documents');
+                })
+                ->hideFromIndex()
                 ->disk('public')
                 ->path('documents')
                 ->rules('required', 'file', 'max:51200') //50MB
