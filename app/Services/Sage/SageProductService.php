@@ -17,7 +17,7 @@ class SageProductService
     /**
      * @throws \Exception
      */
-    public function createInSage(Product $product): void //POST || Create a new customer || /Freedom.Core/Freedom Database/SDK/CustomerInsert{CUSTOMER}
+    public function createInSage(Product $product): void //POST || Create a new product || /Freedom.Core/Freedom Database/SDK/InventoryItemInsert{ITEM}
     {
         try {
             $context = app(Pipeline::class)
@@ -36,10 +36,12 @@ class SageProductService
                 $product,
                 ['product' => $product->name],
                 'created',
-                "Product {product} created successfully in Sage"
+                "Product {product} created successfully in Sage",
+                'archive-box'
             );
+
         } catch(\Exception $err) {
-            Log::error('Error creating customer in Sage: ' . $err->getMessage(), [
+            Log::error('Error creating product in Sage: ' . $err->getMessage(), [
                 'exception' => $err,
             ]);
 
@@ -47,7 +49,9 @@ class SageProductService
                 $product,
                 ['product' => $product->name],
                 'created',
-                "Product {product} failed to create in Sage"
+                "Product {product} failed to create in Sage",
+                'exclamation-circle',
+                'error',
             );
 
             throw $err;
@@ -55,8 +59,9 @@ class SageProductService
 
     }
 
-    public function updateInSage(Product $product): void //POST || Update an existing customer ||/Freedom.Core/Freedom Database/SDK/CustomerUpdate{CUSTOMER}
+    public function updateInSage(Product $product): void //POST || Update an existing product ||/Freedom.Core/Freedom Database/SDK/InventoryItemInsert{ITEM}
     {
+        Log::info("Starting Pipelines for sage: " . json_encode($product));
         try {
             $context = app(Pipeline::class)
                 ->send($product)
@@ -65,7 +70,7 @@ class SageProductService
                     FormatProductDataForSage::class,
                     SageConnection::class,
                     CheckProductExists::class, //TODO - pass a variable to next view??
-                    //Send Update request   //TODO -  update based on previous value?
+                    SendProductCreationRequest::class
                 ])
                 ->thenReturn();
 
@@ -73,18 +78,21 @@ class SageProductService
                 $product,
                 ['product' => $product->name],
                 'update',
-                "Product {product} updated successfully in Sage"
+                "Product {product} updated successfully in Sage",
+                'archive-box'
             );
-            Log::info('Sage API update In Sage called', ['product_id' => $product->id, 'context' => $context]);
+            Log::info('Sage API update In Sage called for Product ', ['product_id' => $product->id, 'context' => $context]);
         } catch(\Exception $err) {
 
             Notifications::notifyAdmins(
                 $product,
                 ['product' => $product->name],
                 'update',
-                "Product {product} failed to update in Sage"
+                "Product {product} failed to update in Sage",
+                'exclamation-circle',
+                'error',
             );
-            Log::error('Error update customer in Sage: ' . $err->getMessage(), [
+            Log::error('Error updating product in Sage: ' . $err->getMessage(), [
                 'exception' => $err,
             ]);
             throw $err;

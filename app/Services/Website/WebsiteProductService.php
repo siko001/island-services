@@ -82,7 +82,6 @@ class WebsiteProductService
     public function updateInWebsite(Product $product): void
     {
         try {
-
             // Prepare the data you want to send
             $context = app(Pipeline::class)
                 ->send($product)

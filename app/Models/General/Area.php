@@ -2,7 +2,9 @@
 
 namespace App\Models\General;
 
+use App\Observers\AreaObserver;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Area extends Model
 {
@@ -38,8 +40,18 @@ class Area extends Model
             ->withTimestamps();
     }
 
-    public function vehicles()
+    public function vehicles(): HasMany
     {
         return $this->hasMany(Vehicle::class);
+    }
+
+    public static function boot()
+    {
+        parent::boot();
+        Area::observe(AreaObserver::class);
+
+        static::deleting(function($area) {
+            $area->locations()->detach();
+        });
     }
 }

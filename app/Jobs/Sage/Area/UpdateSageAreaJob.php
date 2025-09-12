@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Jobs\Sage\Customer;
+namespace App\Jobs\Sage\Area;
 
-use App\Models\Customer\Customer;
-use App\Services\Sage\SageCustomerService;
+use App\Models\General\Area;
+use App\Services\Sage\SageAreaService;
 use Exception;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -13,31 +13,31 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
 use Throwable;
 
-class UpdateSageCustomerJob implements ShouldQueue
+class UpdateSageAreaJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    protected Customer $customer;
+    protected Area $area;
 
     /**
      * Create a new job instance.
      */
-    public function __construct(Customer $customer)
+    public function __construct(Area $area)
     {
-        $this->customer = $customer;
+        $this->area = $area;
     }
 
     /**
      * Execute the job.
      * @throws Exception|Throwable
      */
-    public function handle(SageCustomerService $sageService): void
+    public function handle(SageAreaService $sageService): void
     {
         try {
-            $sageService->updateInSage($this->customer);
+            $sageService->updateInSage($this->area);
         } catch(Throwable $e) {
-            Log::error('Update Sage Customer Job failed: ' . $e->getMessage(), [
-                'customer_id' => $this->customer->id,
+            Log::error('Update Sage Area Job failed: ' . $e->getMessage(), [
+                'area_id' => $this->area->id,
                 'exception' => $e,
             ]);
             throw $e;

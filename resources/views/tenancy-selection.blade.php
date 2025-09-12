@@ -9,9 +9,11 @@
         
         <x-tenant-list :tenants="$tenants"/>
         
-        <x-form-heading :tenants="$tenants"/>
-        
-        <x-creation-form :tenants="$tenants"/>
+        @if(Auth::user())
+            <x-form-heading :tenants="$tenants"/>
+            
+            <x-creation-form :tenants="$tenants"/>
+        @endif
     
     </div>
     

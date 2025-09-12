@@ -1,45 +1,47 @@
 <?php
 
-namespace App\Jobs\Sage\Product;
+namespace App\Jobs\Sage\Area;
 
-use App\Models\Product\Product;
-use App\Services\Sage\SageProductService;
+use App\Models\General\Area;
+use App\Services\Sage\SageAreaService;
 use Exception;
-use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
 
-class CreateSageProductJob implements ShouldQueue
+class CreateSageAreaJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    protected Product $product;
+    protected Area $area;
 
     /**
      * Create a new job instance.
      */
-    public function __construct(Product $product)
+    public function __construct(Area $area)
     {
-        $this->product = $product;
+        $this->area = $area;
     }
 
     /**
      * Execute the job.
      * @throws Exception
      */
-    public function handle(SageProductService $sageService): void
+
+    public function handle(SageAreaService $sageService): void
     {
         try {
-            $sageService->createInSage($this->product);
+            $sageService->createInSage($this->area);
         } catch(\Throwable $e) {
-            Log::error('Create Sage Product Job failed: ' . $e->getMessage(), [
-                'product_id' => $this->product->id,
+            Log::error('Create Sage Area Job failed: ' . $e->getMessage(), [
+                'area_id' => $this->area->id,
                 'exception' => $e,
             ]);
             throw $e;
         }
+
     }
 }

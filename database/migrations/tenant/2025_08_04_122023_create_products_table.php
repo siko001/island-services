@@ -16,6 +16,12 @@ return new class extends Migration {
             $table->string('abbreviation')->nullable();
             $table->decimal("product_price", 8, 2);
             $table->integer('stock')->nullable();
+
+            $table->string("image_path")->nullable();
+            $table->json('gallery')->nullable();
+            $table->text("short_description")->nullable();
+            $table->longText('detailed_description')->nullable();
+
             $table->integer('stock_new')->nullable();
             $table->integer('stock_used')->nullable();
             $table->integer('stock_available')->nullable();
