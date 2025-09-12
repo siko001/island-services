@@ -3,7 +3,7 @@
 namespace App\Nova\Parts\Product;
 
 use App\Helpers\HelperFunctions;
-use Ardenthq\ImageGalleryField\ImageGalleryField;
+use IslandServices\Gallery\Gallery;
 use Laravel\Nova\Fields\File;
 use Laravel\Nova\Fields\Textarea;
 
@@ -37,7 +37,9 @@ class WebsiteInfo
                 ->hideFromIndex()
                 ->help('Upload the Product Featured Image here.'),
 
-            ImageGalleryField::make('Gallery')
+            //            ImageGalleryField::make('Gallery')
+            Gallery:: make('Gallery')
+
             //                ->dependsOn(["gallery"], function($field, $request, $formData) {
             //                    Log::info(json_encode($field));
             //                    Log::info(json_encode($formData));
