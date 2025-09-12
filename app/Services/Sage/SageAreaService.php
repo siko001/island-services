@@ -41,7 +41,7 @@ class SageProductService
             );
 
         } catch(\Exception $err) {
-            Log::error('Error creating product in Sage: ' . $err->getMessage(), [
+            Log::error('Error creating customer in Sage: ' . $err->getMessage(), [
                 'exception' => $err,
             ]);
 
@@ -81,7 +81,7 @@ class SageProductService
                 "Product {product} updated successfully in Sage",
                 'archive-box'
             );
-            Log::info('Sage API update In Sage called for Product ', ['product_id' => $product->id, 'context' => $context]);
+            Log::info('Sage API update In Sage called', ['product_id' => $product->id, 'context' => $context]);
         } catch(\Exception $err) {
 
             Notifications::notifyAdmins(
@@ -92,7 +92,7 @@ class SageProductService
                 'exclamation-circle',
                 'error',
             );
-            Log::error('Error updating product in Sage: ' . $err->getMessage(), [
+            Log::error('Error update customer in Sage: ' . $err->getMessage(), [
                 'exception' => $err,
             ]);
             throw $err;

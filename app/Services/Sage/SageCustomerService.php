@@ -39,7 +39,7 @@ class SageCustomerService
                 "Customer {client} created successfully in Sage",
             );
 
-            Log::info('Sage API createInSage called', ['customer_id' => $customer->id, 'context' => $context]);
+            Log::info('Sage API createInSage called for Customer', ['customer_id' => $customer->id, 'context' => $context]);
         } catch(Exception $err) {
             Log::error('Error creating customer in Sage: ' . $err->getMessage(), [
                 'exception' => $err,
@@ -81,7 +81,7 @@ class SageCustomerService
                 "Customer {client} details updated successfully in Sage"
             );
 
-            Log::info('Sage API updateInSage called', ['customer_id' => $customer->id, 'context' => $context]);
+            Log::info('Sage API updateInSage called for Customer ', ['customer_id' => $customer->id, 'context' => $context]);
 
         } catch(Exception $err) {
             Log::error('Error creating customer in Sage: ' . $err->getMessage(), [

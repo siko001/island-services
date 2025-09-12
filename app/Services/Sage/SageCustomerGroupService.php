@@ -38,7 +38,7 @@ class SageCustomerGroupService
                 'user-group',
             );
 
-            Log::info('Sage API createInSage called', ['customer_group_id' => $customerGroup->id, 'context' => $context]);
+            Log::info('Sage API createInSage called for Customer Group', ['customer_group_id' => $customerGroup->id, 'context' => $context]);
 
         } catch(\Exception $err) {
             // Handle exception
@@ -82,7 +82,7 @@ class SageCustomerGroupService
                 'user-group',
             );
 
-            Log::info('Sage API updateInSage called for customer group', ['customer_group_id' => $customerGroup->id, 'context' => $context]);
+            Log::info('Sage API updateInSage called for Customer Group', ['customer_group_id' => $customerGroup->id, 'context' => $context]);
 
         } catch(\Exception $err) {
             // Handle exception
