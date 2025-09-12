@@ -5,16 +5,16 @@ namespace App\Pipelines\Sage\Area;
 use Closure;
 use Illuminate\Support\Facades\Log;
 
-class ValidateCustomerGroupForSage
+class ValidateAreaForSage
 {
     public function handle($context, Closure $next)
     {
 
-        $customerGroup = $context;
-        Log::info('Validate Customer Group for Sage');
-        if(empty($customerGroup->id)) {
-            Log::info('Required Sage customer fields are missing.', ['customer group' => $customerGroup, 'ID' => $customerGroup->id]);
-            throw new \InvalidArgumentException('Missing required Sage Customer Group fields.');
+        $area = $context;
+        Log::info('Validate Area for Sage');
+        if(empty($area->id)) {
+            Log::info('Required Sage area fields are missing.', ['Area' => $area, 'ID' => $area->id]);
+            throw new \InvalidArgumentException('Missing required Sage Area fields.');
         }
 
         return $next($context);

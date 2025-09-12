@@ -1,32 +1,32 @@
 <?php
 
-namespace App\Pipelines\Sage\CustomerGroup;
+namespace App\Pipelines\Sage\Area;
 
 use Closure;
 use Illuminate\Support\Facades\Log;
 
-class CheckCustomerGroupExists
+class CheckAreaExists
 {
     public function handle($context, Closure $next)
     {
         //        TODO
-        Log::info('Checking if customer group exists in Sage');
+        Log::info('Checking if area exists in Sage');
         // Unpack context variables passed from previous pipes
-        $customerGroup = $context['customerGroup'];
+        $area = $context['area'];
         $credentials = $context['credentials'];
 
-        //        $url = $credentials['base_url'] . '/Freedom.Core/Freedom Database/SDK/CustomerGroupFind/' . $customerGroup->id;
+        //        $url = $credentials['base_url'] . '/Freedom.Core/Freedom Database/SDK/AreaFind/' . $area->abbreviation;
         //        $response = Http::withBasicAuth($credentials['username'], $credentials['password'])->get($url);
         //        if($response->successful()) {
-        //            Log::info('Customer Group existence check successful in Sage.', ['customerGroup' => $customerGroup]);
+        //            Log::info('area existence check successful in Sage.', ['area' => $area]);
         //            $context['exists'] = $response->json()['exists'] ?? false;
         //        } else {
-        //            Log::error('Failed to check customer group existence in Sage.', [
+        //            Log::error('Failed to check area existence in Sage.', [
         //                'status' => $response->status(),
         //                'body' => $response->body(),
-        //                'customer Group' => $customerGroup
+        //                'area' => $area
         //            ]);
-        //            throw new \Exception('Failed to check customer group existence in Sage: ' . $response->body());
+        //            throw new \Exception('Failed to check area existence in Sage: ' . $response->body());
         //        }
         return $next($context);
 

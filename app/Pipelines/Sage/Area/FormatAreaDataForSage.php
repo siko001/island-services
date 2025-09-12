@@ -1,41 +1,31 @@
 <?php
 
-namespace App\Pipelines\Sage\CustomerGroup;
+namespace App\Pipelines\Sage\Area;
 
 use Closure;
 use Illuminate\Support\Facades\Log;
 
-class FormatCustomerGroupDataForSage
+class FormatAreaDataForSage
 {
     public function handle($context, Closure $next)
     {
-        $customerGroup = $context;
-        Log::info('Formating Customer Group Data for Sage');
+        $area = $context;
+        Log::info('Formating Area Data for Sage');
 
         // Build Sage payloa
         $payload = [
-            "Code" => $customerGroup->abbreviation,
-            "Description" => $customerGroup->name,
-            "ControlAccount" => [
-                "ID" => null,
-                "Code" => null,
-                "Description" => null,
-            ],
-            "TaxControlAccount" => [
-                "ID" => null,
-                "Code" => null,
-                "Description" => null,
-            ],
+            "Code" => $area->abbreviation,
+            "Description" => $area->name,
         ];
 
         if(empty($payload['Code']) || empty($payload['Description'])) {
-            Log::info('Required Sage customer group fields are missing.', ['customer_group' => $customerGroup, 'customerGroup-code' => $payload['Code'], 'customer-description' => $payload['Description']]);
-            throw new \InvalidArgumentException('Missing required Sage customer fields.');
+            Log::info('Required Sage Area fields are missing.', ['area' => $area, 'area-code' => $payload['Code'], 'area-description' => $payload['Description']]);
+            throw new \InvalidArgumentException('Missing required Sage Area fields.');
         }
 
         // Pass the context to the next pipe
         return $next([
-            'customerGroup' => $customerGroup,
+            'area' => $area,
             'payload' => $payload
         ]);
     }

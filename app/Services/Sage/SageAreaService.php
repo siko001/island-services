@@ -3,53 +3,54 @@
 namespace App\Services\Sage;
 
 use App\Helpers\Notifications;
-use App\Models\Product\Product;
-use App\Pipelines\Sage\Product\CheckProductExists;
-use App\Pipelines\Sage\Product\FormatProductDataForSage;
-use App\Pipelines\Sage\Product\SendProductCreationRequest;
-use App\Pipelines\Sage\Product\ValidateProductForSage;
+use App\Models\General\Area;
+use App\Pipelines\Sage\Area\CheckAreaExists;
+use App\Pipelines\Sage\Area\FormatAreaDataForSage;
+use App\Pipelines\Sage\Area\SendAreaCreationRequest;
+use App\Pipelines\Sage\Area\ValidateAreaForSage;
 use App\Pipelines\Sage\SageConnection;
+use Exception;
 use Illuminate\Pipeline\Pipeline;
 use Illuminate\Support\Facades\Log;
 
-class SageProductService
+class SageAreaService
 {
     /**
-     * @throws \Exception
+     * @throws Exception
      */
-    public function createInSage(Product $product): void //POST || Create a new product || /Freedom.Core/Freedom Database/SDK/InventoryItemInsert{ITEM}
+    public function createInSage(Area $area): void //POST || Create a new area || /Freedom.Core/Freedom Database/SDK/AreaInsert{AREA}
     {
         try {
             $context = app(Pipeline::class)
-                ->send($product)
+                ->send($area)
                 ->through([
-                    ValidateProductForSage::class,
-                    FormatProductDataForSage::class,
+                    ValidateAreaForSage::class,
+                    FormatAreaDataForSage::class,
                     SageConnection::class,
-                    CheckProductExists::class,//TODO - pass a variable to next view??
-                    SendProductCreationRequest::class
+                    CheckAreaExists::class,
+                    SendAreaCreationRequest::class
                 ])
                 ->thenReturn();
-            Log::info('Sage API createInSage called for Product', ['product_id' => $product->id, 'context' => $context]);
+            Log::info('Sage API createInSage called for Area', ['area_id' => $area->id, 'context' => $context]);
 
             Notifications::notifyAdmins(
-                $product,
-                ['product' => $product->name],
+                $area,
+                ['area' => $area->name],
                 'created',
-                "Product {product} created successfully in Sage",
-                'archive-box'
+                "Area {area} created successfully in Sage",
+                'map-pin'
             );
 
-        } catch(\Exception $err) {
-            Log::error('Error creating customer in Sage: ' . $err->getMessage(), [
+        } catch(Exception $err) {
+            Log::error('Error creating area in Sage: ' . $err->getMessage(), [
                 'exception' => $err,
             ]);
 
             Notifications::notifyAdmins(
-                $product,
-                ['product' => $product->name],
+                $area,
+                ['area' => $area->name],
                 'created',
-                "Product {product} failed to create in Sage",
+                "Area {area} failed to create in Sage",
                 'exclamation-circle',
                 'error',
             );
@@ -59,40 +60,40 @@ class SageProductService
 
     }
 
-    public function updateInSage(Product $product): void //POST || Update an existing product ||/Freedom.Core/Freedom Database/SDK/InventoryItemInsert{ITEM}
+    public function updateInSage(Area $area): void //POST || Update an existing area ||/Freedom.Core/Freedom Database/SDK/InventoryItemInsert{ITEM}
     {
-        Log::info("Starting Pipelines for sage: " . json_encode($product));
+        Log::info("Starting Pipelines for sage: " . json_encode($area));
         try {
             $context = app(Pipeline::class)
-                ->send($product)
+                ->send($area)
                 ->through([
-                    ValidateProductForSage::class,
-                    FormatProductDataForSage::class,
+                    ValidateAreaForSage::class,
+                    FormatAreaDataForSage::class,
                     SageConnection::class,
-                    CheckProductExists::class, //TODO - pass a variable to next view??
-                    SendProductCreationRequest::class
+                    CheckAreaExists::class,
+                    SendAreaCreationRequest::class // TODO - Create a separate pipeline stage for updating an area
                 ])
                 ->thenReturn();
 
             Notifications::notifyAdmins(
-                $product,
-                ['product' => $product->name],
+                $area,
+                ['area' => $area->name],
                 'update',
-                "Product {product} updated successfully in Sage",
-                'archive-box'
+                "Area {area} updated successfully in Sage",
+                'map-pin'
             );
-            Log::info('Sage API update In Sage called', ['product_id' => $product->id, 'context' => $context]);
-        } catch(\Exception $err) {
+            Log::info('Sage API update In Sage called', ['area_id' => $area->id, 'context' => $context]);
+        } catch(Exception $err) {
 
             Notifications::notifyAdmins(
-                $product,
-                ['product' => $product->name],
+                $area,
+                ['area' => $area->name],
                 'update',
-                "Product {product} failed to update in Sage",
+                "Area {area} failed to update in Sage",
                 'exclamation-circle',
                 'error',
             );
-            Log::error('Error update customer in Sage: ' . $err->getMessage(), [
+            Log::error('Error updating area in Sage: ' . $err->getMessage(), [
                 'exception' => $err,
             ]);
             throw $err;
