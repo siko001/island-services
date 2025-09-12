@@ -2,6 +2,7 @@
 
 namespace App\Models\Customer;
 
+use App\Observers\CustomerGroupObserver;
 use Illuminate\Database\Eloquent\Model;
 
 class CustomerGroup extends Model
@@ -18,18 +19,6 @@ class CustomerGroup extends Model
     protected static function boot(): void
     {
         parent::boot();
-        // Method to handle when creating
-        static::creating(function($customerGroup) {
-            //API CALL TO SAGE
-        });
-
-        static::updating(function($customerGroup) {
-            //API CALL TO SAGE
-        });
-
-        static::saving(function($customerGroup) {
-            //
-        });
-
+        CustomerGroup::observe(CustomerGroupObserver::class);
     }
 }

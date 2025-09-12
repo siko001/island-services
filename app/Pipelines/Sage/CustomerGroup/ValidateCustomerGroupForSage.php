@@ -1,21 +1,22 @@
 <?php
 
-namespace App\Pipelines\Sage\Customer;
+namespace App\Pipelines\Sage\CustomerGroup;
 
 use Closure;
 use Illuminate\Support\Facades\Log;
 
-class ValidateCustomerForSage
+class ValidateCustomerGroupForSage
 {
-    public function handle($customer, Closure $next)
+    public function handle($context, Closure $next)
     {
 
-        Log::info('Validate Customer for Sage');
-        if(empty($customer->account_number)) {
-            Log::info('Required Sage customer fields are missing.', ['customer' => $customer, 'account_number' => $customer->account_number]);
-            throw new \InvalidArgumentException('Missing required Sage customer fields.');
+        $customerGroup = $context;
+        Log::info('Validate Customer Group for Sage');
+        if(empty($customerGroup->id)) {
+            Log::info('Required Sage customer fields are missing.', ['customer group' => $customerGroup, 'ID' => $customerGroup->id]);
+            throw new \InvalidArgumentException('Missing required Sage Customer Group fields.');
         }
 
-        return $next($customer);
+        return $next($context);
     }
 }

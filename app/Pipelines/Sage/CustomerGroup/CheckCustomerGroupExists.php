@@ -1,33 +1,32 @@
 <?php
 
-namespace App\Pipelines\Sage\Customer;
+namespace App\Pipelines\Sage\CustomerGroup;
 
 use Closure;
 use Illuminate\Support\Facades\Log;
 
-class CheckCustomerExists
+class CheckCustomerGroupExists
 {
     public function handle($context, Closure $next)
     {
-
         //        TODO
-        Log::info('Checking if customer exists in Sage');
+        Log::info('Checking if customer group exists in Sage');
         // Unpack context variables passed from previous pipes
-        $customer = $context['customer'];
+        $customerGroup = $context['customerGroup'];
         $credentials = $context['credentials'];
 
-        //        $url = $credentials['base_url'] . '/Freedom.Core/Freedom Database/SDK/CustomerExists/' . $customer->account_number;
+        //        $url = $credentials['base_url'] . '/Freedom.Core/Freedom Database/SDK/CustomerGroupFind/' . $customerGroup->id;
         //        $response = Http::withBasicAuth($credentials['username'], $credentials['password'])->get($url);
         //        if($response->successful()) {
-        //            Log::info('Customer existence check successful in Sage.', ['customer' => $customer]);
-        //            return $response->json()['exists'] ?? false;
+        //            Log::info('Customer Group existence check successful in Sage.', ['customerGroup' => $customerGroup]);
+        //            $context['exists'] = $response->json()['exists'] ?? false;
         //        } else {
-        //            Log::error('Failed to check customer existence in Sage.', [
+        //            Log::error('Failed to check customer group existence in Sage.', [
         //                'status' => $response->status(),
         //                'body' => $response->body(),
-        //                'customer' => $customer
+        //                'customer Group' => $customerGroup
         //            ]);
-        //            throw new \Exception('Failed to check customer existence in Sage: ' . $response->body());
+        //            throw new \Exception('Failed to check customer group existence in Sage: ' . $response->body());
         //        }
         return $next($context);
 
