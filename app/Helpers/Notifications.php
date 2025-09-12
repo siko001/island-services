@@ -26,7 +26,7 @@ class Notifications
      * @param string $messageTemplate Message template (supports {model}, {attr}, {operation}).
      * @return void
      */
-    public static function notifyAdmins(object $model, array $attributes, string $operation, string $messageTemplate, string $icon = "user"): void
+    public static function notifyAdmins(object $model, array $attributes, string $operation, string $messageTemplate, string $icon = "user", $type = "success"): void
     {
         $replacements = [
             '{model}' => get_class($model),
@@ -45,6 +45,7 @@ class Notifications
                 NovaNotification::make()
                     ->message($message)
                     ->icon($icon)
+                    ->type($type)
             );
         }
     }
