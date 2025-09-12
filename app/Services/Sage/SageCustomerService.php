@@ -9,13 +9,14 @@ use App\Pipelines\Sage\Customer\FormatCustomerDataForSage;
 use App\Pipelines\Sage\Customer\SendCustomerCreationRequest;
 use App\Pipelines\Sage\Customer\ValidateCustomerForSage;
 use App\Pipelines\Sage\SageConnection;
+use Exception;
 use Illuminate\Pipeline\Pipeline;
 use Illuminate\Support\Facades\Log;
 
 class SageCustomerService
 {
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function createInSage(Customer $customer): void //POST || Create a new customer || /Freedom.Core/Freedom Database/SDK/CustomerInsert{CUSTOMER}
     {
@@ -35,11 +36,11 @@ class SageCustomerService
                 $customer,
                 ['client' => $customer->client],
                 'created',
-                "Customer {client} created successfully in Sage"
+                "Customer {client} created successfully in Sage",
             );
 
             Log::info('Sage API createInSage called', ['customer_id' => $customer->id, 'context' => $context]);
-        } catch(\Exception $err) {
+        } catch(Exception $err) {
             Log::error('Error creating customer in Sage: ' . $err->getMessage(), [
                 'exception' => $err,
             ]);
@@ -48,7 +49,10 @@ class SageCustomerService
                 $customer,
                 ['client' => $customer->client],
                 'created',
-                "Customer {client} failed to create in Sage"
+                "Customer {client} failed to create in Sage",
+                'exclamation-circle',
+                'error'
+
             );
             throw $err;
         }
@@ -79,7 +83,7 @@ class SageCustomerService
 
             Log::info('Sage API updateInSage called', ['customer_id' => $customer->id, 'context' => $context]);
 
-        } catch(\Exception $err) {
+        } catch(Exception $err) {
             Log::error('Error creating customer in Sage: ' . $err->getMessage(), [
                 'exception' => $err,
             ]);
@@ -88,7 +92,9 @@ class SageCustomerService
                 $customer,
                 ['client' => $customer->client],
                 'created',
-                "Customer {client} failed to updated in Sage"
+                "Customer {client} failed to updated in Sage",
+                'exclamation-circle',
+                'error'
             );
 
             throw $err;

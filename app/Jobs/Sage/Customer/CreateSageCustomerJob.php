@@ -4,6 +4,7 @@ namespace App\Jobs\Sage\Customer;
 
 use App\Models\Customer\Customer;
 use App\Services\Sage\SageCustomerService;
+use Exception;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Foundation\Queue\Queueable;
@@ -27,7 +28,7 @@ class CreateSageCustomerJob implements ShouldQueue
 
     /**
      * Execute the job.
-     * @throws \Exception
+     * @throws Exception
      */
 
     public function handle(SageCustomerService $sageService): void

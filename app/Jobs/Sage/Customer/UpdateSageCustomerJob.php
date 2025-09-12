@@ -4,12 +4,14 @@ namespace App\Jobs\Sage\Customer;
 
 use App\Models\Customer\Customer;
 use App\Services\Sage\SageCustomerService;
+use Exception;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
+use Throwable;
 
 class UpdateSageCustomerJob implements ShouldQueue
 {
@@ -27,15 +29,15 @@ class UpdateSageCustomerJob implements ShouldQueue
 
     /**
      * Execute the job.
-     * @throws \Exception
+     * @throws Exception|Throwable
      */
     public function handle(SageCustomerService $sageService): void
     {
         try {
             $sageService->updateInSage($this->customer);
-        } catch(\Throwable $e) {
+        } catch(Throwable $e) {
             Log::error('Update Sage Customer Job failed: ' . $e->getMessage(), [
-                'product_id' => $this->customer->id,
+                'customer_id' => $this->customer->id,
                 'exception' => $e,
             ]);
             throw $e;
