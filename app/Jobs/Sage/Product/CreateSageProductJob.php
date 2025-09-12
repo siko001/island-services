@@ -4,6 +4,7 @@ namespace App\Jobs\Sage\Product;
 
 use App\Models\Product\Product;
 use App\Services\Sage\SageProductService;
+use Exception;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -27,7 +28,7 @@ class CreateSageProductJob implements ShouldQueue
 
     /**
      * Execute the job.
-     * @throws \Exception
+     * @throws Exception
      */
     public function handle(SageProductService $sageService): void
     {

@@ -36,7 +36,8 @@ class SageProductService
                 $product,
                 ['product' => $product->name],
                 'created',
-                "Product {product} created successfully in Sage"
+                "Product {product} created successfully in Sage",
+                'archive-box'
             );
 
         } catch(\Exception $err) {
@@ -48,7 +49,9 @@ class SageProductService
                 $product,
                 ['product' => $product->name],
                 'created',
-                "Product {product} failed to create in Sage"
+                "Product {product} failed to create in Sage",
+                'exclamation-circle',
+                'error',
             );
 
             throw $err;
@@ -75,7 +78,8 @@ class SageProductService
                 $product,
                 ['product' => $product->name],
                 'update',
-                "Product {product} updated successfully in Sage"
+                "Product {product} updated successfully in Sage",
+                'archive-box'
             );
             Log::info('Sage API update In Sage called', ['product_id' => $product->id, 'context' => $context]);
         } catch(\Exception $err) {
@@ -84,7 +88,9 @@ class SageProductService
                 $product,
                 ['product' => $product->name],
                 'update',
-                "Product {product} failed to update in Sage"
+                "Product {product} failed to update in Sage",
+                'exclamation-circle',
+                'error',
             );
             Log::error('Error update customer in Sage: ' . $err->getMessage(), [
                 'exception' => $err,
