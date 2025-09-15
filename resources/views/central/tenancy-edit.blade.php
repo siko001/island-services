@@ -1,9 +1,10 @@
 @if (file_exists(public_path('build/manifest.json')) || file_exists(public_path('hot')))
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 @endif
-<div class="p-8 md:p-16 xl:p-24  min-w-site text-sm font-medium min-h-full text-gray-500 relative dark:text-gray-400 bg-gray-100 dark:bg-gray-900 ">
+
+<div class="p-8 md:p-16 xl:p-24 py-24  min-w-site text-sm font-medium min-h-full text-gray-500 relative dark:text-gray-400 bg-gray-100 dark:bg-gray-900 ">
     
-    <div class="mx-auto w-full max-w-2xl grid place-items-center    gap-4  py-4">
+    <div class="mx-auto w-full max-w-2xl grid place-items-center    gap-4  py-12">
         <div class="w-full max-w-2xl grid place-items-center  gap-4 ">
             <div class="flex items-center gap-2  w-1/2  ">
                 <span class="font-bold">Name:</span>

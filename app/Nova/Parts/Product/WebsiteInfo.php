@@ -37,18 +37,8 @@ class WebsiteInfo
                 ->hideFromIndex()
                 ->help('Upload the Product Featured Image here.'),
 
-            //            ImageGalleryField::make('Gallery')
             Gallery:: make('Gallery')
 
-            //                ->dependsOn(["gallery"], function($field, $request, $formData) {
-            //                    Log::info(json_encode($field));
-            //                    Log::info(json_encode($formData));
-            //                    Log::info(json_encode($request));
-            //                })
-            //                ->resolveUsing(function($value) {
-            //                    $value = json_decode($value, true);
-            //                    Log::info($value);
-            //                })
         ];
 
     }

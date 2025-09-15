@@ -21,7 +21,7 @@
             <div v-if="isOpen(group)" class="px-4 py-3 bg-white dark:bg-gray-900">
               <ul class="list-disc pl-2 space-y-1">
                 <li v-for="perm in perms" :key="perm">
-                  {{ perm }}
+                  {{ perm.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase()) }}
                 </li>
               </ul>
             </div>

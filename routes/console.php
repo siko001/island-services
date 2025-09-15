@@ -163,3 +163,132 @@ Artisan::command('custom-tenant:create', function(Request $request) {
         $this->error("❌ An error occurred: " . $e->getMessage());
     }
 })->describe('Create a new tenant, its domain, a super admin user, and assign permissions.');
+
+//Create a command to create a new user in the central system
+Artisan::command('central:user:create', function() {
+    //ask user for name, email, password
+    $name = $this->ask('Enter the user name');
+    if(empty($name)) {
+        $this->error('User name cannot be empty.');
+        return;
+    }
+
+    $email = $this->ask('Enter the user email');
+    if(empty($email)) {
+        $this->error('User email cannot be empty.');
+        return;
+    }
+    if(!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $this->error('Invalid email format.');
+        return;
+    }
+
+    $password = $this->ask('Enter the user password');
+    if(empty($password)) {
+        $this->error('User password cannot be empty.');
+        return;
+    }
+    if(strlen($password) < 8) {
+        $this->error('Password must be at least 8 characters long.');
+        return;
+    }
+
+    //check if user with email already exists
+    if(\App\Models\User::where('email', $email)->exists()) {
+        $this->error("A user with the email '{$email}' already exists.");
+        return;
+    }
+
+    //create user
+    \App\Models\User::create([
+        'name' => $name,
+        'email' => $email,
+        'password' => bcrypt($password),
+    ]);
+
+    $this->info("✅ Central user '{$email}' created successfully.");
+});
+
+//Create a command to update an existing user in the central system
+Artisan::command('central:user:update', function() {
+    //ask user for email
+    $email = $this->ask('Enter the user email to update');
+    if(empty($email)) {
+        $this->error('User email cannot be empty.');
+        return;
+    }
+    if(!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $this->error('Invalid email format.');
+        return;
+    }
+
+    //check if user with email exists
+    $user = \App\Models\User::where('email', $email)->first();
+    if(!$user) {
+        $this->error("No user found with the email '{$email}'.");
+        return;
+    }
+
+    //ask for new name and password
+    $newName = $this->ask('Enter the new user name (leave blank to keep current)', $user->name);
+    $newPassword = $this->ask('Enter the new user password (leave blank to keep current)');
+
+    // Before update
+    $updated = false;
+
+    // Update name if changed
+    if($newName && $newName !== $user->name) {
+        $user->name = $newName;
+        $updated = true;
+    }
+
+    // Update password if provided and valid
+    if(!empty($newPassword)) {
+        if(strlen($newPassword) < 8) {
+            $this->error('Password must be at least 8 characters long.');
+            return;
+        }
+        $user->password = bcrypt($newPassword);
+        $updated = true;
+    }
+
+    if($updated) {
+        $user->save();
+        $this->info("✅ Central user '{$email}' updated successfully.");
+    } else {
+        $this->info("Nothing Updated for user '{$email}'.");
+    }
+
+})->describe('Update an existing central user\'s name and/or password.');
+
+//Create a command to delete an existing user in the central system
+Artisan::command('central:user:delete', function() {
+    //ask user for email
+    $email = $this->ask('Enter the user email to delete');
+    if(empty($email)) {
+        $this->error('User email cannot be empty.');
+        return;
+    }
+    if(!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $this->error('Invalid email format.');
+        return;
+    }
+
+    //check if user with email exists
+    $user = \App\Models\User::where('email', $email)->first();
+    if(!$user) {
+        $this->error("No user found with the email '{$email}'.");
+        return;
+    }
+
+    //confirm deletion
+    if(!$this->confirm("Are you sure you want to delete the user '{$email}'? This action cannot be undone.")) {
+        $this->info('User deletion cancelled.');
+        return;
+    }
+
+    //delete user
+    $user->delete();
+
+    $this->info("✅ Central user '{$email}' deleted successfully.");
+});

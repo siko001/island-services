@@ -59,4 +59,21 @@ class AuditTrailController extends Controller
             abort(500, 'An error occurred while fetching system audit logs.');
         }
     }
+
+    public function centralLogin(): View|Factory|ViewContract|Application
+    {
+        try {
+            $logs = DB::table('login_audits')
+                ->orderBy('created_at', 'desc')
+                ->paginate(50);
+            return view('central.login', ['logs' => $logs]);
+
+        } catch(\Throwable $e) {
+            Log::error('Failed to load login audit trail.', [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+            abort(500, 'An error occurred while fetching login audit logs.');
+        }
+    }
 }
