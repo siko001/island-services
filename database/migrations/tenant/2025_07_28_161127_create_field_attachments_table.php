@@ -17,7 +17,7 @@ class CreateFieldAttachmentsTable extends Migration
         } else {
             Schema::create('nova_pending_field_attachments', function(Blueprint $table) {
                 $table->increments('id');
-                $table->string('original_name')->after('attachment');
+                $table->string('original_name');
                 $table->string('draft_id')->index();
                 $table->string('attachment');
                 $table->string('disk');

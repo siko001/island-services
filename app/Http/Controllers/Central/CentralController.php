@@ -262,7 +262,6 @@ class CentralController extends Controller
         $user = User::where('email', $request->email)->first();
 
         if($user && \Illuminate\Support\Facades\Hash::check($request->password, $user->password)) {
-            //     Log the user in
             auth()->login($user);
             return redirect()->route('central.index')->with('message', 'Logged in successfully.');
         } else {

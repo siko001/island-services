@@ -26,7 +26,7 @@ foreach(config('tenancy.central_domains') as $domain) {
         Route::get('/forgot-password', [CentralController::class, 'showForgotPasswordForm'])->name('central.forgot-password');
         Route::get('/reset-password', [CentralController::class, 'showResetPasswordForm'])->name('central.reset-password');
         Route::get('/user/{id}/settings/', [CentralController::class, 'showAccountSettings'])->name('central.account-settings');
-        Route::get('/login-trail', [AuditTrailController::class, 'login'])->name('central.login-trail');
+        Route::get('/login-trail', [AuditTrailController::class, 'centralLogin'])->name('central.login-trail');
 
         //Functional Routes
         Route::post('/login', [CentralController::class, 'loginUser'])->name('user.login');
