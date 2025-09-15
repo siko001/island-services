@@ -71,6 +71,7 @@ class Product extends Model implements HasMedia
         "driver_commissions" => "json",
         "purchase_date" => "date",
         "last_service_date" => "date",
+        'gallery' => 'json'
     ];
 
     public function priceType()
