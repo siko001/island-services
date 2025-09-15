@@ -396,7 +396,9 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
         return [$options.isOpen(group) ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_6, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("ul", _hoisted_7, [((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)(perms, function (perm) {
           return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("li", {
             key: perm
-          }, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(perm), 1 /* TEXT */);
+          }, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(perm.replace(/_/g, ' ').replace(/\b\w/g, function (c) {
+            return c.toUpperCase();
+          })), 1 /* TEXT */);
         }), 128 /* KEYED_FRAGMENT */))])])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true)];
       }),
       _: 2 /* DYNAMIC */
