@@ -9,7 +9,7 @@
                 </svg>
             </div>
             
-            <div id="main-menu" class="hidden h-0 border border-gray-200 rounded-md absolute top-16  right-8  flex-col">
+            <div id="main-menu" class="hidden h-0 border bg-gray-900 border-gray-200 rounded-md absolute top-16  right-8  flex-col">
                 <a href="{{ route('central.account-settings', ['id' => Auth::id()]) }}" class="whitespace-nowrap text-white px-4 py-2 hover:bg-gray-700 duration-200
                 transition-colors rounded-t-md
                 cursor-pointer flex
