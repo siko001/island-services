@@ -35,6 +35,7 @@ foreach(config('tenancy.central_domains') as $domain) {
         Route::post('/forgot-password', [CentralController::class, 'sendForgotPasswordToken'])->name('user.forgot-password');
         Route::post('/reset-password', [CentralController::class, 'resetPassword'])->name('password.reset');
         Route::post('/user/{id}/settings/', [CentralController::class, 'updateAccountSettings'])->name('user.update');
+        Route::post('/tenant/{id}/token/regen', [CentralController::class, 'regenApiToken'])->name('token.regen');
 
         //Tenant Management
         Route::group(['prefix' => "/tenancy"], function() {

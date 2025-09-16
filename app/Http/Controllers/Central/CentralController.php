@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Password;
+use Illuminate\Validation\Rule;
 use Laravel\Nova\Nova;
 
 class CentralController extends Controller
@@ -175,18 +176,22 @@ class CentralController extends Controller
 
     public function update(Request $request, $tenantId): RedirectResponse
     {
-        if(!Auth::user()) {
-            return redirect()->route('central.login')->with('message', 'Error : You must be logged in to edit a tenant.');
-        }
+        //        if(!Auth::user()) {
+        //            return redirect()->route('central.login')->with('message', 'Error : You must be logged in to edit a tenant.');
+        //        }
 
         try {
             $tenant = Tenant::query()->findOrFail($tenantId);
-
             $request->validate([
-                'tenant_id' => ['required', 'string', 'regex:/^[a-zA-Z0-9\s]+$/', 'unique:tenants,id'],
+                'tenant_id' => [
+                    'required',
+                    'string',
+                    'regex:/^[a-zA-Z0-9\s]+$/',
+                    Rule::unique('tenants', 'id')->ignore($tenant->id),
+                ],
+                'sage_api_username' => 'nullable',
+                'sage_api_password' => 'nullable',
                 'logo_path' => 'nullable|image',
-            ], [
-                'tenant_id.regex' => 'The tenant ID may only contain letters, numbers and spaces.',
             ]);
 
             if($request->hasFile('logo_path')) {
@@ -195,6 +200,14 @@ class CentralController extends Controller
                 $destination = public_path('media/images');
                 $file->move($destination, $filename);
                 $tenant->logo_path = '/media/images/' . $filename;
+            }
+
+            if($request->filled('sage_api_username')) {
+                $tenant->sage_api_username = $request->sage_api_username;
+            }
+
+            if($request->filled('sage_api_password')) {
+                $tenant->sage_api_password = Hash::make($request->sage_api_password);
             }
 
             $tenant->id = $request->tenant_id;
@@ -402,5 +415,13 @@ class CentralController extends Controller
             return back()->withInput()->with('message', 'An error occurred while updating account settings. Please check logs.');
         }
 
+    }
+
+    public function regenApiToken($tenantId)
+    {
+        $tenant = Tenant::find($tenantId);
+        $tenant->api_token = str_replace(' ', '-', strtolower($tenant->id)) . "_" . bin2hex(random_bytes(18));
+        $tenant->save();
+        return back()->withInput()->with('message', 'API Token Regenerated successfully');
     }
 }
