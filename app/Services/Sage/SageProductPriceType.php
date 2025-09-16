@@ -1,0 +1,58 @@
+<?php
+
+namespace App\Services\Sage;
+
+use App\Models\Product\ProductPriceType;
+use App\Pipelines\Sage\ProductPriceType\FormatProductPriceTypeDataForSage;
+use App\Pipelines\Sage\ProductPriceType\ValidateProductPriceTypeForSage;
+use App\Pipelines\Sage\SageConnection;
+use Exception;
+use Illuminate\Pipeline\Pipeline;
+use Illuminate\Support\Facades\Log;
+
+class SageProductPriceType
+{
+    /**
+     * @throws Exception
+     */
+    public function sendRequestToSage(ProductPriceType $productPriceType): void //POST || Create a new customer || /Freedom.Core/Freedom Database/SDK/CustomerInsert{CUSTOMER}
+    {
+        try {
+
+            Log::info('Sending request to Sage Product Price Type');
+            $context = app(Pipeline::class)
+                ->send($productPriceType)
+                ->through([
+                    ValidateProductPriceTypeForSage::class,
+                    SageConnection::class,
+                    FormatProductPriceTypeDataForSage::class,
+                ])
+                ->thenReturn();
+
+            //            Notifications::notifyAdmins(
+            //                $productPriceType,
+            //                ['price_type' => $productPriceType->name],
+            //                'created',
+            //                "Price Type {price_type} Inserted successfully in Sage",
+            //            );
+
+            Log::info('Sage API sendRequestToSage called for Product Price Types', ['product_price_type_id' => $productPriceType->id, 'context' => $context]);
+        } catch(Exception $err) {
+            Log::error('Error sendRequestToSage for Product Price Type Pivot in Sage: ' . $err->getMessage(), [
+                'exception' => $err,
+            ]);
+
+            //            Notifications::notifyAdmins(
+            //                $customer,
+            //                ['client' => $customer->client],
+            //                'created',
+            //                "Customer {client} failed to create in Sage",
+            //                'exclamation-circle',
+            //                'error'
+            //
+            //            );
+            throw $err;
+        }
+
+    }
+}
