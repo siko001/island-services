@@ -22,6 +22,7 @@ class WebsiteProductService
 
         Log::info('creating the product');
         try {
+            //           THE BELOW IS TO TEST API REQUESTS
             //            Log::info('create product');
             //            // Prepare the data you want to send
             //            $url = "https://h2only.free.beeceptor.com/product/create";
@@ -60,7 +61,8 @@ class WebsiteProductService
                 $product,
                 ['product' => $product->name],
                 'created',
-                "Product {product} created successfully in Website"
+                "Product {product} created successfully in Website",
+                'archive-box'
             );
 
         } catch(\Exception $err) {
@@ -72,7 +74,9 @@ class WebsiteProductService
                 $product,
                 ['product' => $product->name],
                 'created',
-                "Product {product} created successfully in Website"
+                "Product {product} created successfully in Website",
+                'exclamation-circle',
+                'error',
             );
             throw $err;
         }
@@ -93,6 +97,15 @@ class WebsiteProductService
                     SendProductCreationRequestWebsite::class
                 ])
                 ->thenReturn();
+
+            Notifications::notifyAdmins(
+                $product,
+                ['product' => $product->name],
+                'update',
+                "Product {product} updated successfully in Website",
+                'archive-box'
+            );
+
             Log::info('Website API UpdateInSage called for Product', ['product_id' => $product->id, 'context' => $context]);
 
         } catch(\Exception $err) {
@@ -104,7 +117,9 @@ class WebsiteProductService
                 $product,
                 ['product' => $product->name],
                 'update',
-                "Product {product} failed to update in Website"
+                "Product {product} failed to update in Website",
+                'exclamation-circle',
+                'error',
             );
             throw $err;
         }

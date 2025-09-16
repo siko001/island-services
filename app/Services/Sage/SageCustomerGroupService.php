@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Log;
 
 class SageCustomerGroupService
 {
-    public function createInSage(CustomerGroup $customerGroup): void
+    public function createInSage(CustomerGroup $customerGroup): void //POST || Create a new customer group ||  /Freedom.Core/Freedom Database/SDK/CustomerGroupInsert{CUSTOMERGROUP}
     {
         try {
             Log::info("Creating customer group in Sage: " . $customerGroup->name);
@@ -58,7 +58,7 @@ class SageCustomerGroupService
         }
     }
 
-    public function updateInSage(CustomerGroup $customerGroup): void
+    public function updateInSage(CustomerGroup $customerGroup): void //POST || Update an existing customer group ||  /Freedom.Core/Freedom Database/SDK/CustomerGroupUpdate{CUSTOMERGROUP}
     {
         try {
             Log::info("Updating customer group in Sage: " . $customerGroup->name);

@@ -60,7 +60,7 @@ class SageAreaService
 
     }
 
-    public function updateInSage(Area $area): void //POST || Update an existing area ||/Freedom.Core/Freedom Database/SDK/InventoryItemInsert{ITEM}
+    public function updateInSage(Area $area): void //POST || Update an existing area ||/Freedom.Core/Freedom Database/SDK/AreaUpdate{AREA}
     {
         Log::info("Starting Pipelines for sage: " . json_encode($area));
         try {

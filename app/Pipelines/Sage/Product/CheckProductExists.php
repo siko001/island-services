@@ -9,10 +9,10 @@ class CheckProductExists
 {
     public function handle($context, Closure $next)
     {
-
         $context['exists'] = false; //TODO - implement actual check
         Log::info('Checking if Product exists in Sage');
-        //        $product = $context['product'];
+        $priceTypes = $context['priceTypes'] ?? [];
+        $product = $context['product'] ?? null;
         //        $credentials = $context['credentials'];
         //
         //        $url = $credentials['base_url'] . '/Freedom.Core/Freedom Database/SDK/InventoryItemFind/' . $product->id;
