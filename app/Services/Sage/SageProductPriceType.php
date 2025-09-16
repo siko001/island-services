@@ -3,7 +3,9 @@
 namespace App\Services\Sage;
 
 use App\Models\Product\ProductPriceType;
+use App\Pipelines\Sage\Product\CheckProductExists;
 use App\Pipelines\Sage\ProductPriceType\FormatProductPriceTypeDataForSage;
+use App\Pipelines\Sage\ProductPriceType\SendProductPriceTypeRequest;
 use App\Pipelines\Sage\ProductPriceType\ValidateProductPriceTypeForSage;
 use App\Pipelines\Sage\SageConnection;
 use Exception;
@@ -26,6 +28,8 @@ class SageProductPriceType
                     ValidateProductPriceTypeForSage::class,
                     SageConnection::class,
                     FormatProductPriceTypeDataForSage::class,
+                    CheckProductExists::class,
+                    SendProductPriceTypeRequest::class
                 ])
                 ->thenReturn();
 

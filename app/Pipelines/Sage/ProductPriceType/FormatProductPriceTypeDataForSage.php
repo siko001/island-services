@@ -5,7 +5,6 @@ namespace App\Pipelines\Sage\ProductPriceType;
 use App\Models\General\VatCode;
 use App\Models\Product\Product;
 use Closure;
-use Illuminate\Support\Facades\Log;
 
 class FormatProductPriceTypeDataForSage
 {
@@ -37,9 +36,12 @@ class FormatProductPriceTypeDataForSage
             ];
         });
 
+        $context['priceTypes'] = $formattedPrices;
+        $context['product'] = $product;
+
         $prettyJson = json_encode($formattedPrices->toArray(), JSON_PRETTY_PRINT);
 
-        Log::info("Formatted Sage Pricing Data:\n" . $prettyJson);
+        //        Log::info("Formatted Sage Pricing Data:\n" . $prettyJson);
 
         return $next($context);
     }
