@@ -5,7 +5,6 @@ namespace IslandServices\Gallery;
 use Ardenthq\ImageGalleryField\ImageGalleryField;
 use Illuminate\Contracts\Validation\Rule;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Laravel\Nova\Fields\Attachments\DeleteAttachments;
 use Laravel\Nova\Fields\Attachments\DetachAttachment;
@@ -91,12 +90,6 @@ class Gallery extends ImageGalleryField
             $imagesToDelete = $request->get($attribute . '_delete', []);
             /** @var (mixed)[] $imageOrder */
             $imageOrder = $request->get($attribute . '_order', []);
-
-            Log::info('Gallery fillInto', [
-                'newImages' => $newImages,
-                'imagesToDelete' => $imagesToDelete,
-                'imageOrder' => $imageOrder,
-            ]);
 
             collect($newImages)->each(function($tempImageId) use ($model, $attribute, &$imageOrder) {
                 $imageOrderIndex = array_search('new:' . $tempImageId, $imageOrder, true);
