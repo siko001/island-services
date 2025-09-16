@@ -2,6 +2,7 @@
 
 namespace App\Services\Sage;
 
+use App\Helpers\Notifications;
 use App\Models\Product\ProductPriceType;
 use App\Pipelines\Sage\Product\CheckProductExists;
 use App\Pipelines\Sage\ProductPriceType\FormatProductPriceTypeDataForSage;
@@ -17,7 +18,7 @@ class SageProductPriceType
     /**
      * @throws Exception
      */
-    public function sendRequestToSage(ProductPriceType $productPriceType): void //POST || Create a new customer || /Freedom.Core/Freedom Database/SDK/CustomerInsert{CUSTOMER}
+    public function sendRequestToSage(ProductPriceType $productPriceType): void //POST || Update an existing inventory item selling prices || /Freedom.Core/Freedom Database/SDK/ItemSellingPriceInsertOrUpdate {PRICES}
     {
         try {
 
@@ -33,12 +34,12 @@ class SageProductPriceType
                 ])
                 ->thenReturn();
 
-            //            Notifications::notifyAdmins(
-            //                $productPriceType,
-            //                ['price_type' => $productPriceType->name],
-            //                'created',
-            //                "Price Type {price_type} Inserted successfully in Sage",
-            //            );
+            Notifications::notifyAdmins(
+                $context->product,
+                ['product' => $context->product->name],
+                'created',
+                "Price Type for Product: {product}, Inserted successfully in Sage",
+            );
 
             Log::info('Sage API sendRequestToSage called for Product Price Types', ['product_price_type_id' => $productPriceType->id, 'context' => $context]);
         } catch(Exception $err) {
