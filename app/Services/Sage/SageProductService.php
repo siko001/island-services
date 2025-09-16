@@ -59,7 +59,7 @@ class SageProductService
 
     }
 
-    public function updateInSage(Product $product): void //POST || Update an existing product ||/Freedom.Core/Freedom Database/SDK/InventoryItemInsert{ITEM}
+    public function updateInSage(Product $product): void //POST || Update an existing inventory item ||/Freedom.Core/Freedom Database/SDK/InventoryItemUpdate{ITEM}
     {
         Log::info("Starting Pipelines for sage: " . json_encode($product));
         try {
