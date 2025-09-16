@@ -5,6 +5,7 @@ use App\Models\Tenant;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -101,7 +102,9 @@ Artisan::command('custom-tenant:create', function(Request $request) {
             return;
         }
 
-        $tenantLogo = $this->ask('Enter the tenant logo path (optional). Default: /media/images/isl-logo.svg') ?: '/media/images/isl-logo.svg';
+        $tenantLogo = $this->ask('Enter the tenant logo path ( Optional. Press to skip ). Default: /media/images/isl-logo.svg') ?: '/media/images/isl-logo.svg';
+        $sageApiUsername = $this->ask('Enter the Sage API Username ( Optional. Press to skip )');
+        $sageApiPassword = $this->ask('Enter the Sage API Password ( Optional. Press to skip )');
 
         // === Step 2: Validate tenant uniqueness
         if(Tenant::where('id', $tenantId)->exists()) {
@@ -110,7 +113,6 @@ Artisan::command('custom-tenant:create', function(Request $request) {
         }
 
         // === Step 3: Create tenant and domain
-        DB::beginTransaction();
 
         $tenant = Tenant::create(['id' => $tenantId]);
         $tenant->domains()->create([
@@ -118,11 +120,12 @@ Artisan::command('custom-tenant:create', function(Request $request) {
         ]);
         $tenant->logo_path = $tenantLogo;
 
+        $sageApiUsername ? $tenant->sage_api_username = $sageApiUsername : null;
+        $sageApiPassword ? $tenant->sage_api_password = Crypt::encryptString($tenant->sage_api_password) : null;
+
         $tenant->api_token = str_replace(' ', '-', strtolower($tenantDomain)) . "_" . bin2hex(random_bytes(18));
 
         $tenant->save();
-
-        DB::commit();
 
         $this->info("✅ Tenant '{$tenantId}' created successfully. Setting up tenant environment...");
 

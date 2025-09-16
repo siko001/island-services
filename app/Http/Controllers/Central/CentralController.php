@@ -11,6 +11,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Password;
@@ -207,7 +208,7 @@ class CentralController extends Controller
             }
 
             if($request->filled('sage_api_password')) {
-                $tenant->sage_api_password = Hash::make($request->sage_api_password);
+                $tenant->sage_api_password = Crypt::encryptString($request->sage_api_password);
             }
 
             $tenant->id = $request->tenant_id;
