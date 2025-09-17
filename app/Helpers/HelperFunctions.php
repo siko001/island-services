@@ -91,20 +91,24 @@ class HelperFunctions
             $value = $model::find($id)->{$defaultFieldName} ?? '';
             $field->default($value);
             $field->value = $value;
+            $field->show();
         } else {
             if($id && $summerAddressConditional) {
                 $useSummerAddress = $model::find($id)->use_summer_address;
                 if($useSummerAddress) {
                     $value = $model::find($id)->{$summerInfo} ?? '';
                     $field->value = $value;
+                    $field->show();
                     $field->help('Customer Using Summer Address');
                 } else {
                     $value = $model::find($id)->{$defaultFieldName} ?? '';
+                    $field->show();
                     $field->value = $value;
                 }
 
             } else {
                 $field->value = '';
+
             }
         }
 

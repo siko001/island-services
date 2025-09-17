@@ -19,21 +19,21 @@ class DeliveryNoteProductSeeder extends Seeder
     {
         // Check if we have delivery notes
         $deliveryNotes = DeliveryNote::all();
-        if ($deliveryNotes->isEmpty()) {
+        if($deliveryNotes->isEmpty()) {
             $this->command->error('No delivery notes found. Please run DeliveryNoteSeeder first.');
             return;
         }
 
         // Check if we have products with price types
         $productPriceTypes = ProductPriceType::with(['priceType'])->get();
-        if ($productPriceTypes->isEmpty()) {
+        if($productPriceTypes->isEmpty()) {
             $this->command->error('No product price types found. Please run ProductPriceTypeSeeder first.');
             return;
         }
 
         // Check if we have VAT codes
         $vatCodes = VatCode::all();
-        if ($vatCodes->isEmpty()) {
+        if($vatCodes->isEmpty()) {
             $this->command->error('No VAT codes found. Please create VAT codes first.');
             return;
         }
@@ -44,42 +44,39 @@ class DeliveryNoteProductSeeder extends Seeder
         $productPriceTypesByProduct = $productPriceTypes->groupBy('product_id');
 
         // For each delivery note, attach 1-5 products with different price types
-        foreach ($deliveryNotes as $index => $deliveryNote) {
+        foreach($deliveryNotes as $index => $deliveryNote) {
             try {
                 // Get random number of products to attach (1-5)
                 $numProducts = rand(1, 5);
-                
+
                 // Get random products with price types
                 $productIds = $productPriceTypesByProduct->keys()->random(min($numProducts, $productPriceTypesByProduct->count()));
-                
+
                 $this->command->info("Attaching " . count($productIds) . " products to delivery note " . $deliveryNote->delivery_note_number);
-                
-                foreach ($productIds as $productId) {
+
+                foreach($productIds as $productId) {
                     // Get the product
                     $product = Product::find($productId);
-                    if (!$product) {
+                    if(!$product) {
                         continue;
                     }
-                    
+
                     // Get a random price type for this product
                     $productPriceTypesForProduct = $productPriceTypesByProduct[$productId];
                     $randomProductPriceType = $productPriceTypesForProduct->random();
-                    
+
                     // Get the price type ID
                     $priceTypeId = $randomProductPriceType->price_type_id;
-                    
+
                     // Get the unit price from the product price type
                     $unitPrice = $randomProductPriceType->unit_price;
-                    
-                    // Get the VAT code ID
-                    $vatCodeId = $randomProductPriceType->vat_id ?? $vatCodes->random()->id;
-                    
+
                     // Generate random quantity (1-10)
                     $quantity = rand(1, 10);
-                    
+
                     // Calculate total price
                     $totalPrice = $unitPrice * $quantity;
-                    
+
                     // Create delivery note product
                     $deliveryNoteProduct = DeliveryNoteProduct::create([
                         'delivery_note_id' => $deliveryNote->id,
@@ -88,14 +85,19 @@ class DeliveryNoteProductSeeder extends Seeder
                         'quantity' => $quantity,
                         'unit_price' => $unitPrice,
                         'deposit_price' => $product->deposit ?? 0,
-                        'vat_code_id' => $vatCodeId,
+                        'total_deposit_price' => $product->deposit ? $product->deposit * $quantity : 0,
+                        'vat_code_id' => $randomProductPriceType->vat_id ?? $vatCodes->random()->id,
                         'total_price' => $totalPrice,
-                        'bcrs_price' => $product->bcrs_deposit ? $product->bcrs_deposit * $quantity : 0,
+                        'bcrs_deposit' => $product->bcrs_deposit ?? 0,
+                        'total_bcrs_deposit' => $product->bcrs_deposit ? $product->bcrs_deposit * $quantity : 0,
+                        'make' => $product->make ?? "",
+                        "model" => $product->model ?? "",
+                        "serial_number" => $product->serial_number ?? "",
                     ]);
-                    
+
                     $this->command->info("  - Attached product " . $product->name . " with price type " . $randomProductPriceType->priceType->name);
                 }
-            } catch (\Exception $e) {
+            } catch(\Exception $e) {
                 $this->command->error("Error attaching products to delivery note " . $deliveryNote->delivery_note_number . ": " . $e->getMessage());
                 Log::error("Error in DeliveryNoteProductSeeder: " . $e->getMessage());
             }

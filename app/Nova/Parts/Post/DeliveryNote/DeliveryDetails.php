@@ -3,6 +3,8 @@
 namespace App\Nova\Parts\Post\DeliveryNote;
 
 use App\Helpers\HelperFunctions;
+use App\Models\Customer\Customer;
+use App\Models\General\AreaLocation;
 use App\Nova\Area;
 use App\Nova\Location;
 use Laravel\Nova\Fields\BelongsTo;
@@ -24,7 +26,7 @@ class DeliveryDetails
                     $areaId = $formData->get('customer_area');
                     $locationId = $formData->get('customer_location');
                     if($customerId && $areaId && $locationId) {
-                        $nextDeliveryDate = \App\Models\General\AreaLocation::getNextDeliveryDate($areaId, $locationId, $customerId);
+                        $nextDeliveryDate = AreaLocation::getNextDeliveryDate($areaId, $locationId, $customerId);
                         if($nextDeliveryDate) {
                             $nextDeliveryDate = \Carbon\Carbon::parse($nextDeliveryDate)->format('Y-m-d');
                             $field->withMeta(['value' => $nextDeliveryDate]);
@@ -64,7 +66,7 @@ class DeliveryDetails
                     $locationId = $formData->get('customer_location');
                     $areaId = $formData->get('customer_area');
                     if($areaId && $locationId) {
-                        $areaLocation = \App\Models\General\AreaLocation::where('area_id', $areaId)
+                        $areaLocation = AreaLocation::where('area_id', $areaId)
                             ->where('location_id', $locationId)
                             ->first();
                         if($areaLocation) {
@@ -99,7 +101,7 @@ class DeliveryDetails
                 ->maxlength(255)
                 ->withMeta(['extraAttributes' => ['style' => 'max-height: 90px; min-height:40px']])
                 ->dependsOn('customer', function($field, $request, FormData $formData) {
-                    HelperFunctions::fillFromDependentField($field, $formData, \App\Models\Customer\Customer::class, 'customer', 'delivery_details_address', true, 'summer_address');
+                    HelperFunctions::fillFromDependentField($field, $formData, Customer::class, 'customer', 'delivery_details_address', true, 'summer_address');
                 }),
 
             TextArea::make("Delivery Instructions", 'delivery_instructions')
@@ -107,7 +109,7 @@ class DeliveryDetails
                 ->maxlength(255)
                 ->withMeta(['extraAttributes' => ['style' => 'max-height: 90px; min-height:40px']])
                 ->dependsOn('customer', function($field, $request, FormData $formData) {
-                    HelperFunctions::fillFromDependentField($field, $formData, \App\Models\Customer\Customer::class, 'customer', 'delivery_instructions');
+                    HelperFunctions::fillFromDependentField($field, $formData, Customer::class, 'customer', 'delivery_instructions');
                 }),
 
             TextArea::make("Delivery Directions", 'delivery_directions')
@@ -115,14 +117,14 @@ class DeliveryDetails
                 ->maxlength(255)
                 ->withMeta(['extraAttributes' => ['style' => 'max-height: 90px; min-height:40px']])
                 ->dependsOn('customer', function($field, $request, FormData $formData) {
-                    HelperFunctions::fillFromDependentField($field, $formData, \App\Models\Customer\Customer::class, 'customer', 'directions');
+                    HelperFunctions::fillFromDependentField($field, $formData, Customer::class, 'customer', 'directions');
                 }),
 
             TextArea::make("Remarks")
                 ->maxlength(255)
                 ->withMeta(['extraAttributes' => ['style' => 'max-height: 90px; min-height:40px']])
-                ->dependsOn('customer', function($field, $request, FormData $formData) {
-                    HelperFunctions::fillFromDependentField($field, $formData, \App\Models\Customer\Customer::class, 'customer', 'remarks');
+                ->dependsOn('customer_area', function($field, $request, FormData $formData) {
+                    HelperFunctions::fillFromDependentField($field, $formData, \App\Models\General\Area::class, 'customer_area', 'delivery_note_remark');
                 }),
         ];
 

@@ -3,6 +3,9 @@
 namespace App\Nova;
 
 use App\Helpers\HelperFunctions;
+use App\Nova\Actions\DeliveryNote\ProcessDeliveryNote;
+use App\Nova\Lenses\Post\DeliveryNote\ProcessedDeliveryNotes;
+use App\Nova\Lenses\Post\DeliveryNote\UnprocessedDeliveryNotes;
 use App\Nova\Parts\Post\DeliveryNote\AdditionalDetails;
 use App\Nova\Parts\Post\DeliveryNote\DeliveryDetails;
 use App\Nova\Parts\Post\DeliveryNote\FinancialDetails;
@@ -14,6 +17,7 @@ use Laravel\Nova\Fields\FormData;
 use Laravel\Nova\Fields\HasMany;
 use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Http\Requests\NovaRequest;
+use Laravel\Nova\Query\Search\SearchableRelation;
 use Laravel\Nova\Tabs\Tab;
 
 class DeliveryNote extends Resource
@@ -39,6 +43,14 @@ class DeliveryNote extends Resource
         'delivery_note_number',
     ];
 
+    public static function searchableColumns(): array
+    {
+        return [
+            'delivery_note_number',
+            new SearchableRelation('customer', 'client'),
+        ];
+    }
+
     /**
      * Get the fields displayed by the resource.
      * @return array<int, \Laravel\Nova\Fields\Field>
@@ -63,7 +75,7 @@ class DeliveryNote extends Resource
                 ->sortable()
                 ->rules('date'),
 
-            BelongsTo::make('Customer', 'customer', Customer::class),
+            BelongsTo::make('Customer', 'customer', Customer::class)->sortable(),
 
             Text::make('Account Number', 'customer_account_number')
                 ->hideFromIndex()
@@ -77,7 +89,7 @@ class DeliveryNote extends Resource
 
             Tab::group('Information', [
 
-                Tab::make("Delivery Detail", new DeliveryDetails()),
+                Tab::make("Delivery Details", new DeliveryDetails()),
 
                 Tab::make("Financial Details", new FinancialDetails()),
 
@@ -223,7 +235,10 @@ class DeliveryNote extends Resource
      */
     public function lenses(NovaRequest $request): array
     {
-        return [];
+        return [
+            new ProcessedDeliveryNotes(),
+            new UnprocessedDeliveryNotes()
+        ];
     }
 
     /**
@@ -232,7 +247,9 @@ class DeliveryNote extends Resource
      */
     public function actions(NovaRequest $request): array
     {
-        return [];
+        return [
+            new ProcessDeliveryNote(),
+        ];
     }
 
     public static function relatableCustomers(NovaRequest $request, $query)
