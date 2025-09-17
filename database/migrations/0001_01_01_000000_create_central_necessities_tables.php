@@ -10,6 +10,28 @@ return new class extends Migration {
      */
     public function up(): void
     {
+        Schema::create('users', function(Blueprint $table) {
+            $table->id();
+            $table->string('name')->nullable();
+            $table->rememberToken();
+            $table->timestamps();
+        });
+
+        Schema::create('password_reset_tokens', function(Blueprint $table) {
+            $table->string('email')->primary();
+            $table->string('token');
+            $table->timestamp('created_at')->nullable();
+        });
+
+        Schema::create('sessions', function(Blueprint $table) {
+            $table->string('id')->primary();
+            $table->foreignId('user_id')->nullable()->index();
+            $table->string('ip_address', 45)->nullable();
+            $table->text('user_agent')->nullable();
+            $table->longText('payload');
+            $table->integer('last_activity')->index();
+        });
+
         $teams = config('permission.teams');
         $tableNames = config('permission.table_names');
         $columnNames = config('permission.column_names');
@@ -114,6 +136,42 @@ return new class extends Migration {
         app('cache')
             ->store(config('permission.cache.store') != 'default' ? config('permission.cache.store') : null)
             ->forget(config('permission.cache.key'));
+
+        Schema::create('login_audits', function(Blueprint $table) {
+            $table->id();
+            $table->string('email');
+            $table->string('ip_address');
+            $table->boolean('success');
+            $table->timestamp('created_at')->nullable();
+            $table->timestamp('updated_at')->nullable();
+        });
+
+        Schema::create('cache', function(Blueprint $table) {
+            $table->string('key')->primary();
+            $table->mediumText('value');
+            $table->integer('expiration');
+        });
+
+        Schema::create('cache_locks', function(Blueprint $table) {
+            $table->string('key')->primary();
+            $table->string('owner');
+            $table->integer('expiration');
+        });
+
+        Schema::create('tenants', function(Blueprint $table) {
+            $table->string('id')->primary();
+            $table->timestamps();
+            $table->json('data')->nullable();
+        });
+
+        Schema::create('domains', function(Blueprint $table) {
+            $table->increments('id');
+            $table->string('domain', 255)->unique();
+            $table->string('tenant_id');
+
+            $table->timestamps();
+            $table->foreign('tenant_id')->references('id')->on('tenants')->onUpdate('cascade')->onDelete('cascade');
+        });
     }
 
     /**
@@ -121,6 +179,10 @@ return new class extends Migration {
      */
     public function down(): void
     {
+        Schema::dropIfExists('users');
+        Schema::dropIfExists('password_reset_tokens');
+        Schema::dropIfExists('sessions');
+
         $tableNames = config('permission.table_names');
 
         if(empty($tableNames)) {
@@ -132,5 +194,13 @@ return new class extends Migration {
         Schema::drop($tableNames['model_has_permissions']);
         Schema::drop($tableNames['roles']);
         Schema::drop($tableNames['permissions']);
+
+        Schema::dropIfExists('login_audits');
+
+        Schema::dropIfExists('cache');
+        Schema::dropIfExists('cache_locks');
+
+        Schema::dropIfExists('tenants');
+        Schema::dropIfExists('domains');
     }
 };
