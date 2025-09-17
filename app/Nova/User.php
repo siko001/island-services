@@ -152,7 +152,7 @@ class User extends Resource
     public function lenses(NovaRequest $request): array
     {
         return [
-            new Lenses\TerminatedUsers,
+            new Lenses\Admin\User\TerminatedUsers,
         ];
     }
 
