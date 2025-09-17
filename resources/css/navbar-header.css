@@ -1,0 +1,48 @@
+/* public/nova.css */
+.sidebar-menu {
+    position: relative;
+    top: -20px;
+    padding-bottom: 1rem;
+}
+
+.sidebar-menu > div:first-child {
+    position: relative;
+    top: -4px;
+    margin-bottom: 12px !important;
+}
+
+.sidebar-menu > div:first-child span {
+    font-size: 24px;
+    white-space: nowrap;
+    display: flex;
+    justify-content: end;
+}
+.sidebar-menu > div:first-child a:hover,
+.sidebar-menu > div:first-child a:focus {
+    box-shadow: none !important;
+    background-color: transparent !important;
+}
+
+.sidebar-menu > div:nth-child(2) {
+    margin-top: 0 !important;
+}
+
+[alt="Tenant Logo"] {
+    position: relative;
+    left: -20px;
+}
+
+@media screen and (max-width: 768px) {
+    .sidebar-menu > div:first-child {
+        position: relative;
+        top: 0;
+        margin-bottom: 0 !important;
+    }
+    .sidebar-menu > div:nth-child(2) {
+        margin-top: 0 !important;
+    }
+}
+
+td:not(.phpdebugbar td) {
+    background: #f9fafb;
+}

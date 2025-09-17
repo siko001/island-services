@@ -2,18 +2,18 @@
 
 namespace App\Providers;
 
-use App\Nova\Permission;
-use App\Nova\User;
-use App\Nova\Role;
+use App\Helpers\NovaResources;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Gate;
 use Laravel\Fortify\Features;
 use Laravel\Nova\Menu\MenuGroup;
 use Laravel\Nova\Menu\MenuItem;
 use Laravel\Nova\Menu\MenuSection;
-use Illuminate\Http\Request;
 use Laravel\Nova\Nova;
 use Laravel\Nova\NovaApplicationServiceProvider;
+use Stancl\Tenancy\Middleware\InitializeTenancyByDomain;
+use Stancl\Tenancy\Middleware\PreventAccessFromCentralDomains;
 use Vyuldashev\NovaPermission\NovaPermissionTool;
 
 class NovaServiceProvider extends NovaApplicationServiceProvider
@@ -23,35 +23,94 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
      */
     public function boot(): void
     {
+
         parent::boot();
+        //CSS
+        Nova::style('navbar-header', resource_path('css/navbar-header.css'));
 
+        //JS
+        Nova::script('desktop-branding', public_path('assets/js/desktopBranding.js'));
+        Nova::script('mobile-branding', public_path('assets/js/mobileBranding.js'));
+        Nova::script('change-button-text', public_path('assets/js/changeDeliveryNoteProductButton.js'));
 
-        //All Nova resources should be registered here
-        Nova::resources([
-            \App\Nova\User::class,
-            \App\Nova\Role::class,
-        ]);
+        Nova::resources(
+            array_merge(
+                NovaResources::generalResources(),
+                NovaResources::customerResources(),
+                NovaResources::adminResources(),
+                NovaResources::stockResources(),
+                NovaResources::postResources()
+            )
+        );
 
-        //Nav Menu
-        Nova::mainMenu(function (Request $request) {
-            return [
+        //        Nova Main Menu
+        Nova::mainMenu(function(Request $request) {
+            $user = auth()->user();
 
-                MenuSection::make('Admin', [
+            $auditTrailItems = [];
 
-                    MenuItem::resource(User::class),
-                    MenuItem::resource(Role::class),
-                    MenuItem::resource(Permission::class),
+            foreach(NovaResources::adminResources() as $adminItem) {
+                $adminItems[] = MenuItem::resource($adminItem);
+            }
+            //Login Audit trail
+            if($user && $user->can('view audit_trail_login')) {
+                $auditTrailItems[] = MenuItem::make('Login', '/audit-trails/login');
+            }
 
-                    MenuGroup::make('Audit Trails', [
-                        MenuItem::make("Login", '/audit-trails/login'),
-                        MenuItem::make("System", '/audit-trails/system'),
-                    ])->collapsable()
-                ])->icon('user')->collapsable(),
+            //System Audit Trail
+            if($user && $user->can('view audit_trail_system')) {
+                $auditTrailItems[] = MenuItem::make('System', '/audit-trails/system');
+            }
+            if(!empty($auditTrailItems)) {
+                $adminItems[] = MenuGroup::make('Audit Trails', $auditTrailItems)->collapsable();
+            }
+
+            $menu = [
+                MenuItem::make('', '/')->data(["logopath" => tenancy()->tenant?->logo_path])->name(tenancy()->tenant?->id),
+
+                //Other Companies
+                ($user && $user->can('view other_companies')) ?
+                    MenuItem::externalLink('Companies', env('APP_URL') . '/admin/get-companies')->data(['hasPermissionToView'])
+                    : null,
+
+                //General Section
+                MenuSection::make('General', collect(NovaResources::generalResources())->map(fn($resource) => MenuItem::resource($resource))->toArray())
+                    ->collapsable(),
+
+                //Customer Section
+                MenuSection::make('Customers', collect(NovaResources::customerResources())->map(fn($resource) => MenuItem::resource($resource))->toArray())
+                    ->icon('user-group')
+                    ->collapsable(),
+
+                //Stock Section
+                MenuSection::make('Stock',
+                    collect(NovaResources::stockResources())->map(fn($resource) => MenuItem::resource($resource))->toArray())
+                    ->icon('newspaper')
+                    ->collapsable(),
+
+                //Post Section
+                MenuSection::make('Post', [
+                    //collect(NovaResources::postResources())->map(fn($resource) => MenuItem::resource($resource))->push()->toArray())
+                    MenuGroup::make("Delivery Notes", [
+                        MenuItem::make('All')->path('/resources/delivery-notes'),
+                        MenuItem::make('Unprocessed')->path('/resources/delivery-notes/lens/unprocessed-delivery-notes'),
+                        MenuItem::make('Processed')->path('/resources/delivery-notes/lens/processed-delivery-notes'),
+                    ])->collapsable(),
+                ])->icon('cog-8-tooth')
+                    ->collapsable(),
+
+                //Admin Section
+                MenuSection::make('Admin', $adminItems)
+                    ->icon('user')
+                    ->collapsable(),
             ];
+
+            // Filter nulls so Nova doesn't try to render invalid menu items
+            return array_filter($menu);
         });
 
-
-        Nova::footer(function ($request) {
+        //        Nova Footer
+        Nova::footer(function($request) {
             return Blade::render('nova/footer', [
                 'version' => env('APP_VERSION', '1.0.0'),
                 'company' => config('app.name'),
@@ -73,37 +132,45 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
             ->register();
     }
 
-
     /**
      * Register the Nova routes.
      */
     protected function routes(): void
     {
         Nova::routes()
-            ->withAuthenticationRoutes(default: true)
-            ->withPasswordResetRoutes()
+            ->withAuthenticationRoutes([
+                // You can make this simpler by creating a tenancy route group
+                InitializeTenancyByDomain::class,
+                PreventAccessFromCentralDomains::class,
+                'nova',
+            ])
+            ->withPasswordResetRoutes([
+                // You can make this simpler by creating a tenancy route group
+                InitializeTenancyByDomain::class,
+                PreventAccessFromCentralDomains::class,
+                'nova',
+            ])
             ->withoutEmailVerificationRoutes()
             ->register();
     }
 
     /**
      * Register the Nova gate.
-     *
      * This gate determines who can access Nova in non-local environments.
      */
     protected function gate(): void
     {
-        Gate::define('viewNova', function (User $user) {
-            return in_array($user->email, [
-                //
-            ]);
+        Gate::define('viewNova', function(\App\Models\User $user) {
+            return true;
+            //            USE THIS FOR STAGING
+            //            return in_array($user->email, [
+            //                //                Allowed Emails Here
+            //            ]);
         });
     }
 
-
     /**
      * Get the dashboards that should be listed in the Nova sidebar.
-     *
      * @return array<int, \Laravel\Nova\Dashboard>
      */
     protected function dashboards(): array
@@ -115,7 +182,6 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
 
     /**
      * Get the tools that should be listed in the Nova sidebar.
-     *
      * @return array<int, \Laravel\Nova\Tool>
      */
     public function tools(): array
@@ -131,7 +197,6 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
     public function register(): void
     {
         parent::register();
-
         //
     }
 }

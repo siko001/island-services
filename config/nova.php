@@ -1,5 +1,8 @@
 <?php
 
+use Stancl\Tenancy\Middleware\InitializeTenancyByDomain;
+use Stancl\Tenancy\Middleware\PreventAccessFromCentralDomains;
+
 return [
 
     /*
@@ -52,7 +55,7 @@ return [
     |
     */
 
-    'path' => '/',
+    'path' => '/admin',
 
     /*
     |--------------------------------------------------------------------------
@@ -65,8 +68,8 @@ return [
     |
     */
 
-    'guard' => env('NOVA_GUARD', null),
-
+    //    'guard' => env('NOVA_GUARD', null),
+    'guard' => 'tenant',
     /*
     |--------------------------------------------------------------------------
     | Nova Password Reset Broker
@@ -92,6 +95,8 @@ return [
     */
 
     'middleware' => [
+        InitializeTenancyByDomain::class,
+        PreventAccessFromCentralDomains::class,
         'web',
         \Laravel\Nova\Http\Middleware\HandleInertiaRequests::class,
         \Vyuldashev\NovaPermission\ForgetCachedPermissions::class,
@@ -148,7 +153,7 @@ return [
     |
     */
 
-    'currency' => 'USD',
+    'currency' => 'EUR',
 
     /*
     |--------------------------------------------------------------------------
@@ -162,14 +167,14 @@ return [
     |
     */
 
-     'brand' => [
-         'logo' => resource_path('media/images/isl-logo.svg'),
-         'colors' => [
-             "400" => "81, 162, 255, 0.7",
-             "500" => "43, 127, 255",
-             "600" => "21, 93, 252, 1",
-         ]
-     ],
+    'brand' => [
+        'logo' => resource_path('media/images/isl-logo.svg'),
+        'colors' => [
+            "400" => "81, 162, 255, 0.7",
+            "500" => "43, 127, 255",
+            "600" => "21, 93, 252, 1",
+        ]
+    ],
 
     /*
     |--------------------------------------------------------------------------

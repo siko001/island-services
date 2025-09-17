@@ -2,7 +2,8 @@
 
 namespace App\Nova;
 
-use Illuminate\Http\Request;
+use App\Policies\ResourcePolicies;
+use IslandServices\GroupedPermissions\GroupedPermissions;
 use Laravel\Nova\Fields\BelongsToMany;
 use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\ID;
@@ -11,23 +12,21 @@ use Laravel\Nova\Http\Requests\NovaRequest;
 
 class Role extends Resource
 {
+    use ResourcePolicies;
+
+    public static string $policyKey = 'role';
     /**
      * The model the resource corresponds to.
-     *
-     * @var class-string<\App\Models\Role>
+     * @var class-string<\App\Models\Admin\Role>
      */
-    public static $model = \Spatie\Permission\Models\Role::class;
-
+    public static $model = \App\Models\Admin\Role::class;
     /**
      * The single value that should be used to represent the resource when being displayed.
-     *
      * @var string
      */
     public static $title = 'name';
-
     /**
      * The columns that should be searched.
-     *
      * @var array
      */
     public static $search = [
@@ -36,7 +35,6 @@ class Role extends Resource
 
     /**
      * Get the fields displayed by the resource.
-     *
      * @return array<int, \Laravel\Nova\Fields\Field>
      */
     public function fields(NovaRequest $request): array
@@ -46,17 +44,23 @@ class Role extends Resource
             Text::make('Name')
                 ->sortable()
                 ->rules('required', 'max:255'),
-            Boolean::make('Earns Commission')->help('Enable this to allow users with this role to have additional fields for commission when creating or updating users'),
+
+            Boolean::make('Earns Commission')->help('Enable this to allow users with this role to have additional fields for commission when creating or updating users')->sortable(),
+
+            GroupedPermissions::make('Permissions')
+                ->resolveUsing(function($value, $model, $attribute) {
+                    return $model->getAllPermissions()->pluck('name')->toArray();
+                })
+                ->hideFromIndex(),
+
             BelongsToMany::make('Users', 'users', User::class),
 
         ];
-
 
     }
 
     /**
      * Get the cards available for the resource.
-     *
      * @return array<int, \Laravel\Nova\Card>
      */
     public function cards(NovaRequest $request): array
@@ -66,7 +70,6 @@ class Role extends Resource
 
     /**
      * Get the filters available for the resource.
-     *
      * @return array<int, \Laravel\Nova\Filters\Filter>
      */
     public function filters(NovaRequest $request): array
@@ -76,7 +79,6 @@ class Role extends Resource
 
     /**
      * Get the lenses available for the resource.
-     *
      * @return array<int, \Laravel\Nova\Lenses\Lens>
      */
     public function lenses(NovaRequest $request): array
@@ -86,7 +88,6 @@ class Role extends Resource
 
     /**
      * Get the actions available for the resource.
-     *
      * @return array<int, \Laravel\Nova\Actions\Action>
      */
     public function actions(NovaRequest $request): array

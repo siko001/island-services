@@ -1,0 +1,17 @@
+<?php
+
+namespace App\Models\General;
+
+use Illuminate\Database\Eloquent\Model;
+
+class Service extends Model
+{
+    protected $fillable = [
+        'name',
+        'abbreviation',
+        'cost',
+    ];
+    protected $casts = [
+        'cost' => 'decimal:2',
+    ];
+}

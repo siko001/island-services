@@ -3,40 +3,36 @@
 namespace App\Nova;
 
 use App\Helpers\HelperFunctions;
-use Illuminate\Http\Request;
-use Laravel\Nova\Fields\Boolean;
-use Laravel\Nova\Fields\FormData;
-use Laravel\Nova\Panel;
+use App\Policies\ResourcePolicies;
+use Illuminate\Contracts\Database\Eloquent\Builder;
+use IslandServices\GroupedPermissions\GroupedPermissions;
 use Laravel\Nova\Auth\PasswordValidationRules;
-use Laravel\Nova\Fields\Gravatar;
+use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Password;
 use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Http\Requests\NovaRequest;
+use Laravel\Nova\Panel;
 use Laravel\Nova\Tabs\Tab;
 use Vyuldashev\NovaPermission\RoleBooleanGroup;
 
 class User extends Resource
 {
-    use PasswordValidationRules;
+    use PasswordValidationRules, ResourcePolicies;
 
+    public static string $policyKey = 'user';
     /**
      * The model the resource corresponds to.
-     *
      * @var class-string<\App\Models\User>
      */
     public static $model = \App\Models\User::class;
-
     /**
      * The single value that should be used to represent the resource when being displayed.
-     *
      * @var string
      */
     public static $title = 'name';
-
     /**
      * The columns that should be searched.
-     *
      * @var array
      */
     public static $search = [
@@ -45,7 +41,6 @@ class User extends Resource
 
     /**
      * Get the fields displayed by the resource.
-     *
      * @return array<int, \Laravel\Nova\Fields\Field|\Laravel\Nova\Panel|\Laravel\Nova\ResourceTool|\Illuminate\Http\Resources\MergeValue>
      */
     public function fields(NovaRequest $request): array
@@ -57,8 +52,11 @@ class User extends Resource
                     ->sortable()
                     ->rules('required', 'max:255'),
 
+                Text::make('Abbreviation')
+                    ->maxlength(16)
+                    ->rules('required', 'max:16')
+                    ->hideFromIndex(),
 
-                Text::make('Abbreviation')->rules('required', 'max:255')->hideFromIndex(),
                 Text::make('Email')
                     ->sortable()
                     ->rules('required', 'email', 'max:254')
@@ -96,30 +94,32 @@ class User extends Resource
                     //Show the below if roles are selected that earn commission
                     Boolean::make('Gets Commission')
                         ->hide()
-                        ->dependsOn(['roles'], function ($field, $request, $formData) {
+                        ->dependsOn(['roles'], function($field, $request, $formData) {
                             HelperFunctions::showFieldIfEarningCommissionRole($field, $formData);
                         })
                         ->hideFromIndex(),
                     Boolean::make('Apply Standard Commission Rates', 'standard_commission')
                         ->hide()
-                        ->dependsOn(['roles'], function ($field, $request, $formData) {
+                        ->dependsOn(['roles'], function($field, $request, $formData) {
                             HelperFunctions::showFieldIfEarningCommissionRole($field, $formData);
                         })
                         ->hideFromIndex(),
-                    Text::make("Dakar Pay Code",'dakar_code')
+                    Text::make("Dakar Pay Code", 'dakar_code')
                         ->hide()
-                        ->dependsOn(['roles'], function ($field, $request, $formData) {
+                        ->dependsOn(['roles'], function($field, $request, $formData) {
                             HelperFunctions::showFieldIfEarningCommissionRole($field, $formData);
                         })
                         ->hideFromIndex(),
-
 
                     Boolean::make('Is Terminated')
                 ]),
 
                 Tab::make('Permissions', [
-                    //replace with Permissions boolean group
-                    Text::make('Address')->hideFromIndex(),
+                    GroupedPermissions::make('Permissions', 'permissions')
+                        ->resolveUsing(function($value, $model, $attribute) {
+                            return $model->getAllPermissions()->pluck('name')->toArray();
+                        })
+                        ->hideFromIndex(),
                 ]),
 
             ]),
@@ -129,7 +129,6 @@ class User extends Resource
 
     /**
      * Get the cards available for the request.
-     *
      * @return array<int, \Laravel\Nova\Card>
      */
     public function cards(NovaRequest $request): array
@@ -139,7 +138,6 @@ class User extends Resource
 
     /**
      * Get the filters available for the resource.
-     *
      * @return array<int, \Laravel\Nova\Filters\Filter>
      */
     public function filters(NovaRequest $request): array
@@ -149,21 +147,45 @@ class User extends Resource
 
     /**
      * Get the lenses available for the resource.
-     *
      * @return array<int, \Laravel\Nova\Lenses\Lens>
      */
     public function lenses(NovaRequest $request): array
     {
-        return [];
+        return [
+            new Lenses\Admin\User\TerminatedUsers,
+        ];
     }
 
     /**
      * Get the actions available for the resource.
-     *
      * @return array<int, \Laravel\Nova\Actions\Action>
      */
     public function actions(NovaRequest $request): array
     {
-        return [];
+        return [
+            new Actions\User\TerminateUser,
+
+        ];
+    }
+
+    //Method to filter the query for relatable resources (user -> vehicles) attachment
+    public static function relatableQuery(NovaRequest $request, $query): Builder
+    {
+
+        // first check if the user is a driver and if the request is for vehicles via the drivers relationship
+        if(($request->resource === 'vehicles' && $request->viaRelationship === 'drivers')) {
+            return $query->whereHas('roles', function($q) {
+                $q->where('name', 'driver');
+            })->where('is_terminated', false); //return only non terminated users
+
+        }
+
+        if($request->resource === 'delivery-notes') {
+            return $query->whereHas('roles', function($q) {
+                $q->whereIn('name', ['driver', 'salesman']);
+            })->where('is_terminated', false); //return only non terminated users
+        }
+
+        return $query;
     }
 }

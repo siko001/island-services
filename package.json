@@ -3,8 +3,15 @@
     "private": true,
     "type": "module",
     "scripts": {
-        "build": "vite build",
-        "dev": "vite"
+        "dev": "vite",
+        "build": "vite build && npm run copy-tenants",
+        "copy-tenants": "mkdir -p public/tenancy/assets/build/assets/ && rsync -a public/build/assets/ public/tenancy/assets/build/assets/",
+        "build-example-card": "cd nova-components/ExampleCard && npm run dev",
+        "build-example-card-prod": "cd nova-components/ExampleCard && npm run prod",
+        "build-grouped-permissions": "cd nova-components/GroupedPermissions && npm run dev",
+        "build-grouped-permissions-prod": "cd nova-components/GroupedPermissions && npm run prod",
+        "build-gallery": "cd nova-components/Gallery && npm run dev",
+        "build-gallery-prod": "cd nova-components/Gallery && npm run prod"
     },
     "devDependencies": {
         "@tailwindcss/vite": "^4.0.0",
