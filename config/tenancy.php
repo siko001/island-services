@@ -4,6 +4,11 @@ declare(strict_types=1);
 
 use Stancl\Tenancy\Database\Models\Domain;
 
+// get the protocol
+
+$url = config('app.url');
+$urlWithoutProtocol = preg_replace("(^https?://)", "", $url);
+
 return [
     'tenant_model' => \App\Models\Tenant::class,
     'id_generator' => Stancl\Tenancy\UUIDGenerator::class,
@@ -14,7 +19,8 @@ return [
      * Only relevant if you're using the domain or subdomain identification middleware.
      */
     'central_domains' => [
-        'island-services.test',
+        $urlWithoutProtocol,
+        // Other Domains
     ],
 
     /**
