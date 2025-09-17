@@ -9,18 +9,5 @@
         {{ session('message') }}
     </div>
     
-    <script>
-		const notification = document.getElementById('notification');
-		requestAnimationFrame(() => {
-			notification.classList.remove('translate-y-20', 'opacity-0');
-			notification.classList.add('translate-y-0', 'opacity-100');
-		});
-		setTimeout(() => {
-			notification.classList.remove('translate-y-0', 'opacity-100');
-			notification.classList.add('translate-y-20', 'opacity-0');
-			notification.addEventListener('transitionend', () => {
-				notification.remove();
-			});
-		}, 3000);
-    </script>
+    @vite('resources/js/central/notification.js')
 @endif
