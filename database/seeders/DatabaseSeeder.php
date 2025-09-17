@@ -20,6 +20,11 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
 
+        if(!app()->environment(['local', 'development', 'staging'])) {
+            $this->command->error('Environment is NOT local/development/staging !');
+            return;
+        }
+
         //create a default user (Super Admin)
         User::firstOrCreate(
             ['email' => 'neil@gmail.com'],
