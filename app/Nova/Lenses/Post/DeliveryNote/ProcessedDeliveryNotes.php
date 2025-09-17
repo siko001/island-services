@@ -1,17 +1,17 @@
 <?php
 
-namespace App\Nova\Lenses;
+namespace App\Nova\Lenses\Post\DeliveryNote;
 
+use App\Nova\Parts\Post\DeliveryNote\DeliveryNoteLensFields;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Contracts\Pagination\Paginator;
-use Laravel\Nova\Fields\Boolean;
-use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Http\Requests\LensRequest;
 use Laravel\Nova\Http\Requests\NovaRequest;
 use Laravel\Nova\Lenses\Lens;
 
-class TerminatedUsers extends Lens
+class ProcessedDeliveryNotes extends Lens
 {
+    public static $title = 'something';
     /**
      * The columns that should be searched.
      * @var array
@@ -23,7 +23,7 @@ class TerminatedUsers extends Lens
      */
     public static function query(LensRequest $request, Builder $query): Builder|Paginator
     {
-        return $query->where('is_terminated', 1);
+        return $query->where('status', 1);
     }
 
     /**
@@ -32,14 +32,7 @@ class TerminatedUsers extends Lens
      */
     public function fields(NovaRequest $request): array
     {
-        return [
-            Text::make('Name')
-                ->sortable()
-                ->rules('required', 'max:255'),
-            Text::make('Mobile')->rules('required', 'max:255'),
-            Boolean::make('Is Terminated'),
-            Boolean::make('Gets Commission')
-        ];
+        return (new DeliveryNoteLensFields)();
     }
 
     /**
@@ -74,6 +67,6 @@ class TerminatedUsers extends Lens
      */
     public function uriKey(): string
     {
-        return 'terminated-users';
+        return 'processed-delivery-notes';
     }
 }

@@ -8,6 +8,7 @@ use App\Models\General\Vehicle;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Laravel\Nova\Http\Requests\NovaRequest;
 use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
@@ -77,25 +78,29 @@ class User extends Authenticatable
         return $salesmen;
     }
 
+    public static function indexQuery(NovaRequest $request, $query)
+    {
+        return $query->with(['roles.permissions', 'permissions']);
+    }
 
-    //    protected static function boot(): void
-    //    {
-    //        parent::boot();
-    //
-    //        static::saving(function($user) {
-    //            //check if the user is being marked as terminated and if they are assigned to vehicles
-    //            if(!$user->roles->isEmpty() && $user->is_terminated && $user->vehicles()->count() > 0) {
-    //                return throw new \Exception("User {$user->name} is being marked as terminated, but still assigned to vehicles. Please remove the user from all vehicles before terminating.");
-    //            }
-    //
-    //            //if the user is terminated, and they have commission enabled, disable it
-    //            if($user->is_terminated && ($user->gets_commission || $user->standard_commission)) {
-    //                $user->gets_commission = false;
-    //                $user->standard_commission = false;
-    //
-    //            }
-    //            return true;
-    //        });
-    //
-    //    }
+    protected static function boot(): void
+    {
+        parent::boot();
+
+        static::saving(function($user) {
+            //check if the user is being marked as terminated and if they are assigned to vehicles
+            if(!$user->roles->isEmpty() && $user->is_terminated && $user->vehicles()->count() > 0) {
+                return throw new \Exception("User {$user->name} is being marked as terminated, but still assigned to vehicles. Please remove the user from all vehicles before terminating.");
+            }
+
+            //if the user is terminated, and they have commission enabled, disable it
+            if($user->is_terminated && ($user->gets_commission || $user->standard_commission)) {
+                $user->gets_commission = false;
+                $user->standard_commission = false;
+
+            }
+            return true;
+        });
+
+    }
 }
