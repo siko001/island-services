@@ -3,7 +3,6 @@
 namespace App\Providers;
 
 use App\Helpers\NovaResources;
-use App\Nova\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Gate;
@@ -28,8 +27,11 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
         parent::boot();
         //CSS
         Nova::style('navbar-header', resource_path('css/navbar-header.css'));
+
         //JS
-        Nova::script('custom', public_path('nova.js'));
+        Nova::script('desktop-branding', public_path('assets/js/desktopBranding.js'));
+        Nova::script('mobile-branding', public_path('assets/js/mobileBranding.js'));
+        Nova::script('change-button-text', public_path('assets/js/changeDeliveryNoteProductButton.js'));
 
         Nova::resources(
             array_merge(
@@ -87,9 +89,14 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
                     ->collapsable(),
 
                 //Post Section
-                MenuSection::make('Post',
-                    collect(NovaResources::postResources())->map(fn($resource) => MenuItem::resource($resource))->toArray())
-                    ->icon('cog-8-tooth')
+                MenuSection::make('Post', [
+                    //collect(NovaResources::postResources())->map(fn($resource) => MenuItem::resource($resource))->push()->toArray())
+                    MenuGroup::make("Delivery Notes", [
+                        MenuItem::make('All')->path('/resources/delivery-notes'),
+                        MenuItem::make('Unprocessed')->path('/resources/delivery-notes/lens/unprocessed-delivery-notes'),
+                        MenuItem::make('Processed')->path('/resources/delivery-notes/lens/processed-delivery-notes'),
+                    ])->collapsable(),
+                ])->icon('cog-8-tooth')
                     ->collapsable(),
 
                 //Admin Section
@@ -153,10 +160,12 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
      */
     protected function gate(): void
     {
-        Gate::define('viewNova', function(User $user) {
-            return in_array($user->email, [
-                //
-            ]);
+        Gate::define('viewNova', function(\App\Models\User $user) {
+            return true;
+            //            USE THIS FOR STAGING
+            //            return in_array($user->email, [
+            //                //                Allowed Emails Here
+            //            ]);
         });
     }
 
@@ -188,7 +197,6 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
     public function register(): void
     {
         parent::register();
-
         //
     }
 }
