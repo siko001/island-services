@@ -80,10 +80,10 @@ class User extends Resource
 
                 //Address information
                 Tab::make('Address', [
-                    Text::make('Address')->rules('required', 'max:255')->hideFromIndex(),
-                    Text::make('Town')->rules('required', 'max:255')->hideFromIndex(),
-                    Text::make('Country')->rules('required', 'max:255')->hideFromIndex(),
-                    Text::make('Post Code')->rules('required', 'max:255')->hideFromIndex(),
+                    Text::make('Address')->rules('max:255')->hideFromIndex(),
+                    Text::make('Town')->rules('max:255')->hideFromIndex(),
+                    Text::make('Country')->rules('max:255')->hideFromIndex(),
+                    Text::make('Post Code')->rules('max:255')->hideFromIndex(),
                 ]),
 
                 //Roles, Commissions, Status
@@ -104,6 +104,51 @@ class User extends Resource
                             HelperFunctions::showFieldIfEarningCommissionRole($field, $formData);
                         })
                         ->hideFromIndex(),
+
+                    Boolean::make('Default Salesman', 'is_default_salesman')
+                        ->dependsOn(['roles'], function($field, $request, $formData) {
+                            $selectedRoles = $formData['roles'] ?? [];
+                            $normalizedRoles = [];
+                            $selectedRoles = is_array($selectedRoles) ? $selectedRoles : (empty($selectedRoles) ? [] : [$selectedRoles]);
+
+                            foreach($selectedRoles as $item) {
+                                if(is_string($item) && substr($item, 0, 1) === '{') {
+                                    $assoc = json_decode($item, true);
+                                    if(is_array($assoc)) {
+                                        foreach($assoc as $roleName => $selected) {
+                                            if($selected) {
+                                                $normalizedRoles[] = $roleName;
+                                            }
+                                        }
+                                    }
+                                } else {
+                                    $normalizedRoles[] = $item;
+                                }
+                            }
+
+                            $salesmanRoleNames = \App\Models\Admin\Role::where('is_salesmen_role', true)->pluck('name')->toArray();
+                            $isSalesmanSelected = false;
+                            foreach($normalizedRoles as $roleName) {
+                                if(in_array($roleName, $salesmanRoleNames)) {
+                                    $isSalesmanSelected = true;
+                                    break;
+                                }
+                            }
+
+                            // --- ENFORCE ONLY ONE DEFAULT SALESMAN ---
+                            $currentUserId = $formData->id ?? $request->findResourceOrFail()?->id ?? null;
+                            $otherDefault = \App\Models\User::where('is_default_salesman', true)
+                                ->where('id', '!=', $currentUserId)
+                                ->first();
+
+                            if($isSalesmanSelected && (!$otherDefault || $currentUserId == $otherDefault->id)) {
+                                $field->show();
+                            } else {
+                                $field->hide();
+                            }
+                        })
+                        ->help('Selecting this user as a default salesman will result as the first option for customers / sale orders'),
+
                     Text::make("Dakar Pay Code", 'dakar_code')
                         ->hide()
                         ->dependsOn(['roles'], function($field, $request, $formData) {
@@ -171,20 +216,19 @@ class User extends Resource
     //Method to filter the query for relatable resources (user -> vehicles) attachment
     public static function relatableQuery(NovaRequest $request, $query): Builder
     {
-
         // first check if the user is a driver and if the request is for vehicles via the drivers relationship
         if(($request->resource === 'vehicles' && $request->viaRelationship === 'drivers')) {
             return $query->whereHas('roles', function($q) {
-                $q->where('name', 'driver');
-            })->where('is_terminated', false); //return only non terminated users
+                $q->where('is_driver_role', true);
+            })->where('is_terminated', false);
 
         }
 
-        if($request->resource === 'delivery-notes') {
-            return $query->whereHas('roles', function($q) {
-                $q->whereIn('name', ['driver', 'salesman']);
-            })->where('is_terminated', false); //return only non terminated users
-        }
+        //        if($request->resource === 'delivery-notes') {
+        //            return $query->whereHas('roles', function($q) {
+        //                $q->whereIn('name', ['driver', 'salesman']);
+        //            })->where('is_terminated', false); //return only non terminated users
+        //        }
 
         return $query;
     }

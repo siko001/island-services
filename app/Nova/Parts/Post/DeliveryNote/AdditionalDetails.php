@@ -22,7 +22,11 @@ class AdditionalDetails
                 ->displayUsingLabels(),
 
             Select::make('Salesman', 'salesman_id')
-                ->options(\App\Models\User::all()->pluck('name', 'id')->toArray())
+                ->options(function() {
+                    return \App\Models\User::whereHas('roles', function($q) {
+                        $q->where('is_salesmen_role', true);
+                    })->pluck('name', 'id')->toArray();
+                })
                 ->displayUsingLabels()
                 ->sortable()
                 ->rules('required')

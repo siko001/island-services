@@ -2,6 +2,7 @@
 
 namespace Database\Seeders\Admin;
 
+use App\Models\Admin\Role;
 use Illuminate\Database\Seeder;
 
 class UserSeeder extends Seeder
@@ -12,10 +13,8 @@ class UserSeeder extends Seeder
             $roles = \App\Helpers\Data::RoleOptions();
 
             if($index < 8) {
-                // First 8 users get driver role
-                $role = 'driver';
+                $role = 'Driver'; // Make sure casing matches your actual roles
             } else {
-                // For others, pick a random role that might include driver as well or exclude it
                 $role = $roles[array_rand($roles)];
             }
 
@@ -23,5 +22,17 @@ class UserSeeder extends Seeder
             $user->save();
         });
 
+        // The following logic executes ONCE (not inside the loop)
+        $salesmanRole = Role::where('name', 'Salesman')->first();
+
+        if($salesmanRole) {
+            $salesmen = \App\Models\User::role('Salesman')->get();
+
+            if($salesmen->count()) {
+                $defaultSalesman = $salesmen->random();
+                $defaultSalesman->is_default_salesman = true;
+                $defaultSalesman->save();
+            }
+        }
     }
 }

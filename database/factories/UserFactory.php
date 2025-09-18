@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Helpers\HelperFunctions;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
@@ -22,9 +23,15 @@ class UserFactory extends Factory
      */
     public function definition(): array
     {
+        $name = fake()->firstName();
+        $surname = fake()->lastName();
+        $id_prefix = ['M', 'G', 'A'];
         return [
-            'name' => fake()->name(),
+            'name' => $name . " " . $surname,
+            'abbreviation' => HelperFunctions::getInitials($name, $surname),
             'email' => fake()->unique()->safeEmail(),
+            'id_card_number' => random_int(11111, 99999) . "(" . $id_prefix[array_rand($id_prefix)] . ")",
+            'mobile' => fake()->phoneNumber(),
             'email_verified_at' => now(),
             'password' => static::$password ??= Hash::make('password'),
             'remember_token' => Str::random(10),

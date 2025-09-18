@@ -27,6 +27,7 @@ return new class extends Migration {
             $table->boolean('standard_commission')->default(false);
             $table->string('dakar_code')->nullable();
             $table->boolean('is_terminated')->default(false);
+            $table->boolean('is_default_salesman')->default(false);
             $table->timestamp('email_verified_at')->nullable();
             $table->rememberToken();
             $table->timestamps();
