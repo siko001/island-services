@@ -96,6 +96,11 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
                         MenuItem::make('Unprocessed')->path('/resources/delivery-notes/lens/unprocessed-delivery-notes'),
                         MenuItem::make('Processed')->path('/resources/delivery-notes/lens/processed-delivery-notes'),
                     ])->collapsable(),
+
+                    //                    MenuGroup::make("Direct Sales", [
+                    MenuItem::make('Direct Sales')->path('/resources/direct-sales'),
+                    //                    ])->collapsable(),
+
                 ])->icon('cog-8-tooth')
                     ->collapsable(),
 

@@ -3,12 +3,9 @@
 namespace App\Nova;
 
 use App\Helpers\HelperFunctions;
-use App\Nova\Actions\DeliveryNote\ProcessDeliveryNote;
-use App\Nova\Lenses\Post\DeliveryNote\ProcessedDeliveryNotes;
-use App\Nova\Lenses\Post\DeliveryNote\UnprocessedDeliveryNotes;
-use App\Nova\Parts\Post\DeliveryNote\AdditionalDetails;
-use App\Nova\Parts\Post\DeliveryNote\DeliveryDetails;
-use App\Nova\Parts\Post\DeliveryNote\FinancialDetails;
+use App\Nova\Parts\Post\DirectSale\AdditionalDetails;
+use App\Nova\Parts\Post\DirectSale\DeliveryDetails;
+use App\Nova\Parts\Post\DirectSale\FinancialDetails;
 use App\Policies\ResourcePolicies;
 use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\Boolean;
@@ -20,33 +17,26 @@ use Laravel\Nova\Http\Requests\NovaRequest;
 use Laravel\Nova\Query\Search\SearchableRelation;
 use Laravel\Nova\Tabs\Tab;
 
-class DeliveryNote extends Resource
+class DirectSale extends Resource
 {
     use ResourcePolicies;
 
-    public static string $policyKey = 'delivery_note';
+    public static string $policyKey = 'direct_sale';
     /**
      * The model the resource corresponds to.
      * @var class-string<\App\Models\Post\DeliveryNote>
      */
-    public static $model = \App\Models\Post\DeliveryNote::class;
+    public static $model = \App\Models\Post\DirectSale::class;
     /**
      * The single value that should be used to represent the resource when being displayed.
      * @var string
      */
-    public static $title = 'delivery_note_number';
-    /**
-     * The columns that should be searched.
-     * @var array
-     */
-    public static $search = [
-        'delivery_note_number',
-    ];
+    public static $title = 'direct_sale_number';
 
     public static function searchableColumns(): array
     {
         return [
-            'delivery_note_number',
+            'direct_sale_number',
             new SearchableRelation('customer', 'client'),
         ];
     }
@@ -58,19 +48,17 @@ class DeliveryNote extends Resource
     public function fields(NovaRequest $request): array
     {
         return [
-
             //            random and auto generate delivery note number
             Boolean::make("Processed", 'status')->readonly()->onlyOnDetail(),
             Boolean::make("Processed", 'status')->readonly()->onlyOnIndex()->sortable(),
 
-            Text::make('Delivery Note Number', 'delivery_note_number')
-                ->default(function() {
-                    return \App\Models\Post\DeliveryNote::generateDeliveryNoteNumber();
-                })
+            Text::make('Delivery Note Number', 'direct_sale_number')
+                ->default(\App\Models\Post\DirectSale::generateDeliveryNoteNumber())
                 ->help('this field is auto generated')
                 ->sortable()
                 ->rules('required', 'max:255', 'unique:delivery_notes,delivery_note_number,{{resourceId}}')
                 ->creationRules('unique:delivery_notes,delivery_note_number'),
+
             Date::make('Order Date', 'order_date')->default(\Carbon\Carbon::now())
                 ->sortable()
                 ->rules('date'),
@@ -82,6 +70,7 @@ class DeliveryNote extends Resource
                 ->dependsOn('customer', function($field, $request, FormData $formData) {
                     HelperFunctions::fillFromDependentField($field, $formData, \App\Models\Customer\Customer::class, 'customer', 'account_number');
                 }),
+
             Text::make('Customer Email')
                 ->dependsOn('customer', function($field, $request, FormData $formData) {
                     HelperFunctions::fillFromDependentField($field, $formData, \App\Models\Customer\Customer::class, 'customer', 'delivery_details_email_one');
@@ -99,7 +88,6 @@ class DeliveryNote extends Resource
             HasMany::make('Products', 'deliveryNoteProducts', DeliveryNoteProduct::class),
 
         ];
-        //        Still to do load-sheet number (when in a load sheet) Products has many rel
     }
 
     /**
@@ -126,10 +114,7 @@ class DeliveryNote extends Resource
      */
     public function lenses(NovaRequest $request): array
     {
-        return [
-            new ProcessedDeliveryNotes(),
-            new UnprocessedDeliveryNotes()
-        ];
+        return [];
     }
 
     /**
@@ -138,13 +123,6 @@ class DeliveryNote extends Resource
      */
     public function actions(NovaRequest $request): array
     {
-        return [
-            new ProcessDeliveryNote(),
-        ];
-    }
-
-    public static function relatableCustomers(NovaRequest $request, $query)
-    {
-        return $query->where('account_closed', false);
+        return [];
     }
 }
