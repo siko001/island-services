@@ -39,6 +39,7 @@ class OtherDetails
 
             Select::make('Salesman', 'user_id')
                 ->options(\App\Models\User::getSalesmenRoles())
+                ->default(\App\Models\User::where('is_default_salesman', true)->value('id'))
                 ->displayUsingLabels()
                 ->sortable()
                 ->rules('required'),
