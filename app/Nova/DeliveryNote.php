@@ -9,7 +9,7 @@ use App\Nova\Lenses\Post\DeliveryNote\UnprocessedDeliveryNotes;
 use App\Nova\Parts\Post\DeliveryNote\AdditionalDetails;
 use App\Nova\Parts\Post\DeliveryNote\DeliveryDetails;
 use App\Nova\Parts\Post\DeliveryNote\FinancialDetails;
-use App\Policies\ResourcePolicies;
+use App\Traits\ResourcePolicies;
 use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\Date;
@@ -71,6 +71,7 @@ class DeliveryNote extends Resource
                 ->sortable()
                 ->rules('required', 'max:255', 'unique:delivery_notes,delivery_note_number,{{resourceId}}')
                 ->creationRules('unique:delivery_notes,delivery_note_number'),
+
             Date::make('Order Date', 'order_date')->default(\Carbon\Carbon::now())
                 ->sortable()
                 ->rules('date'),
@@ -108,7 +109,12 @@ class DeliveryNote extends Resource
      */
     public function cards(NovaRequest $request): array
     {
-        return [];
+        return [
+            Metrics\DeliveryNote\TotalDeliveryNotes::make()->defaultRange('TODAY')->refreshWhenActionsRun(),
+            Metrics\DeliveryNote\NewDeliveryNotes::make()->defaultRange('TODAY')->refreshWhenActionsRun(),
+            Metrics\DeliveryNote\ProcessedDeliveryNotes::make()->defaultRange('TODAY')->refreshWhenActionsRun(),
+
+        ];
     }
 
     /**

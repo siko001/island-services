@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Policies;
+namespace App\Traits;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;

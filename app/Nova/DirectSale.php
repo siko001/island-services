@@ -6,7 +6,7 @@ use App\Helpers\HelperFunctions;
 use App\Nova\Parts\Post\DirectSale\AdditionalDetails;
 use App\Nova\Parts\Post\DirectSale\DeliveryDetails;
 use App\Nova\Parts\Post\DirectSale\FinancialDetails;
-use App\Policies\ResourcePolicies;
+use App\Traits\ResourcePolicies;
 use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\Date;
@@ -69,6 +69,9 @@ class DirectSale extends Resource
                 ->hideFromIndex()
                 ->dependsOn('customer', function($field, $request, FormData $formData) {
                     HelperFunctions::fillFromDependentField($field, $formData, \App\Models\Customer\Customer::class, 'customer', 'account_number');
+                    if($formData['customer']) {
+                        $field->immutable();
+                    }
                 }),
 
             Text::make('Customer Email')

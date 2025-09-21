@@ -3,7 +3,7 @@
 namespace App\Nova;
 
 use App\Helpers\HelperFunctions;
-use App\Policies\ResourcePolicies;
+use App\Traits\ResourcePolicies;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use IslandServices\GroupedPermissions\GroupedPermissions;
 use Laravel\Nova\Auth\PasswordValidationRules;

@@ -40,7 +40,9 @@ class UnprocessedDeliveryNotes extends Lens
      */
     public function cards(NovaRequest $request): array
     {
-        return [];
+        return [
+            \App\Nova\Metrics\DeliveryNote\UnprocessedDeliveryNotes::make()->defaultRange('TODAY')->refreshWhenActionsRun(),
+        ];
     }
 
     /**

@@ -14,6 +14,8 @@ class UserSeeder extends Seeder
 
             if($index < 8) {
                 $role = 'Driver'; // Make sure casing matches your actual roles
+            } elseif($index < 16) {
+                $role = 'Salesman';
             } else {
                 $role = $roles[array_rand($roles)];
             }

@@ -2,7 +2,7 @@
 
 namespace App\Nova;
 
-use App\Policies\ResourcePolicies;
+use App\Traits\ResourcePolicies;
 use IslandServices\GroupedPermissions\GroupedPermissions;
 use Laravel\Nova\Fields\BelongsToMany;
 use Laravel\Nova\Fields\Boolean;

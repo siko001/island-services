@@ -42,6 +42,7 @@ return new class extends Migration {
             $table->decimal('credit_on_deposit', 10, 2)->default(0.00);
 
             $table->integer('credit_limit')->nullable()->default(0);
+            $table->timestamp('processed_at')->nullable();
             $table->date('last_delivery_date')->nullable();
 
             //            Load sheet?

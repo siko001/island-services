@@ -2,7 +2,7 @@
 
 namespace App\Nova;
 
-use App\Policies\ResourcePolicies;
+use App\Traits\ResourcePolicies;
 use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\Number;
 use Laravel\Nova\Fields\Select;
@@ -26,7 +26,6 @@ class OfferProduct extends Resource
 
     /**
      * Get the display name for the resource.
-     *
      * @return string
      */
     public static function label()
@@ -36,7 +35,6 @@ class OfferProduct extends Resource
 
     /**
      * Get the singular label for the resource.
-     *
      * @return string
      */
     public static function singularLabel()
@@ -46,7 +44,6 @@ class OfferProduct extends Resource
 
     /**
      * Get the text for the create resource button.
-     *
      * @return string
      */
     public static function createButtonLabel()
@@ -56,7 +53,6 @@ class OfferProduct extends Resource
 
     /**
      * Get the value that should be displayed to represent the resource.
-     *
      * @return string
      */
     public function title()

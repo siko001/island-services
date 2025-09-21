@@ -23,7 +23,10 @@ class ProcessedDeliveryNotes extends Lens
      */
     public static function query(LensRequest $request, Builder $query): Builder|Paginator
     {
-        return $query->where('status', 1);
+        return $request->withOrdering(
+            $request->withFilters($query->where('status', 1)),
+            fn($query) => $query->latest()
+        );
     }
 
     /**
@@ -41,7 +44,9 @@ class ProcessedDeliveryNotes extends Lens
      */
     public function cards(NovaRequest $request): array
     {
-        return [];
+        return [
+            \App\Nova\Metrics\DeliveryNote\ProcessedDeliveryNotes::make()->defaultRange('30'),
+        ];
     }
 
     /**

@@ -6,7 +6,7 @@ use App\Nova\Parts\Product\AdditionalDetails;
 use App\Nova\Parts\Product\PriceTypeDynamicFields;
 use App\Nova\Parts\Product\StockInfo;
 use App\Nova\Parts\Product\WebsiteInfo;
-use App\Policies\ResourcePolicies;
+use App\Traits\ResourcePolicies;
 use Laravel\Nova\Fields\BelongsToMany;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Number;

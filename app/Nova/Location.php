@@ -3,7 +3,7 @@
 namespace App\Nova;
 
 use App\Helpers\HelperFunctions;
-use App\Policies\ResourcePolicies;
+use App\Traits\ResourcePolicies;
 use Laravel\Nova\Fields\BelongsToMany;
 use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\FormData;

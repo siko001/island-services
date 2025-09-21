@@ -82,10 +82,10 @@ class DirectSale extends Model
         return $this->belongsTo(Location::class, 'customer_location');
     }
 
-    //    public function deliveryNoteProducts()
-    //    {
-    //        return $this->hasMany(DeliveryNoteProduct::class);
-    //    }
+    public function deliveryNoteProducts()
+    {
+        return $this->hasMany(DeliveryNoteProduct::class);
+    }
 
     public static function generateDeliveryNoteNumber(): string
     {

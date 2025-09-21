@@ -9,7 +9,7 @@ use App\Nova\Parts\Customer\DeliveryDetails;
 use App\Nova\Parts\Customer\FinancialDetails;
 use App\Nova\Parts\Customer\OtherDetails;
 use App\Nova\Parts\Customer\SummerAddress;
-use App\Policies\ResourcePolicies;
+use App\Traits\ResourcePolicies;
 use Laravel\Nova\Actions\ExportAsCsv;
 use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\DateTime;
