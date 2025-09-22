@@ -3,6 +3,10 @@
 namespace App\Providers;
 
 use App\Helpers\NovaResources;
+use App\Nova\DeliveryNote;
+use App\Nova\DirectSale;
+use App\Nova\Lenses\Post\DeliveryNote\ProcessedDeliveryNotes;
+use App\Nova\Lenses\Post\DeliveryNote\UnprocessedDeliveryNotes;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Gate;
@@ -93,13 +97,13 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
                 MenuSection::make('Post', [
                     //collect(NovaResources::postResources())->map(fn($resource) => MenuItem::resource($resource))->push()->toArray())
                     MenuGroup::make("Delivery Notes", [
-                        MenuItem::make('All')->path('/resources/delivery-notes'),
-                        MenuItem::make('Unprocessed')->path('/resources/delivery-notes/lens/unprocessed-delivery-notes'),
-                        MenuItem::make('Processed')->path('/resources/delivery-notes/lens/processed-delivery-notes'),
+                        MenuItem::resource(DeliveryNote::class)->name("All Delivery Notes"),
+                        MenuItem::lens(DeliveryNote::class, UnprocessedDeliveryNotes::class)->name('Unprocessed')->canSee(fn($request) => $request->user()?->can('view unprocessed delivery_note') ?? false),
+                        MenuItem::lens(DeliveryNote::class, ProcessedDeliveryNotes::class)->name('Processed')->canSee(fn($request) => $request->user()?->can('view processed delivery_note') ?? false),
                     ])->collapsable(),
 
                     //                    MenuGroup::make("Direct Sales", [
-                    MenuItem::make('Direct Sales')->path('/resources/direct-sales'),
+                    MenuItem::resource(DirectSale::class)
                     //                    ])->collapsable(),
 
                 ])->icon('cog-8-tooth')

@@ -13,9 +13,9 @@ class PermissionGenerator
         $createdCount = 0;
         $createdCount = self::createResourcePermissions($output, $createdCount);
         $createdCount = self::createStaticPermissions($output, $createdCount);
-        $createdCount = self::createActionPermissions($output, $createdCount);
+        $createdCount = self::createLensPermissions($output, $createdCount);
+        return self::createActionPermissions($output, $createdCount);
 
-        return $createdCount;
     }
 
     public static function createResourcePermissions($output, $createdCount): int
@@ -74,6 +74,16 @@ class PermissionGenerator
         ];
 
         return self::PermissionLoop($staticPermissions, $output, $createdCount);
+    }
+
+    public static function createLensPermissions($output, $createdCount): int
+    {
+        $lensPermissions = [
+            'view processed delivery_note',
+            'view unprocessed delivery_note',
+        ];
+
+        return self::PermissionLoop($lensPermissions, $output, $createdCount);
     }
 
     public static function PermissionLoop($permissionArray, $output, $createdCount): int
