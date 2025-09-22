@@ -7,6 +7,8 @@ use App\Nova\DeliveryNote;
 use App\Nova\DirectSale;
 use App\Nova\Lenses\Post\DeliveryNote\ProcessedDeliveryNotes;
 use App\Nova\Lenses\Post\DeliveryNote\UnprocessedDeliveryNotes;
+use App\Nova\Lenses\Post\DirectSale\ProcessedDirectSales;
+use App\Nova\Lenses\Post\DirectSale\UnprocessedDirectSales;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Gate;
@@ -97,14 +99,16 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
                 MenuSection::make('Post', [
                     //collect(NovaResources::postResources())->map(fn($resource) => MenuItem::resource($resource))->push()->toArray())
                     MenuGroup::make("Delivery Notes", [
-                        MenuItem::resource(DeliveryNote::class)->name("All Delivery Notes"),
+                        MenuItem::resource(DeliveryNote::class)->name("All / Create"),
                         MenuItem::lens(DeliveryNote::class, UnprocessedDeliveryNotes::class)->name('Unprocessed')->canSee(fn($request) => $request->user()?->can('view unprocessed delivery_note') ?? false),
                         MenuItem::lens(DeliveryNote::class, ProcessedDeliveryNotes::class)->name('Processed')->canSee(fn($request) => $request->user()?->can('view processed delivery_note') ?? false),
                     ])->collapsable(),
 
-                    //                    MenuGroup::make("Direct Sales", [
-                    MenuItem::resource(DirectSale::class)
-                    //                    ])->collapsable(),
+                    MenuGroup::make("Direct Sales", [
+                        MenuItem::resource(DirectSale::class)->name("All / Create"),
+                        MenuItem::lens(DirectSale::class, UnprocessedDirectSales::class)->name('Unprocessed')->canSee(fn($request) => $request->user()?->can('view unprocessed direct_sale') ?? false),
+                        MenuItem::lens(DirectSale::class, ProcessedDirectSales::class)->name('Processed')->canSee(fn($request) => $request->user()?->can('view processed direct_sale') ?? false)
+                    ])->collapsable(),
 
                 ])->icon('cog-8-tooth')
                     ->collapsable(),

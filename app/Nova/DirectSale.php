@@ -3,6 +3,8 @@
 namespace App\Nova;
 
 use App\Helpers\HelperFunctions;
+use App\Nova\Lenses\Post\DirectSale\ProcessedDirectSales;
+use App\Nova\Lenses\Post\DirectSale\UnprocessedDirectSales;
 use App\Nova\Parts\Post\DirectSale\AdditionalDetails;
 use App\Nova\Parts\Post\DirectSale\DeliveryDetails;
 use App\Nova\Parts\Post\DirectSale\FinancialDetails;
@@ -118,7 +120,10 @@ class DirectSale extends Resource
      */
     public function lenses(NovaRequest $request): array
     {
-        return [];
+        return [
+            new ProcessedDirectSales(),
+            new UnprocessedDirectSales(),
+        ];
     }
 
     /**

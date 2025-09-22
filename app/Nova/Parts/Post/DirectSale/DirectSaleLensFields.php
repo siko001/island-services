@@ -8,7 +8,7 @@ use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\Date;
 use Laravel\Nova\Fields\Text;
 
-class DeliveryNoteLensFields
+class DirectSaleLensFields
 {
     public function __invoke(): array
     {

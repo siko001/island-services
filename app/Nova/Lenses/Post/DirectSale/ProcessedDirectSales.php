@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Nova\Lenses\Post\DeliveryNote;
+namespace App\Nova\Lenses\Post\DirectSale;
 
-use App\Nova\Parts\Post\DeliveryNote\DeliveryNoteLensFields;
+use App\Nova\Parts\Post\DirectSale\DirectSaleLensFields;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Contracts\Pagination\Paginator;
 use Laravel\Nova\Actions\Action;
@@ -13,7 +13,7 @@ use Laravel\Nova\Http\Requests\LensRequest;
 use Laravel\Nova\Http\Requests\NovaRequest;
 use Laravel\Nova\Lenses\Lens;
 
-class ProcessedDeliveryNotes extends Lens
+class ProcessedDirectSales extends Lens
 {
     /**
      * The columns that should be searched.
@@ -38,7 +38,8 @@ class ProcessedDeliveryNotes extends Lens
      */
     public function fields(NovaRequest $request): array
     {
-        return (new DeliveryNoteLensFields)();
+
+        return (new DirectSaleLensFields)();
     }
 
     /**
@@ -47,9 +48,7 @@ class ProcessedDeliveryNotes extends Lens
      */
     public function cards(NovaRequest $request): array
     {
-        return [
-            \App\Nova\Metrics\DeliveryNote\ProcessedDeliveryNotes::make()->defaultRange('30'),
-        ];
+        return [];
     }
 
     /**
@@ -75,6 +74,6 @@ class ProcessedDeliveryNotes extends Lens
      */
     public function uriKey(): string
     {
-        return 'processed-delivery-notes';
+        return 'processed-direct-sales';
     }
 }
