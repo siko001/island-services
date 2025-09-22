@@ -15,7 +15,7 @@ class DirectSaleLensFields
         return [
             Boolean::make("Processed", 'status')->readonly(),
 
-            Text::make('Delivery Note Number', 'delivery_note_number'),
+            Text::make('Direct Sale Number', 'direct_sale_number'),
 
             Date::make('Order Date', 'order_date'),
 

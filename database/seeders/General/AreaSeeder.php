@@ -25,7 +25,6 @@ class AreaSeeder extends Seeder
             [
                 "name" => 'North',
                 "abbreviation" => 'north',
-                "is_foreign_area" => false,
                 'commission_paid_outstanding_delivery' => 0.00,
                 'commission_paid_outstanding_deposit' => 0.00,
                 'commission_cash_delivery' => 0.00,
@@ -37,7 +36,6 @@ class AreaSeeder extends Seeder
             [
                 "name" => 'South',
                 "abbreviation" => 'south',
-                "is_foreign_area" => false,
                 'commission_paid_outstanding_delivery' => 2.50,
                 'commission_paid_outstanding_deposit' => 2.50,
                 'commission_cash_delivery' => 2.50,
@@ -49,7 +47,6 @@ class AreaSeeder extends Seeder
             [
                 "name" => 'East',
                 "abbreviation" => 'east',
-                "is_foreign_area" => false,
                 'commission_paid_outstanding_delivery' => 5,
                 'commission_paid_outstanding_deposit' => 5,
                 'commission_cash_delivery' => 5,
@@ -61,7 +58,6 @@ class AreaSeeder extends Seeder
             [
                 "name" => 'West',
                 "abbreviation" => 'west',
-                "is_foreign_area" => false,
                 'commission_paid_outstanding_delivery' => 8.75,
                 'commission_paid_outstanding_deposit' => 8.75,
                 'commission_cash_delivery' => 8.75,
@@ -73,7 +69,6 @@ class AreaSeeder extends Seeder
             [
                 "name" => 'Gozo',
                 "abbreviation" => 'gozo',
-                "is_foreign_area" => false,
                 'commission_paid_outstanding_delivery' => 0.00,
                 'commission_paid_outstanding_deposit' => 0.00,
                 'commission_cash_delivery' => 0.00,
@@ -97,7 +92,7 @@ class AreaSeeder extends Seeder
             [
                 "name" => 'Direct Sale',
                 "abbreviation" => 'direct',
-                "is_foreign_area" => false,
+                "is_direct_sale" => true,
                 'commission_paid_outstanding_delivery' => 00.00,
                 'commission_paid_outstanding_deposit' => 00.00,
                 'commission_cash_delivery' => 00.00,

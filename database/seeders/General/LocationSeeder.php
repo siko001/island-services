@@ -73,9 +73,10 @@ class LocationSeeder extends Seeder
         // Create locations and attach to areas with random delivery settings
         $locationNumbering = [];
         foreach($locationData as $key => $info) {
-            $location = Location::create([
-                'name' => $info['name']
-            ]);
+            $locationAttributes = ['name' => $info['name']];
+            $info['name'] === 'Direct Sales' ? $locationAttributes['is_direct_sale'] = 1 : $locationAttributes['is_direct_sale'] = 0;
+
+            $location = Location::create($locationAttributes);
 
             $areaId = $areaMap[$info['area_abbr']];
 
