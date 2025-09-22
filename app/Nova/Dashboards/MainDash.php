@@ -38,6 +38,6 @@ class MainDash extends Dashboard
      */
     public function uriKey(): string
     {
-        return 'main-dash';
+        return 'main';
     }
 }

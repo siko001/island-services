@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "635413caf9423fa25da085aa4c803f79",
+    "content-hash": "15d9ae01dd1601a2698a75c4ce74a02c",
     "packages": [
         {
             "name": "ardenthq/nova-image-gallery-field",

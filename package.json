@@ -15,7 +15,9 @@
         "build-login-logs": "cd nova-components/LoginLogs && npm run dev",
         "build-login-logs-prod": "cd nova-components/LoginLogs && npm run prod",
         "build-custom-heading": "cd nova-components/CustomHeading && npm run dev",
-        "build-custom-heading-prod": "cd nova-components/CustomHeading && npm run prod"
+        "build-custom-heading-prod": "cd nova-components/CustomHeading && npm run prod",
+        "build-heading-card": "cd nova-components/HeadingCard && npm run dev",
+        "build-heading-card-prod": "cd nova-components/HeadingCard && npm run prod"
     },
     "devDependencies": {
         "@tailwindcss/vite": "^4.0.0",

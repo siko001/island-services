@@ -111,6 +111,10 @@
         "4": {
             "type": "path",
             "url": "./nova-components/CustomHeading"
+        },
+        "5": {
+            "type": "path",
+            "url": "./nova-components/HeadingCard"
         }
     }
 }

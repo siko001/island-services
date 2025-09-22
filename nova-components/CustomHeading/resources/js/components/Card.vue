@@ -25,5 +25,4 @@ export default {
   box-shadow: none !important;
   border: none !important;
   max-height: 1.2rem !important;
-}
-</style>
+}</style>
