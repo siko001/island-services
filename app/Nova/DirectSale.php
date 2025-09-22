@@ -53,6 +53,7 @@ class DirectSale extends Resource
             Boolean::make("Processed", 'status')->readonly()->onlyOnIndex()->sortable(),
 
             Text::make('Delivery Note Number', 'direct_sale_number')
+                ->immutable()
                 ->default(\App\Models\Post\DirectSale::generateDeliveryNoteNumber())
                 ->help('this field is auto generated')
                 ->sortable()
@@ -88,7 +89,7 @@ class DirectSale extends Resource
                 Tab::make("Additional Details", new AdditionalDetails()),
             ]),
 
-            HasMany::make('Products', 'deliveryNoteProducts', DeliveryNoteProduct::class),
+            HasMany::make('Products', 'directSaleProducts', DirectSaleProduct::class),
 
         ];
     }

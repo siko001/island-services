@@ -64,6 +64,7 @@ class DeliveryNote extends Resource
             Boolean::make("Processed", 'status')->readonly()->onlyOnIndex()->sortable(),
 
             Text::make('Delivery Note Number', 'delivery_note_number')
+                ->immutable()
                 ->default(function() {
                     return \App\Models\Post\DeliveryNote::generateDeliveryNoteNumber();
                 })
