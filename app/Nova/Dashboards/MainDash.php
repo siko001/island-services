@@ -4,8 +4,8 @@ namespace App\Nova\Dashboards;
 
 use App\Nova\Metrics\DeliveryNote\NewDeliveryNotes;
 use App\Nova\Metrics\DeliveryNote\ProcessedDeliveryNotes;
+use IslandServices\CustomHeading\CustomHeading;
 use Laravel\Nova\Dashboard;
-use Laravel\Nova\Fields\Heading;
 
 class MainDash extends Dashboard
 {
@@ -23,7 +23,11 @@ class MainDash extends Dashboard
     {
 
         return [
-            Heading::make('Delivery Note Metrics'),
+            (new CustomHeading())->withMeta(['title' => 'Delivery Note Metrics']),
+            NewDeliveryNotes::make()->width('1/3')->defaultRange('TODAY'),
+            ProcessedDeliveryNotes::make()->width('1/3')->defaultRange('TODAY'),
+
+            (new CustomHeading())->withMeta(['title' => 'Customer Metrics']),
             NewDeliveryNotes::make()->width('1/2')->defaultRange('TODAY'),
             ProcessedDeliveryNotes::make()->width('1/2')->defaultRange('TODAY'),
         ];
@@ -34,6 +38,6 @@ class MainDash extends Dashboard
      */
     public function uriKey(): string
     {
-        return 'main';
+        return 'main-dash';
     }
 }

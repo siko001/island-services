@@ -20,7 +20,8 @@
         "spatie/laravel-permission": "^6.20",
         "stancl/tenancy": "^3.9",
         "island-services/gallery": "@dev",
-        "island-services/login-logs": "@dev"
+        "island-services/login-logs": "@dev",
+        "island-services/custom-heading": "@dev"
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.16",
@@ -106,6 +107,10 @@
         "3": {
             "type": "path",
             "url": "./nova-components/LoginLogs"
+        },
+        "4": {
+            "type": "path",
+            "url": "./nova-components/CustomHeading"
         }
     }
 }
