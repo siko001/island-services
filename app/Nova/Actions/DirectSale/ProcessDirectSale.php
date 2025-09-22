@@ -1,19 +1,18 @@
 <?php
 
-namespace App\Nova\Actions\DeliveryNote;
+namespace App\Nova\Actions\DirectSale;
 
-use App\Models\Post\DeliveryNote;
+use App\Models\Post\DirectSale;
 use Illuminate\Bus\Queueable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Log;
 use Laravel\Nova\Actions\Action;
 use Laravel\Nova\Actions\ActionResponse;
 use Laravel\Nova\Fields\ActionFields;
 use Laravel\Nova\Fields\Field;
 use Laravel\Nova\Http\Requests\NovaRequest;
 
-class ProcessDeliveryNote extends Action
+class ProcessDirectSale extends Action
 {
     use InteractsWithQueue;
     use Queueable;
@@ -26,17 +25,17 @@ class ProcessDeliveryNote extends Action
     public function handle(ActionFields $fields, Collection $models): ActionResponse
     {
         //
-        $processedDeliverNotes = 0;
-        foreach($models as $deliveryNote) {
-            if($deliveryNote->status == 1) {
+        $processedDirectSale = 0;
+        foreach($models as $directSale) {
+            if($directSale->status == 1) {
                 continue;
             }
-            $deliveryNote->status = 1;
-            $deliveryNote->save();
-            $processedDeliverNotes++;
+            $directSale->status = 1;
+            $directSale->save();
+            $processedDirectSale++;
         }
         return Action::message(
-            "Processed {$processedDeliverNotes} Delivery Note" . ($processedDeliverNotes > 1 ? 's' : '')
+            "Processed {$processedDirectSale} Direct Sale" . ($processedDirectSale > 1 ? 's' : '')
         );
     }
 
@@ -51,7 +50,7 @@ class ProcessDeliveryNote extends Action
 
     public function authorizedToSee(\Illuminate\Http\Request $request)
     {
-        if(!auth()->user()->can('process delivery_note')) {
+        if(!auth()->user()->can('process direct_sale')) {
             return false;
         }
 
@@ -59,7 +58,6 @@ class ProcessDeliveryNote extends Action
         $allSelected = $request->resources === 'all' || ($request->allResourcesSelected ?? false);
 
         if($allSelected) {
-            Log::info($request);
             return true;
         }
 
@@ -72,15 +70,15 @@ class ProcessDeliveryNote extends Action
             return true;
         }
 
-        $resources = DeliveryNote::whereIn('id', $selectedResourceIds)->get();
+        $resources = DirectSale::whereIn('id', $selectedResourceIds)->get();
 
         if(!$editViewResourceId && $resources->isEmpty()) {
             return false;
         }
 
         if($editViewResourceId) {
-            $deliveryNote = DeliveryNote::find($editViewResourceId);
-            return $deliveryNote && !$deliveryNote->status == 1;
+            $directSale = DirectSale::find($editViewResourceId);
+            return $directSale && !$directSale->status == 1;
         }
 
         return $resources->contains(fn($r) => !$r->status);
