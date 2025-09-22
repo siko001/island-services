@@ -12,11 +12,13 @@ class OrderType extends Model
         'abbreviation',
         'short_period_type',
         'is_default',
+        'is_direct_sale',
         'created_at',
         'updated_at',
     ];
     protected $casts = [
         'short_period_type' => 'boolean',
+        'is_direct_sale' => 'boolean',
         'is_default' => 'boolean',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',

@@ -11,9 +11,8 @@
         
         <x-tenant-list :tenants="$tenants"/>
         
-        @if(Auth::user())
             <x-form-heading :tenants="$tenants"/>
-            
+        @if(Auth::user())
             <x-creation-form :tenants="$tenants"/>
         @endif
     

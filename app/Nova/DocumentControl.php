@@ -3,7 +3,7 @@
 namespace App\Nova;
 
 use App\Helpers\HelperFunctions;
-use App\Policies\ResourcePolicies;
+use App\Traits\ResourcePolicies;
 use Laravel\Nova\Fields\File;
 use Laravel\Nova\Fields\Select;
 use Laravel\Nova\Fields\Text;

@@ -7,6 +7,7 @@ use App\Models\General\Area;
 use App\Models\General\Location;
 use App\Models\General\OrderType;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
 class DeliveryNote extends Model
@@ -100,5 +101,17 @@ class DeliveryNote extends Model
             $newNumber = '0001';
         }
         return 'DN-' . date('Y') . '-' . $newNumber;
+    }
+
+    public static function boot()
+    {
+        parent::boot();
+
+        static::saving(function($model) {
+            if($model->status == 1) {
+                $model->processed_at = Carbon::now();
+            }
+        });
+
     }
 }

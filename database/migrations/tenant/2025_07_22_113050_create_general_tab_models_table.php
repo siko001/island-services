@@ -15,6 +15,7 @@ return new class extends Migration {
             $table->string('name');
             $table->string('abbreviation')->nullable();
             $table->boolean('short_period_type')->default(false);
+            $table->boolean('is_direct_sale')->default(false);
             $table->boolean('is_default')->default(false);
             $table->timestamps();
         });
@@ -75,20 +76,6 @@ return new class extends Migration {
             $table->string('name');
         });
 
-        Schema::create('offer_products', function(Blueprint $table) {
-            $table->id();
-            $table->foreignId('offer_id')->constrained('offers')->onDelete('cascade');
-            $table->foreignId('product_id')->constrained('products')->onDelete('cascade');
-            $table->foreignId('price_type_id')->nullable()->constrained('price_types')->onDelete('set null');
-            $table->foreignId('vat_code_id')->nullable()->constrained('vat_codes')->onDelete('set null');
-            $table->integer('quantity')->default(1);
-            $table->decimal('price', 10, 2)->nullable();
-            $table->decimal('deposit', 10, 2)->nullable();
-            $table->decimal('bcrs_deposit', 10, 2)->nullable();
-            $table->decimal('total_price', 10, 2);
-            $table->timestamps();
-
-        });
     }
 
     /**
@@ -104,6 +91,5 @@ return new class extends Migration {
         Schema::dropIfExists('document_controls');
         Schema::dropIfExists('monetory_values');
         Schema::dropIfExists('offers');
-        Schema::dropIfExists('offer_products');
     }
 };

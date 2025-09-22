@@ -22,12 +22,22 @@ class AdditionalDetails
                 ->displayUsingLabels(),
 
             Select::make('Salesman', 'salesman_id')
-                ->options(\App\Models\User::all()->pluck('name', 'id')->toArray())
+                ->options(function() {
+                    return \App\Models\User::getSalesmenRoles();
+                })
+                ->default(function() {
+                    return \App\Models\User::where('is_default_salesman', true)->value('id');
+                })
                 ->displayUsingLabels()
                 ->sortable()
                 ->rules('required')
                 ->dependsOn('customer', function($field, $request, FormData $formData) {
-                    HelperFunctions::fillFromDependentField($field, $formData, \App\Models\Customer\Customer::class, 'customer', 'user_id');
+                    $customerId = $formData->customer ?? null;
+                    if($customerId) {
+                        HelperFunctions::fillFromDependentField($field, $formData, \App\Models\Customer\Customer::class, 'customer', 'user_id');
+                    } else {
+                        $field->setValue(\App\Models\User::where('is_default_salesman', true)->value('id'));
+                    }
                 }),
 
             BelongsTo::make('Order Type', 'orderType', OrderType::class)

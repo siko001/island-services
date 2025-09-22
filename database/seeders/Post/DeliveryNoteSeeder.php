@@ -77,22 +77,22 @@ class DeliveryNoteSeeder extends Seeder
                 // Get random order type
                 $orderType = $orderTypes->random();
 
-                // Generate dates
-                // Make order date today or yesterday for more realistic data
-                $orderDate = Carbon::now()->subDays(rand(0, 1));
+                $randomDate = Carbon::now()->subDays(rand(0, 7));
 
                 // Get the next delivery date based on the customer's area and location
                 $deliveryDate = AreaLocation::getNextDeliveryDate($customerArea, $customerLocation, $customer->id);
 
                 // If no delivery date could be determined, default to at least 2 days after order date
-                if (!$deliveryDate) {
-                    $deliveryDate = Carbon::parse($orderDate)->addDays(rand(2, 5));
+                if(!$deliveryDate) {
+                    $deliveryDate = $randomDate;
                 }
+
+                $processed = rand(0, 1);
 
                 // Create delivery note
                 $deliveryNote = DeliveryNote::create([
                     'delivery_note_number' => DeliveryNote::generateDeliveryNoteNumber(),
-                    'order_date' => $orderDate,
+                    'order_date' => $randomDate,
                     'delivery_date' => $deliveryDate,
                     'salesman_id' => $salesman->id,
                     'operator_id' => $operator->id,
@@ -100,7 +100,8 @@ class DeliveryNoteSeeder extends Seeder
                     'delivery_instructions' => "Delivery instructions for {$customer->client}",
                     'delivery_directions' => "Directions for {$customer->client}",
                     'remarks' => "Remarks for delivery note",
-                    'status' => rand(0, 1), // Randomly set as processed or not
+                    'processed_at' => $processed ? $deliveryDate : null,
+                    'status' => $processed,
                     'customer_id' => $customer->id,
                     'customer_account_number' => $customerAccountNumber,
                     'customer_email' => $customerEmail,
@@ -112,6 +113,7 @@ class DeliveryNoteSeeder extends Seeder
                     'balance_on_deposit' => $customer->balance_dep,
                     'credit_on_deposit' => $customer->credit_limit_dep,
                     'credit_limit' => $customer->credit_terms_current,
+                    'created_at' => $randomDate,
                 ]);
 
                 $this->command->info("Created delivery note #" . ($i + 1) . ": " . $deliveryNote->delivery_note_number . " for " . $customer->client);

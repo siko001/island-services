@@ -10,6 +10,7 @@ use App\Nova\Complaint;
 use App\Nova\Customer;
 use App\Nova\CustomerGroup;
 use App\Nova\DeliveryNote;
+use App\Nova\DirectSale;
 use App\Nova\DocumentControl;
 use App\Nova\HearAbout;
 use App\Nova\Location;
@@ -68,7 +69,8 @@ class NovaResources
     public static function postResources(): array
     {
         return [
-            DeliveryNote::class
+            DeliveryNote::class,
+            DirectSale::class
         ];
     }
 

@@ -13,6 +13,10 @@ class CustomerObserver
      */
     public function created(Customer $customer): void
     {
+        if(app()->runningInConsole()) {
+            return;
+        }
+
         // Dispatch a queue job to create the customer in Sage
         CreateSageCustomerJob::dispatch($customer);
     }
@@ -22,6 +26,9 @@ class CustomerObserver
      */
     public function updated(Customer $customer): void
     {
+        if(app()->runningInConsole()) {
+            return;
+        }
         // Dispatch a queue job to update the customer in Sage
         UpdateSageCustomerJob::dispatch($customer);
     }

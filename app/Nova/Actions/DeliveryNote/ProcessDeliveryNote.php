@@ -6,8 +6,11 @@ use App\Models\Post\DeliveryNote;
 use Illuminate\Bus\Queueable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Log;
 use Laravel\Nova\Actions\Action;
+use Laravel\Nova\Actions\ActionResponse;
 use Laravel\Nova\Fields\ActionFields;
+use Laravel\Nova\Fields\Field;
 use Laravel\Nova\Http\Requests\NovaRequest;
 
 class ProcessDeliveryNote extends Action
@@ -17,9 +20,10 @@ class ProcessDeliveryNote extends Action
 
     /**
      * Perform the action on the given models.
-     * @return mixed
+     * @return ActionResponse
      */
-    public function handle(ActionFields $fields, Collection $models): mixed
+
+    public function handle(ActionFields $fields, Collection $models): ActionResponse
     {
         //
         $processedDeliverNotes = 0;
@@ -38,7 +42,7 @@ class ProcessDeliveryNote extends Action
 
     /**
      * Get the fields available on the action.
-     * @return array<int, \Laravel\Nova\Fields\Field>
+     * @return array<int, Field>
      */
     public function fields(NovaRequest $request): array
     {
@@ -51,10 +55,20 @@ class ProcessDeliveryNote extends Action
             return false;
         }
 
-        //hide the action if or for the users that have been already terminated
-        $selectedResourceIds = $request->resources ?? [];
-        $editViewResourceId = $request->{'resourceId'};
-        if(!$editViewResourceId && !$selectedResourceIds) {
+        $editViewResourceId = $request->resourceId;
+        $allSelected = $request->resources === 'all' || ($request->allResourcesSelected ?? false);
+
+        if($allSelected) {
+            Log::info($request);
+            return true;
+        }
+
+        // Process individual selection
+        $selectedResourceIds = is_array($request->resources)
+            ? $request->resources
+            : (!empty($request->resources) ? explode(',', $request->resources) : []);
+
+        if(!$editViewResourceId && empty($selectedResourceIds)) {
             return true;
         }
 
@@ -70,6 +84,5 @@ class ProcessDeliveryNote extends Action
         }
 
         return $resources->contains(fn($r) => !$r->status);
-
     }
 }

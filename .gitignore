@@ -24,3 +24,4 @@ Homestead.yaml
 Thumbs.db
 storage/
 public/tenancy/
+package-lock.json

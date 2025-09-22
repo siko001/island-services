@@ -15,6 +15,9 @@ class ProductObserver
      */
     public function created(Product $product): void
     {
+        if(app()->runningInConsole()) {
+            return;
+        }
         CreateWebsiteProductJob::dispatch($product);
         CreateSageProductJob::dispatch($product);
     }
@@ -24,6 +27,9 @@ class ProductObserver
      */
     public function updated(Product $product): void
     {
+        if(app()->runningInConsole()) {
+            return;
+        }
         UpdateWebsiteProductJob::dispatch($product);
         UpdateSageProductJob::dispatch($product);
     }

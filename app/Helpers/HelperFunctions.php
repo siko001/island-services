@@ -116,7 +116,7 @@ class HelperFunctions
 
     protected static int $seedingCounter = 0;
 
-    protected static function getInitials(string $value1, string $value2): string
+    public static function getInitials(string $value1, string $value2): string
     {
         $initials = '';
         $words = array_merge(

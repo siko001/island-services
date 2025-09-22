@@ -93,6 +93,18 @@ class AreaSeeder extends Seeder
                 'delivery_note_remark' => 'Italy Area Delivery Note (Foreign)',
                 'customer_care_email' => 'islandServices@gmail.com',
             ],
+
+            [
+                "name" => 'Direct Sale',
+                "abbreviation" => 'direct',
+                "is_foreign_area" => false,
+                'commission_paid_outstanding_delivery' => 00.00,
+                'commission_paid_outstanding_deposit' => 00.00,
+                'commission_cash_delivery' => 00.00,
+                'commission_cash_deposit' => 00.00,
+                'delivery_note_remark' => 'Direct Sales',
+                'customer_care_email' => 'islandServices@gmail.com',
+            ]
         ];
 
         foreach($areas as $area) {

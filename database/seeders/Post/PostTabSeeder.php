@@ -14,6 +14,8 @@ class PostTabSeeder extends Seeder
         $seeders = [
             DeliveryNoteSeeder::class,
             DeliveryNoteProductSeeder::class,
+            DirectSaleSeeder::class,
+            DirectSaleProductSeeder::class,
         ];
 
         // Loop through each seeder and call it

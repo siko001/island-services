@@ -37,7 +37,8 @@ class LocationSeeder extends Seeder
             ],
             'gozo' => [
                 'Victoria', 'Xagħra', 'Xewkija', 'Għajnsielem', 'Marsalforn', 'Nadur'
-            ]
+            ],
+            'direct' => ['Direct Sales']
         ];
 
         $locationData = [];
@@ -82,16 +83,28 @@ class LocationSeeder extends Seeder
             $locationNumbering[$areaId] = $locationNumbering[$areaId] ?? 1;
             $locationNumber = $locationNumbering[$areaId]++;
 
-            // Randomize delivery days
-            $deliveryDays = [
-                'monday' => (bool)random_int(0, 1),
-                'tuesday' => (bool)random_int(0, 1),
-                'wednesday' => (bool)random_int(0, 1),
-                'thursday' => (bool)random_int(0, 1),
-                'friday' => (bool)random_int(0, 1),
-                'saturday' => (bool)random_int(0, 1),
-                'sunday' => (bool)random_int(0, 1),
-            ];
+            if($info['name'] == "Direct Sales") {
+                $deliveryDays = [
+                    'monday' => 1,
+                    'tuesday' => 1,
+                    'wednesday' => 1,
+                    'thursday' => 1,
+                    'friday' => 1,
+                    'saturday' => 1,
+                    'sunday' => 1,
+                ];
+            } else {
+                // Randomize delivery days
+                $deliveryDays = [
+                    'monday' => (bool)random_int(0, 1),
+                    'tuesday' => (bool)random_int(0, 1),
+                    'wednesday' => (bool)random_int(0, 1),
+                    'thursday' => (bool)random_int(0, 1),
+                    'friday' => (bool)random_int(0, 1),
+                    'saturday' => (bool)random_int(0, 1),
+                    'sunday' => (bool)random_int(0, 1),
+                ];
+            }
 
             // Attach location to area with pivot delivery fields
             $location->areas()->attach($areaId, array_merge([

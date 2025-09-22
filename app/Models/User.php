@@ -68,7 +68,7 @@ class User extends Authenticatable
         $salesmen = [];
 
         $roles = Role::with('users')
-            ->where('earns_commission', true)
+            ->where('is_salesmen_role', true)
             ->get();
         foreach($roles as $role) {
             foreach($role->users as $user) {
@@ -94,10 +94,10 @@ class User extends Authenticatable
             }
 
             //if the user is terminated, and they have commission enabled, disable it
-            if($user->is_terminated && ($user->gets_commission || $user->standard_commission)) {
+            if($user->is_terminated && ($user->gets_commission || $user->standard_commission || $user->is_default_salesman)) {
                 $user->gets_commission = false;
                 $user->standard_commission = false;
-
+                $user->is_default_salesman = false;
             }
             return true;
         });

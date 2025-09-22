@@ -32,6 +32,10 @@
     left: -20px;
 }
 
+[searchable="true"] {
+    max-width: 550px;
+}
+
 @media screen and (max-width: 768px) {
     .sidebar-menu > div:first-child {
         position: relative;
@@ -40,6 +44,9 @@
     }
     .sidebar-menu > div:nth-child(2) {
         margin-top: 0 !important;
+    }
+    [searchable="true"] {
+        max-width: 300px;
     }
 }
 

@@ -3,7 +3,7 @@
 namespace App\Nova;
 
 use App\Helpers\HelperFunctions;
-use App\Policies\ResourcePolicies;
+use App\Traits\ResourcePolicies;
 use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Http\Requests\NovaRequest;
@@ -41,6 +41,14 @@ class OrderType extends Resource
             Text::make('Name')->rules('required', 'max:255')->sortable(),
             Text::make('Abbreviation')->rules('required', 'max:16')->maxlength(16)->sortable(),
             Boolean::make('Short Period Type')->sortable(),
+
+            Boolean::make('Direct Sale Default', 'is_direct_sale')
+                ->hideWhenUpdating(function() {
+                    return HelperFunctions::otherDefaultExists($this::$model, $this->resource->id);
+                })
+                ->hideWhenCreating(function() {
+                    return HelperFunctions::otherDefaultExists($this::$model, $this->resource->id);
+                })->sortable(),
 
             Boolean::make('Default', 'is_default')
                 ->hideWhenUpdating(function() {

@@ -10,9 +10,24 @@ return new class extends Migration {
      */
     public function up(): void
     {
+
+        Schema::create('cache', function(Blueprint $table) {
+            $table->string('key')->primary();
+            $table->mediumText('value');
+            $table->integer('expiration');
+        });
+
+        Schema::create('cache_locks', function(Blueprint $table) {
+            $table->string('key')->primary();
+            $table->string('owner');
+            $table->integer('expiration');
+        });
+
         Schema::create('users', function(Blueprint $table) {
             $table->id();
             $table->string('name')->nullable();
+            $table->string('email')->unique();
+            $table->string('password');
             $table->rememberToken();
             $table->timestamps();
         });
@@ -146,17 +161,7 @@ return new class extends Migration {
             $table->timestamp('updated_at')->nullable();
         });
 
-        Schema::create('cache', function(Blueprint $table) {
-            $table->string('key')->primary();
-            $table->mediumText('value');
-            $table->integer('expiration');
-        });
-
-        Schema::create('cache_locks', function(Blueprint $table) {
-            $table->string('key')->primary();
-            $table->string('owner');
-            $table->integer('expiration');
-        });
+ 
 
         Schema::create('tenants', function(Blueprint $table) {
             $table->string('id')->primary();
