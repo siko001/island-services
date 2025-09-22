@@ -61,14 +61,15 @@ class Customer extends Resource
                     Text::make('Account Number')
                         ->maxlength(16)
                         ->rules('required', 'max:16', 'unique:customers,account_number,{{resourceId}}')
-                        ->help('Automatically generated from client <span class="text-blue-500">initials</span> or delivery details <span class="text-blue-500">name</span> and <span class="text-blue-500">surname</span>')
+                        ->help('Automatically generated from client <span class="text-blue-500">Field Above</span>')
                         ->withMeta(['extraAttributes' => ['readOnly' => true]])
                         ->dependsOn(['client', 'delivery_details_name', 'delivery_details_surname'], function($field, $request, $formData) {
                             $acNumb = $formData->get('client');
                             $name = $formData->get('delivery_details_name');
                             $surname = $formData->get('delivery_details_surname');
                             $acNumb && $field->value = HelperFunctions::generateAccountNumber($acNumb, null);
-                            ($name && $surname) && $field->value = HelperFunctions::generateAccountNumber($name, $surname);
+                            !$acNumb && ($name && $surname) && $field->value = HelperFunctions::generateAccountNumber($name, $surname);
+                            $acNumb && $field->immutable();
                         }),
 
                     DateTime::make('Created At', 'created_at')
