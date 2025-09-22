@@ -66,7 +66,7 @@ class CustomerFactory extends Factory
             'delivery_details_telephone_office' => $this->faker->phoneNumber,
             'delivery_details_fax_one' => $this->faker->optional()->phoneNumber,
             'delivery_details_fax_two' => $this->faker->optional()->phoneNumber,
-            'delivery_details_email_one' => $this->faker->email,
+            'delivery_details_email_one' => $name . "." . $surname . "@gmail.com",
             'delivery_details_email_two' => $this->faker->optional()->email,
             'delivery_details_mobile' => $this->faker->phoneNumber,
             'delivery_details_url' => $this->faker->optional()->url,
