@@ -13,6 +13,7 @@ class WebsiteInfo
     {
         return [
             Textarea::make('Short Description')
+                ->alwaysShow()
                 ->withMeta(['extraAttributes' => ['style' => 'max-height: 150px; min-height:100px']])
                 ->rules('max:255')
                 ->maxlength(255)
@@ -20,6 +21,7 @@ class WebsiteInfo
                 ->sortable(),
 
             Textarea::make('Detailed Description')
+                ->alwaysShow()
                 ->withMeta(['extraAttributes' => ['style' => 'max-height: 150px; min-height:100px']])
                 ->hideFromIndex()
                 ->sortable(),

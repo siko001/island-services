@@ -112,6 +112,7 @@ class Area extends Resource
 
             Panel::make("Delivery Note Information", [
                 Textarea::make('Delivery Note Remark', 'delivery_note_remark')
+                    ->alwaysShow()
                     ->sortable()
                     ->rules('max:255')
                     ->maxlength(255)

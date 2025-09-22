@@ -121,6 +121,7 @@ class DeliveryDetails
                 }),
 
             TextArea::make("Remarks")
+                ->alwaysShow()
                 ->maxlength(255)
                 ->withMeta(['extraAttributes' => ['style' => 'max-height: 90px; min-height:40px']])
                 ->dependsOn('customer_area', function($field, $request, FormData $formData) {

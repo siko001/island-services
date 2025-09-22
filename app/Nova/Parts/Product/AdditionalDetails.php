@@ -105,6 +105,7 @@ class AdditionalDetails
                 ->default(0.00),
 
             TextArea::make('Packing Details', 'packing_details')
+                ->alwaysShow()
                 ->rules('max:255')
                 ->maxlength(255)
                 ->withMeta(['extraAttributes' => ['style' => 'max-height: 150px; min-height:100px']])

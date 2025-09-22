@@ -19,7 +19,6 @@ class DeliveryDetails
     public function __invoke(): array
     {
         return [
-            //            Next Delivery Date should be next avaliable date within that area / location
             Date::make('Delivery Date', 'delivery_date')
                 ->default(\Carbon\Carbon::now())
                 ->sortable(),
@@ -28,7 +27,7 @@ class DeliveryDetails
             BelongsTo::make('Area', 'area', Area::class)->onlyOnIndex(),
             Select::make('Area', 'customer_area')
                 ->options(\App\Models\General\Area::all()->pluck('name', 'id')->toArray())
-                ->default(\App\Models\General\Area::where('abbreviation', 'direct')->value('id'))
+                ->default(\App\Models\General\Area::where('is_direct_sale', 1)->value('id'))
                 ->sortable()
                 ->rules('required')
                 ->onlyOnForms(),
@@ -37,7 +36,7 @@ class DeliveryDetails
             BelongsTo::make('Location', 'location', Location::class)->onlyOnIndex(),
             Select::make('Location', 'customer_location')
                 ->options(\App\Models\General\Location::all()->pluck('name', 'id')->toArray())
-                ->default(\App\Models\General\Location::where('name', 'Direct Sales')->value('id'))
+                ->default(\App\Models\General\Location::where('is_direct_sale', 1)->value('id'))
                 ->sortable()
                 ->onlyOnForms()
                 ->rules('required'),
@@ -102,6 +101,7 @@ class DeliveryDetails
                 }),
 
             TextArea::make("Remarks")
+                ->alwaysShow()
                 ->maxlength(255)
                 ->withMeta(['extraAttributes' => ['style' => 'max-height: 90px; min-height:40px']])
                 ->dependsOn('customer_area', function($field, $request, FormData $formData) {

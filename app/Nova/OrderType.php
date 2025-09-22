@@ -44,11 +44,12 @@ class OrderType extends Resource
 
             Boolean::make('Direct Sale Default', 'is_direct_sale')
                 ->hideWhenUpdating(function() {
-                    return HelperFunctions::otherDefaultExists($this::$model, $this->resource->id);
+                    return HelperFunctions::otherDefaultExists($this::$model, $this->resource->id, 'is_direct_sale');
                 })
                 ->hideWhenCreating(function() {
-                    return HelperFunctions::otherDefaultExists($this::$model, $this->resource->id);
-                })->sortable(),
+                    return HelperFunctions::otherDefaultExists($this::$model, $this->resource->id, 'is_direct_sale');
+                })
+                ->sortable(),
 
             Boolean::make('Default', 'is_default')
                 ->hideWhenUpdating(function() {
