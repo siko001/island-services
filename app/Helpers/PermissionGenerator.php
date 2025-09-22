@@ -59,7 +59,8 @@ class PermissionGenerator
     {
         $actionPermissions = [
             'terminate user',
-            'process delivery_note'
+            'process delivery_note',
+            'process direct_sale',
         ];
 
         return self::PermissionLoop($actionPermissions, $output, $createdCount);
