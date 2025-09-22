@@ -8,7 +8,14 @@ class Location extends Model
 {
     protected $fillable = [
         'name',
-        'updated_at'
+        'updated_at',
+        'created_at',
+        'is_direct_sale',
+    ];
+    protected $casts = [
+        'is_direct_sale' => 'boolean',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
     ];
 
     public function areas()
