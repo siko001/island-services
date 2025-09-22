@@ -29,7 +29,7 @@ class AreaSeeder extends Seeder
                 'commission_paid_outstanding_deposit' => 0.00,
                 'commission_cash_delivery' => 0.00,
                 'commission_cash_deposit' => 0.00,
-                'delivery_note_remark' => 'North Area Delivery Note',
+                'delivery_note_remark' => 'North Area Delivery Note Remark',
                 'customer_care_email' => 'islandServices@gmail.com',
             ],
 
@@ -40,7 +40,7 @@ class AreaSeeder extends Seeder
                 'commission_paid_outstanding_deposit' => 2.50,
                 'commission_cash_delivery' => 2.50,
                 'commission_cash_deposit' => 2.50,
-                'delivery_note_remark' => 'South Area Delivery Note',
+                'delivery_note_remark' => 'South Area Delivery Note Remark',
                 'customer_care_email' => 'islandServices@gmail.com',
             ],
 
@@ -51,7 +51,7 @@ class AreaSeeder extends Seeder
                 'commission_paid_outstanding_deposit' => 5,
                 'commission_cash_delivery' => 5,
                 'commission_cash_deposit' => 5,
-                'delivery_note_remark' => 'East Area Delivery Note',
+                'delivery_note_remark' => 'East Area Delivery Note Remark',
                 'customer_care_email' => 'islandServices@gmail.com',
             ],
 
@@ -62,7 +62,7 @@ class AreaSeeder extends Seeder
                 'commission_paid_outstanding_deposit' => 8.75,
                 'commission_cash_delivery' => 8.75,
                 'commission_cash_deposit' => 8.75,
-                'delivery_note_remark' => 'West Area Delivery Note',
+                'delivery_note_remark' => 'West Area Delivery Note Remark',
                 'customer_care_email' => 'islandServices@gmail.com',
             ],
 
@@ -73,7 +73,7 @@ class AreaSeeder extends Seeder
                 'commission_paid_outstanding_deposit' => 0.00,
                 'commission_cash_delivery' => 0.00,
                 'commission_cash_deposit' => 0.00,
-                'delivery_note_remark' => 'Gozo Area Delivery Note',
+                'delivery_note_remark' => 'Gozo Area Delivery Note Remark',
                 'customer_care_email' => 'islandServices@gmail.com',
             ],
 
@@ -97,7 +97,7 @@ class AreaSeeder extends Seeder
                 'commission_paid_outstanding_deposit' => 00.00,
                 'commission_cash_delivery' => 00.00,
                 'commission_cash_deposit' => 00.00,
-                'delivery_note_remark' => 'Direct Sales',
+                'delivery_note_remark' => 'Direct Sales Delivery Note Remark',
                 'customer_care_email' => 'islandServices@gmail.com',
             ]
         ];

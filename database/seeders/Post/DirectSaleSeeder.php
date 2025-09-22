@@ -3,7 +3,9 @@
 namespace Database\Seeders\Post;
 
 use App\Models\Customer\Customer;
+use App\Models\General\Area;
 use App\Models\General\AreaLocation;
+use App\Models\General\Location;
 use App\Models\General\OrderType;
 use App\Models\Post\DirectSale;
 use App\Models\User;
@@ -64,8 +66,8 @@ class DirectSaleSeeder extends Seeder
                 $customer = $customers->random();
 
                 // Get customer details
-                $customerArea = $customer->delivery_details_area_id;
-                $customerLocation = $customer->delivery_details_locality_id;
+                $customerArea = Area::where('is_direct_sale', true)->first()->id;
+                $customerLocation = Location::where('is_direct_sale', true)->first()->id;
                 $customerAddress = $customer->delivery_details_address;
                 $customerEmail = $customer->delivery_details_email_one;
                 $customerAccountNumber = $customer->account_number;
@@ -99,7 +101,7 @@ class DirectSaleSeeder extends Seeder
                     'order_type_id' => $orderType->id,
                     'delivery_instructions' => "Delivery instructions for {$customer->client}",
                     'delivery_directions' => "Directions for {$customer->client}",
-                    'remarks' => "Remarks for direct sale",
+                    'remarks' => Area::where('is_direct_sale', true, '')->first()->delivery_note_remark,
                     'processed_at' => $processed ? $deliveryDate : null,
                     'status' => $processed,
                     'customer_id' => $customer->id,

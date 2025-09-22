@@ -20,6 +20,8 @@ return new class extends Migration {
             $table->foreignId('operator_id')->constrained('users')->onDelete('cascade');
             $table->foreignId('order_type_id')->constrained('order_types')->onDelete('cascade');
 
+            $table->text('days_for_delivery')->nullable();
+
             $table->date('expiry_date')->nullable();
             $table->string('delivery_instructions')->nullable();
             $table->string('delivery_directions')->nullable();

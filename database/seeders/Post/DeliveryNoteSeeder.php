@@ -3,6 +3,7 @@
 namespace Database\Seeders\Post;
 
 use App\Models\Customer\Customer;
+use App\Models\General\Area;
 use App\Models\General\AreaLocation;
 use App\Models\General\OrderType;
 use App\Models\Post\DeliveryNote;
@@ -89,6 +90,30 @@ class DeliveryNoteSeeder extends Seeder
 
                 $processed = rand(0, 1);
 
+                // Generate Days for delivery
+                if($customerArea && $customerLocation) {
+                    $areaLocation = AreaLocation::where('area_id', $customerArea)
+                        ->where('location_id', $customerLocation)
+                        ->first();
+                    if($areaLocation) {
+                        $days = collect([
+                            'Monday' => $areaLocation->monday,
+                            'Tuesday' => $areaLocation->tuesday,
+                            'Wednesday' => $areaLocation->wednesday,
+                            'Thursday' => $areaLocation->thursday,
+                            'Friday' => $areaLocation->friday,
+                            'Saturday' => $areaLocation->saturday,
+                            'Sunday' => $areaLocation->sunday,
+                        ])->filter(fn($delivered) => $delivered)->keys()->toArray();
+                        $deliveryDaysString = implode(', ', $days);
+                        $daysForDelivery = $deliveryDaysString;
+                    } else {
+                        $daysForDelivery = 'No delivery information';
+                    }
+                } else {
+                    $daysForDelivery = 'Please select area and location';
+                }
+
                 // Create delivery note
                 $deliveryNote = DeliveryNote::create([
                     'delivery_note_number' => DeliveryNote::generateDeliveryNoteNumber(),
@@ -97,9 +122,10 @@ class DeliveryNoteSeeder extends Seeder
                     'salesman_id' => $salesman->id,
                     'operator_id' => $operator->id,
                     'order_type_id' => $orderType->id,
+                    'days_for_delivery' => $daysForDelivery,
                     'delivery_instructions' => "Delivery instructions for {$customer->client}",
                     'delivery_directions' => "Directions for {$customer->client}",
-                    'remarks' => "Remarks for delivery note",
+                    'remarks' => Area::where('id', $customerArea)->first()->delivery_note_remark,
                     'processed_at' => $processed ? $deliveryDate : null,
                     'status' => $processed,
                     'customer_id' => $customer->id,

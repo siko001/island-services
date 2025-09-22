@@ -24,18 +24,33 @@ class CustomerFactory extends Factory
         $usingDifferentSummerAddress = $this->faker->boolean;
 
         // Get a random valid AreaLocation row
-        $areaLocation = AreaLocation::inRandomOrder()->first();
+        $areaLocation = AreaLocation::join('locations', 'area_location.location_id', '=', 'locations.id')
+            ->where('locations.name', '!=', 'Direct Sales')
+            ->inRandomOrder()
+            ->select('area_location.*')
+            ->first();
+
         $deliveryAreaId = $areaLocation ? $areaLocation->area_id : 1;
         $deliveryLocationId = $areaLocation ? $areaLocation->location_id : 1;
 
         if($usingDifferentBilling) {
-            $billingAreaLocation = AreaLocation::inRandomOrder()->first();
+            $billingAreaLocation = AreaLocation::join('locations', 'area_location.location_id', '=', 'locations.id')
+                ->where('locations.name', '!=', 'Direct Sales')
+                ->inRandomOrder()
+                ->select('area_location.*')
+                ->first();
+
             $billingAreaId = $billingAreaLocation ? $billingAreaLocation->area_id : 1;
             $billingLocationId = $billingAreaLocation ? $billingAreaLocation->location_id : 1;
         }
 
         if($usingDifferentSummerAddress) {
-            $summerAreaLocation = AreaLocation::inRandomOrder()->first();
+            $summerAreaLocation = AreaLocation::join('locations', 'area_location.location_id', '=', 'locations.id')
+                ->where('locations.name', '!=', 'Direct Sales')
+                ->inRandomOrder()
+                ->select('area_location.*')
+                ->first();
+
             $summerAreaId = $summerAreaLocation ? $summerAreaLocation->area_id : 1;
             $summerLocationId = $summerAreaLocation ? $summerAreaLocation->location_id : 1;
         }
@@ -130,7 +145,6 @@ class CustomerFactory extends Factory
             },
 
             'client_types_id' => ClientType::inRandomOrder()->value('id') ?? 1,
-
             'deliver_instruction' => $this->faker->sentence,
             'directions' => $this->faker->sentence,
             'remarks' => $this->faker->optional()->sentence,
