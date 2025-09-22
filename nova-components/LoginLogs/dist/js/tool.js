@@ -101,6 +101,10 @@ function _arrayWithoutHoles(r) { if (Array.isArray(r)) return _arrayLikeToArray(
 function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length); for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e]; return n; }
 
 var _hoisted_1 = {
+  style: {
+    "overflow": "scroll",
+    "scrollbar-width": "none"
+  },
   "class": "p-4 h-[100vh] sm:p-8 relative scrollbar-hidden overflow-scroll"
 };
 var _hoisted_2 = {
@@ -117,11 +121,11 @@ var _hoisted_5 = {
   "class": "font-semibold"
 };
 var _hoisted_6 = {
-  "class": "relative max-sm:left-0.5 -bottom-4 text-xs text-gray-500"
+  "class": "relative max-sm:left-0.5 -bottom-4 text-xs text-black"
 };
 var _hoisted_7 = {
   key: 1,
-  "class": "mt-6 flex justify-center items-center gap-2 text-sm text-white dark:text-black"
+  "class": "mt-6 flex justify-center items-center gap-2 text-sm text-black"
 };
 var _hoisted_8 = ["disabled"];
 var _hoisted_9 = {
@@ -130,12 +134,14 @@ var _hoisted_9 = {
 var _hoisted_10 = ["disabled"];
 function render(_ctx, _cache, $props, $setup, $data, $options) {
   var _$setup$logs;
-  return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_1, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_2, [((_$setup$logs = $setup.logs) === null || _$setup$logs === void 0 ? void 0 : _$setup$logs.length) === 0 ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_3, _toConsumableArray(_cache[2] || (_cache[2] = [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("p", {
+  return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_1, [_cache[7] || (_cache[7] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
+    "class": "text-4xl mx-auto w-full flex justify-center mb-8"
+  }, "Login Logs", -1 /* CACHED */)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_2, [((_$setup$logs = $setup.logs) === null || _$setup$logs === void 0 ? void 0 : _$setup$logs.length) === 0 ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_3, _toConsumableArray(_cache[2] || (_cache[2] = [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("p", {
     "class": "text-gray-800 text-2xl font-bold"
   }, "No logs found.", -1 /* CACHED */)])))) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($setup.logs, function (log) {
     return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", {
       key: log.id,
-      "class": "bg-neutral-800 dark:bg-neutral-200 sm:w-full p-4 py-8 sm:p-8 rounded-xl max-w-[850px] text-white dark:text-black w-full mx-auto shadow"
+      "class": "bg-neutral-800 dark:bg-neutral-200 sm:w-full p-4 py-8 sm:p-8 rounded-xl max-w-[850px] text-black w-full mx-auto shadow"
     }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_4, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("p", null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", _hoisted_5, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(log.success ? 'Logged in Email:' : 'Attempted Email:'), 1 /* TEXT */), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(log.email), 1 /* TEXT */)])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
       "class": (0,vue__WEBPACK_IMPORTED_MODULE_0__.normalizeClass)(["p-1 text-xs rounded-sm relative -top-2 sm:-right-2 text-white", log.success ? 'bg-green-700' : 'bg-red-700'])
     }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("p", null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(log.success ? 'Success' : 'Failed'), 1 /* TEXT */)], 2 /* CLASS */)]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("p", null, [_cache[3] || (_cache[3] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", {
