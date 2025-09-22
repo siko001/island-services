@@ -43,6 +43,8 @@ return new class extends Migration {
 
             $table->integer('credit_limit')->nullable()->default(0);
             $table->date('last_delivery_date')->nullable();
+
+            $table->date('processed_at')->nullable();
             $table->timestamps();
         });
 

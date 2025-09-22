@@ -9,6 +9,7 @@ use App\Models\General\OrderType;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class DirectSale extends Model
 {
@@ -82,9 +83,9 @@ class DirectSale extends Model
         return $this->belongsTo(Location::class, 'customer_location');
     }
 
-    public function deliveryNoteProducts()
+    public function directSaleProducts(): hasMany
     {
-        return $this->hasMany(DeliveryNoteProduct::class);
+        return $this->hasMany(DirectSaleProduct::class);
     }
 
     public static function generateDeliveryNoteNumber(): string
