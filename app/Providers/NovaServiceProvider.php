@@ -6,6 +6,7 @@ use App\Helpers\NovaResources;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Gate;
+use IslandServices\LoginLogs\LoginTrail;
 use Laravel\Fortify\Features;
 use Laravel\Nova\Menu\MenuGroup;
 use Laravel\Nova\Menu\MenuItem;
@@ -54,7 +55,7 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
             }
             //Login Audit trail
             if($user && $user->can('view audit_trail_login')) {
-                $auditTrailItems[] = MenuItem::make('Login', '/audit-trails/login');
+                $auditTrailItems[] = (new LoginTrail())->menu($request);
             }
 
             //System Audit Trail
@@ -108,6 +109,7 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
                 MenuSection::make('Admin', $adminItems)
                     ->icon('user')
                     ->collapsable(),
+
             ];
 
             // Filter nulls so Nova doesn't try to render invalid menu items
@@ -193,6 +195,7 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
     {
         return [
             NovaPermissionTool::make(),
+            new LoginTrail(),
         ];
     }
 

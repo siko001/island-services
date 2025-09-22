@@ -19,7 +19,8 @@
         "spatie/laravel-medialibrary": "^11.14",
         "spatie/laravel-permission": "^6.20",
         "stancl/tenancy": "^3.9",
-        "island-services/gallery": "@dev"
+        "island-services/gallery": "@dev",
+        "island-services/login-logs": "@dev"
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.16",
@@ -101,6 +102,10 @@
         "2": {
             "type": "path",
             "url": "./nova-components/Gallery"
+        },
+        "3": {
+            "type": "path",
+            "url": "./nova-components/LoginLogs"
         }
     }
 }
