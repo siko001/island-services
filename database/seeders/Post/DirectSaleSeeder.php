@@ -91,6 +91,33 @@ class DirectSaleSeeder extends Seeder
 
                 $processed = rand(0, 1);
 
+                $this->command->info("Customer Area: {$customerArea}, Location: {$customerLocation}");
+
+                $areaLocation = null;
+                if($customerArea && $customerLocation) {
+                    $areaLocation = AreaLocation::where('area_id', $customerArea)
+                        ->where('location_id', $customerLocation)
+                        ->first();
+                }
+                if($areaLocation) {
+                    $days = collect([
+                        'Monday' => $areaLocation->monday,
+                        'Tuesday' => $areaLocation->tuesday,
+                        'Wednesday' => $areaLocation->wednesday,
+                        'Thursday' => $areaLocation->thursday,
+                        'Friday' => $areaLocation->friday,
+                        'Saturday' => $areaLocation->saturday,
+                        'Sunday' => $areaLocation->sunday,
+                    ])->filter(fn($delivered) => $delivered)->keys()->toArray();
+
+                    $this->command->info("Delivery days: " . implode(', ', $days));
+
+                    $daysForDelivery = implode(', ', $days);
+                } else {
+                    $this->command->warn('No area-location found or invalid area/location IDs.');
+                    $daysForDelivery = 'No delivery information';
+                }
+
                 // Create direct sale
                 $deliveryNote = DirectSale::create([
                     'direct_sale_number' => DirectSale::generateDeliveryNoteNumber(),
@@ -99,6 +126,7 @@ class DirectSaleSeeder extends Seeder
                     'salesman_id' => $salesman->id,
                     'operator_id' => $operator->id,
                     'order_type_id' => $orderType->id,
+                    'days_for_delivery' => $daysForDelivery,
                     'delivery_instructions' => "Delivery instructions for {$customer->client}",
                     'delivery_directions' => "Directions for {$customer->client}",
                     'remarks' => Area::where('is_direct_sale', true, '')->first()->delivery_note_remark,

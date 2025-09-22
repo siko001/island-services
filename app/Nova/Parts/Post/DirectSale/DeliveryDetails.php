@@ -41,7 +41,7 @@ class DeliveryDetails
                 ->onlyOnForms()
                 ->rules('required'),
 
-            Text::make('Days for Delivery', 'delivery_days')
+            Text::make('Days for Delivery', 'days_for_delivery')
                 ->dependsOn(['customer_location', 'customer_area'], function($field, $request, FormData $formData) {
                     $locationId = $formData->get('customer_location');
                     $areaId = $formData->get('customer_area');

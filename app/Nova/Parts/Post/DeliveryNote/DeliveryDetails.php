@@ -61,7 +61,7 @@ class DeliveryDetails
                     HelperFunctions::fillFromDependentField($field, $formData, \App\Models\Customer\Customer::class, 'customer', 'delivery_details_locality_id', true, 'summer_address_locality_id');
                 }),
 
-            Text::make('Days for Delivery', 'delivery_days')
+            Text::make('Days for Delivery', 'days_for_delivery')
                 ->dependsOn(['customer_location', 'customer_area'], function($field, $request, FormData $formData) {
                     $locationId = $formData->get('customer_location');
                     $areaId = $formData->get('customer_area');
