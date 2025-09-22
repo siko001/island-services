@@ -76,10 +76,10 @@ class HelperFunctions
         }
     }
 
-    public static function otherDefaultExists($model, $currentId): bool
+    public static function otherDefaultExists($model, $currentId, $columnName = "is_default"): bool
     {
         // Replace ModelName with your actual model
-        return $model::where('is_default', true)
+        return $model::where($columnName, true)
             ->where('id', '!=', $currentId)
             ->exists();
     }
