@@ -2,6 +2,7 @@
 
 namespace App\Models\Post;
 
+use App\Helpers\HelperFunctions;
 use App\Models\Customer\Customer;
 use App\Models\General\Area;
 use App\Models\General\Location;
@@ -111,10 +112,10 @@ class CollectionNote extends Model
     //
     //    }
 
-    //    public function replicate(array $except = null): DeliveryNote
-    //    {
-    //        $new = parent::replicate($except);
-    //        $new->delivery_note_number = HelperFunctions::generateOrderNumber('delivery_note', $new);
-    //        return $new;
-    //    }
+    public function replicate(array $except = null): CollectionNote
+    {
+        $new = parent::replicate($except);
+        $new->collection_note_number = HelperFunctions::generateOrderNumber('collection_note', $new);
+        return $new;
+    }
 }
