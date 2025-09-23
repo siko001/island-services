@@ -5,6 +5,7 @@ namespace App\Nova\Parts\Post\SharedFields;
 use App\Helpers\HelperFunctions;
 use App\Models\Customer\Customer;
 use App\Models\General\AreaLocation;
+use App\Nova\Area;
 use App\Nova\Location;
 use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\Date;
@@ -51,6 +52,8 @@ class DeliveryDetails
             default:
                 break;
         }
+        $fields[] = BelongsTo::make('Area', 'area', Area::class)->onlyOnDetail();
+        $fields[] = BelongsTo::make('Area', 'area', Area::class)->onlyOnIndex();
 
         $fields[] = BelongsTo::make('Location', 'location', Location::class)->onlyOnDetail();
         $fields[] = BelongsTo::make('Location', 'location', Location::class)->onlyOnIndex();
