@@ -16,6 +16,7 @@ class AdditionalDetails
         $fields = [];
 
         $fields[] = Select::make('Operator', 'operator_id')
+            ->immutable()
             ->options(\App\Models\User::all()->pluck('name', 'id'))
             ->default(fn() => auth()->user()->id)
             ->sortable()
@@ -25,7 +26,6 @@ class AdditionalDetails
 
         switch($orderType) {
             case 'direct_sale':
-
                 $fields[] = Select::make('Salesman', 'salesman_id')
                     ->options(function() {
                         return \App\Models\User::getSalesmenRoles();
@@ -43,9 +43,8 @@ class AdditionalDetails
                     ->sortable()
                     ->rules('required');
                 break;
-
             case 'delivery_note':
-
+            case 'collection_note':
                 $fields[] = Select::make('Salesman', 'salesman_id')
                     ->options(function() {
                         return \App\Models\User::getSalesmenRoles();

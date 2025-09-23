@@ -190,6 +190,7 @@ class HelperFunctions
         $initialsMap = [
             'delivery_note' => 'DN',
             'direct_sale' => 'DS',
+            'collection_note' => 'CN',
         ];
         $initials = $initialsMap[$orderType] ?? 'ON';
 
