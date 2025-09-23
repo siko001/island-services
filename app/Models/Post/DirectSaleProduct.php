@@ -48,37 +48,4 @@ class DirectSaleProduct extends Model
     {
         return $this->belongsTo(VatCode::class);
     }
-
-    protected static function boot()
-    {
-        parent::boot();
-
-        static::creating(function($lineItem) {
-            $product = Product::find($lineItem->product_id);
-            if($product) {
-                $product->stock -= $lineItem->quantity;
-                //                Log::info("Creating, new stock: " . $product->stock);
-                $product->save();
-            }
-        });
-
-        static::updating(function($lineItem) {
-            $oldQuantity = $lineItem->getOriginal('quantity');
-            $diff = $lineItem->quantity - $oldQuantity;
-            $product = Product::find($lineItem->product_id);
-            if($product) {
-                $product->stock -= $diff;
-                //                Log::info("Updating, new stock: " . $product->stock);
-                $product->save();
-            }
-        });
-
-        static::deleting(function($lineItem) {
-            $product = Product::find($lineItem->product_id);
-            if($product) {
-                $product->stock += $lineItem->quantity;
-                $product->save();
-            }
-        });
-    }
 }

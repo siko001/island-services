@@ -9,6 +9,7 @@ use App\Models\General\OrderType;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Log;
 
 class DeliveryNote extends Model
 {
@@ -94,9 +95,20 @@ class DeliveryNote extends Model
     public static function boot()
     {
         parent::boot();
-        static::saving(function($model) {
-            if($model->status == 1) {
-                $model->processed_at = Carbon::now();
+        static::updating(function($deliveryNote) {
+            Log::info($deliveryNote->isDirty('status'));
+            if($deliveryNote->isDirty('status') && $deliveryNote->status == 1 && !$deliveryNote->processed_at) {
+
+                $deliveryNote->processed_at = Carbon::now();
+                foreach($deliveryNote->deliveryNoteProducts as $lineItem) {
+                    Log::info('running: ' . $lineItem);
+                    $product = $lineItem->product;
+                    if($product) {
+                        $product->stock -= $lineItem->quantity;
+                        $product->save();
+                    }
+                }
+
             }
         });
 

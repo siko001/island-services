@@ -7,9 +7,11 @@ use App\Models\General\Area;
 use App\Models\General\Location;
 use App\Models\General\OrderType;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\Log;
 
 class DirectSale extends Model
 {
@@ -88,15 +90,25 @@ class DirectSale extends Model
         return $this->hasMany(DirectSaleProduct::class);
     }
 
-    public static function generateDeliveryNoteNumber(): string
+    public static function boot()
     {
-        $lastDeliveryNote = self::orderBy('id', 'desc')->first();
-        if($lastDeliveryNote) {
-            $lastNumber = (int)substr($lastDeliveryNote->direct_sale_number, -4);
-            $newNumber = str_pad($lastNumber + 1, 4, '0', STR_PAD_LEFT);
-        } else {
-            $newNumber = '0001';
-        }
-        return 'DS-' . date('Y') . '-' . $newNumber;
+        parent::boot();
+        static::updating(function($directSale) {
+            Log::info($directSale->isDirty('status'));
+            if($directSale->isDirty('status') && $directSale->status == 1 && !$directSale->processed_at) {
+                $directSale->processed_at = Carbon::now();
+
+                foreach($directSale->directSaleProducts as $lineItem) {
+                    Log::info('running: ' . $lineItem);
+                    $product = $lineItem->product;
+                    if($product) {
+                        $product->stock -= $lineItem->quantity;
+                        $product->save();
+                    }
+                }
+
+            }
+        });
+
     }
 }
