@@ -41,6 +41,7 @@ class DirectSale extends Resource
         return [
             'direct_sale_number',
             new SearchableRelation('customer', 'client'),
+            new SearchableRelation('customer', 'account_number'),
         ];
     }
 

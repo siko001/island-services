@@ -12,14 +12,18 @@ use Laravel\Nova\Filters\Filter;
 use Laravel\Nova\Http\Requests\LensRequest;
 use Laravel\Nova\Http\Requests\NovaRequest;
 use Laravel\Nova\Lenses\Lens;
+use Laravel\Nova\Query\Search\SearchableRelation;
 
 class ProcessedDeliveryNotes extends Lens
 {
-    /**
-     * The columns that should be searched.
-     * @var array
-     */
-    public static $search = [];
+    public static function searchableColumns(): array
+    {
+        return [
+            'deliver_note_number',
+            new SearchableRelation('customer', 'client'),
+            new SearchableRelation('customer', 'account_number'),
+        ];
+    }
 
     /**
      * Get the query builder / paginator for the lens.

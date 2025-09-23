@@ -49,6 +49,7 @@ class DeliveryNote extends Resource
         return [
             'delivery_note_number',
             new SearchableRelation('customer', 'client'),
+            new SearchableRelation('customer', 'account_number'),
         ];
     }
 
