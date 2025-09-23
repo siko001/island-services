@@ -4,6 +4,7 @@ namespace App\Helpers;
 
 use App\Models\Admin\Role;
 use App\Models\Customer\Customer;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
@@ -176,5 +177,36 @@ class HelperFunctions
         }
 
         return $filename;
+    }
+
+    /**
+     * Generate Order Number based on type, year, next availability.
+     * @param string| $orderType
+     * $param model | $model
+     * @return string
+     */
+    public static function generateOrderNumber(string $orderType, $model): string
+    {
+        $initialsMap = [
+            'delivery_note' => 'DN',
+            'direct_sale' => 'DS',
+        ];
+        $initials = $initialsMap[$orderType] ?? 'ON';
+
+        $column = $orderType . '_number';
+        $lastEntry = $model::select($column)->orderBy('id', 'desc')->first();
+
+        if($lastEntry && !empty($lastEntry->$column)) {
+            $parts = explode('-', $lastEntry->$column);
+            $lastNumberStr = end($parts);
+            $lastNumber = (int)$lastNumberStr;
+            $nextNumber = $lastNumber + 1;
+        } else {
+            $nextNumber = 1;
+        }
+
+        $paddedNumber = str_pad($nextNumber, max(strlen((string)$nextNumber), 4), '0', STR_PAD_LEFT);
+        $year = Carbon::now()->format('Y');
+        return $initials . '-' . $year . '-' . $paddedNumber;
     }
 }

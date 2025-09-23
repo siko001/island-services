@@ -2,7 +2,7 @@
 
 namespace App\Nova\Lenses\Post\DeliveryNote;
 
-use App\Nova\Parts\Post\DeliveryNote\DeliveryNoteLensFields;
+use App\Nova\Parts\Post\SharedFields\OrderLensFields;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Contracts\Pagination\Paginator;
 use Laravel\Nova\Actions\Action;
@@ -37,7 +37,7 @@ class UnprocessedDeliveryNotes extends Lens
      */
     public function fields(NovaRequest $request): array
     {
-        return (new DeliveryNoteLensFields)();
+        return (new OrderLensFields())('delivery_note');
     }
 
     /**

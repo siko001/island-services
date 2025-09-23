@@ -2,7 +2,7 @@
 
 namespace App\Nova\Lenses\Post\DirectSale;
 
-use App\Nova\Parts\Post\DirectSale\DirectSaleLensFields;
+use App\Nova\Parts\Post\SharedFields\OrderLensFields;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Contracts\Pagination\Paginator;
 use Laravel\Nova\Actions\Action;
@@ -38,7 +38,7 @@ class UnprocessedDirectSales extends Lens
      */
     public function fields(NovaRequest $request): array
     {
-        return (new DirectSaleLensFields)();
+        return (new OrderLensFields())('direct_sale');
     }
 
     /**

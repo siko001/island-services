@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Nova\Parts\Post\DeliveryNote;
+namespace App\Nova\Parts\Post\SharedFields;
 
 use App\Helpers\HelperFunctions;
 use Laravel\Nova\Fields\FormData;

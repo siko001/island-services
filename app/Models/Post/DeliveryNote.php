@@ -91,22 +91,9 @@ class DeliveryNote extends Model
     //        return $this->belongsTo(PriceType::class, 'price_type_id');
     //    }
 
-    public static function generateDeliveryNoteNumber()
-    {
-        $lastDeliveryNote = self::orderBy('id', 'desc')->first();
-        if($lastDeliveryNote) {
-            $lastNumber = (int)substr($lastDeliveryNote->delivery_note_number, -4);
-            $newNumber = str_pad($lastNumber + 1, 4, '0', STR_PAD_LEFT);
-        } else {
-            $newNumber = '0001';
-        }
-        return 'DN-' . date('Y') . '-' . $newNumber;
-    }
-
     public static function boot()
     {
         parent::boot();
-
         static::saving(function($model) {
             if($model->status == 1) {
                 $model->processed_at = Carbon::now();
