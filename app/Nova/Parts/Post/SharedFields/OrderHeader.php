@@ -4,7 +4,6 @@ namespace App\Nova\Parts\Post\SharedFields;
 
 use App\Helpers\HelperFunctions;
 use App\Nova\Customer;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\Boolean;
@@ -22,8 +21,7 @@ class OrderHeader
 
             Text::make(Str::title(str_replace('_', ' ', $orderType)) . ' Number', $orderType . '_number')
                 ->immutable()
-                ->default(function($request) use ($orderType, $model) {
-                    Log::info($request);
+                ->default(function() use ($orderType, $model) {
                     return HelperFunctions::generateOrderNumber($orderType, $model);
                 })
                 ->help('this field is auto generated')
