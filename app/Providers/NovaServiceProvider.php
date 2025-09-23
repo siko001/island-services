@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Helpers\NovaResources;
+use App\Nova\CollectionNote;
 use App\Nova\DeliveryNote;
 use App\Nova\DirectSale;
 use App\Nova\Lenses\Post\DeliveryNote\ProcessedDeliveryNotes;
@@ -109,6 +110,8 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
                         MenuItem::lens(DirectSale::class, UnprocessedDirectSales::class)->name('Unprocessed')->canSee(fn($request) => $request->user()?->can('view unprocessed direct_sale') ?? false),
                         MenuItem::lens(DirectSale::class, ProcessedDirectSales::class)->name('Processed')->canSee(fn($request) => $request->user()?->can('view processed direct_sale') ?? false)
                     ])->collapsable(),
+
+                    MenuItem::resource(CollectionNote::class)
 
                 ])->icon('cog-8-tooth')
                     ->collapsable(),
