@@ -2,6 +2,7 @@
 
 namespace Database\Seeders\Post;
 
+use App\Helpers\HelperFunctions;
 use App\Models\Customer\Customer;
 use App\Models\General\Area;
 use App\Models\General\AreaLocation;
@@ -118,7 +119,7 @@ class DeliveryNoteSeeder extends Seeder
                 }
                 // Create delivery note
                 $deliveryNote = DeliveryNote::create([
-                    'delivery_note_number' => DeliveryNote::generateDeliveryNoteNumber(),
+                    'delivery_note_number' => HelperFunctions::generateOrderNumber("delivery_note", DeliveryNote::class),
                     'order_date' => $randomDate,
                     'delivery_date' => $deliveryDate,
                     'salesman_id' => $salesman->id,
