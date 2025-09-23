@@ -67,6 +67,7 @@ class CollectionNote extends Resource
                 Tab::make("Additional Details", (new AdditionalDetails)("collection_note"))
             ])
 
+            //Continue Here to Add Products
         ];
     }
 

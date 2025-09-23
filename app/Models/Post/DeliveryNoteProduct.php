@@ -42,7 +42,7 @@ class DeliveryNoteProduct extends Model
 
     public function priceType(): BelongsTo
     {
-        return $this->belongsTo(PriceType::class, 'price_type_id');
+        return $this->belongsTo(PriceType::class);
     }
 
     public function vatCode(): BelongsTo

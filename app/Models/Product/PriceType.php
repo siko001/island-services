@@ -24,8 +24,8 @@ class PriceType extends Model
 
     public function products()
     {
-        return $this->belongsToMany(\App\Models\Product\Product::class, 'product_price_types')
-            ->using(\App\Models\Product\ProductPriceType::class)
+        return $this->belongsToMany(Product::class, 'product_price_types')
+            ->using(ProductPriceType::class)
             ->withPivot(['unit_price', 'yearly_rental', 'vat_id'])
             ->withTimestamps();
     }

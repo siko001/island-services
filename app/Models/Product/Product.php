@@ -77,7 +77,7 @@ class Product extends Model implements HasMedia
     public function priceType()
     {
         return $this->belongsToMany(PriceType::class, 'product_price_types')
-            ->using(\App\Models\Product\ProductPriceType::class)
+            ->using(ProductPriceType::class)
             ->withPivot(['unit_price', 'yearly_rental', 'vat_id'])
             ->withTimestamps();
     }

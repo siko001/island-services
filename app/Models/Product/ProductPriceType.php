@@ -24,13 +24,13 @@ class ProductPriceType extends Pivot
 
     public function vat(): BelongsTo
     {
-        return $this->belongsTo(VatCode::class, 'id');
+        return $this->belongsTo(VatCode::class);
     }
 
     public function priceType(): BelongsTo
     {
 
-        return $this->belongsTo(PriceType::class, 'price_type_id');
+        return $this->belongsTo(PriceType::class);
     }
 
     protected static function booted(): void
