@@ -16,6 +16,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Gate;
 use IslandServices\LoginLogs\LoginTrail;
+use IslandServices\SystemTrail\SystemTrail;
 use Laravel\Fortify\Features;
 use Laravel\Nova\Menu\MenuGroup;
 use Laravel\Nova\Menu\MenuItem;
@@ -69,7 +70,8 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
 
             //System Audit Trail
             if($user && $user->can('view audit_trail_system')) {
-                $auditTrailItems[] = MenuItem::make('System', '/audit-trails/system');
+                //                $auditTrailItems[] = MenuItem::make('System', '/audit-trails/system');
+                $auditTrailItems[] = (new SystemTrail())->menu($request);
             }
             if(!empty($auditTrailItems)) {
                 $adminItems[] = MenuGroup::make('Audit Trails', $auditTrailItems)->collapsable();
@@ -215,6 +217,7 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
         return [
             NovaPermissionTool::make(),
             new LoginTrail(),
+            new SystemTrail(),
         ];
     }
 

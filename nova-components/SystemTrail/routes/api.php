@@ -18,19 +18,22 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', function(Request $request) {
     try {
-        $logs = DB::table('login_audits')
-            ->orderBy('created_at', 'desc')
-            ->paginate(20);
-
+        $logs = DB::table('action_events')
+            ->leftJoin('users', 'action_events.user_id', '=', 'users.id')
+            ->select(
+                'action_events.*',
+                DB::raw("COALESCE(users.name, 'Unknown User') as username")
+            )
+            ->orderBy('action_events.created_at', 'desc')
+            ->paginate(10);
         $user = auth()->user();
 
         return ['logs' => $logs, "user" => $user];
-
     } catch(\Throwable $e) {
-        Log::error('Failed to load login audit trail.', [
+        Log::error('Failed to load system audit trail.', [
             'message' => $e->getMessage(),
             'trace' => $e->getTraceAsString(),
         ]);
-        abort(500, 'An error occurred while fetching login audit logs.');
+        abort(500, 'An error occurred while fetching system audit logs.');
     }
 });

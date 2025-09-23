@@ -1,20 +1,20 @@
 <?php
 
-namespace IslandServices\LoginLogs;
+namespace IslandServices\SystemTrail;
 
 use Illuminate\Http\Request;
 use Laravel\Nova\Menu\MenuSection;
 use Laravel\Nova\Nova;
 use Laravel\Nova\Tool;
 
-class LoginTrail extends Tool
+class SystemTrail extends Tool
 {
     /**
      * Perform any tasks that need to happen when the tool is booted.
      */
     public function boot(): void
     {
-        Nova::mix('login-logs', __DIR__ . '/../dist/mix-manifest.json');
+        Nova::mix('system-trail', __DIR__ . '/../dist/mix-manifest.json');
     }
 
     /**
@@ -22,9 +22,9 @@ class LoginTrail extends Tool
      */
     public function menu(Request $request): MenuSection
     {
-        return MenuSection::make('Login')
-            ->path('/login-logs')
+        return MenuSection::make('System Logs')
+            ->path('/system-trail')
+            //            ->icon("server");
             ->icon("empty");
-        //            ->icon('clipboard-document-list');
     }
 }
