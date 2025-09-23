@@ -80,10 +80,13 @@ class PermissionGenerator
     public static function createLensPermissions($output, $createdCount): int
     {
         $lensPermissions = [
+            'view terminated user',
             'view processed delivery_note',
             'view unprocessed delivery_note',
             'view processed direct_sale',
             'view unprocessed direct_sale',
+            'view processed collection_note',
+            'view unprocessed collection_note',
         ];
 
         return self::PermissionLoop($lensPermissions, $output, $createdCount);
