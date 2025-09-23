@@ -107,7 +107,13 @@ class DirectSale extends Resource
         ];
     }
 
-    public function authorizedToUpdate(\Illuminate\Http\Request $request): bool
+    //Dont include clients with account closed
+    public static function relatableCustomers(NovaRequest $request, $query)
+    {
+        return $query->where('account_closed', false);
+    }
+
+    public function authorizedToUpdate(Request $request): bool
     {
         if($request->user()->cannot('update direct_sale')) {
             return false;
@@ -115,7 +121,7 @@ class DirectSale extends Resource
         return !self::model()->status;
     }
 
-    public function authorizedToDelete(\Illuminate\Http\Request $request): bool
+    public function authorizedToDelete(Request $request): bool
     {
         if($request->user()->cannot('delete direct_sale')) {
             return false;
