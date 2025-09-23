@@ -41,10 +41,12 @@ __webpack_require__.r(__webpack_exports__);
     };
     var logs = (0,vue__WEBPACK_IMPORTED_MODULE_0__.ref)([]);
     var pagination = (0,vue__WEBPACK_IMPORTED_MODULE_0__.ref)(null);
+    var canViewAuditTrail = (0,vue__WEBPACK_IMPORTED_MODULE_0__.ref)(false);
     var fetchLogs = function fetchLogs() {
       var page = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
       Nova.request().get("/nova-vendor/login-logs?page=".concat(page)).then(function (response) {
-        logs.value = response.data.logs.data; // paginated array
+        logs.value = response.data.logs.data;
+        canViewAuditTrail.value = response.data.canView;
         pagination.value = {
           current_page: response.data.logs.current_page,
           last_page: response.data.logs.last_page,
@@ -74,6 +76,7 @@ __webpack_require__.r(__webpack_exports__);
       formatRelative: formatRelative,
       logs: logs,
       pagination: pagination,
+      canViewAuditTrail: canViewAuditTrail,
       fetchLogs: fetchLogs,
       changePage: changePage,
       onMounted: vue__WEBPACK_IMPORTED_MODULE_0__.onMounted,
@@ -112,12 +115,13 @@ var _hoisted_1 = {
   style: {
     "overflow": "scroll",
     "scrollbar-width": "none",
-    "max-height": "2000px",
-    "height": "140vh"
+    "max-height": "900px",
+    "height": "90vh"
   },
-  "class": "p-4 sm:p-8 relative scrollbar-hidden overflow-scroll main-login-template"
+  "class": "px-4 py-0 sm:p-8 relative scrollbar-hidden overflow-scroll main-login-template"
 };
 var _hoisted_2 = {
+  key: 0,
   "class": "overflow-hidden grid md:grid-cols-2 gap-4 sm:gap-8"
 };
 var _hoisted_3 = {
@@ -140,19 +144,23 @@ var _hoisted_8 = {
   "class": "relative max-sm:left-0.5 -bottom-4 text-xs text-black"
 };
 var _hoisted_9 = {
-  key: 0,
+  key: 1,
+  "class": "bg-red-100 text-red-800 p-8 rounded-lg mb-4"
+};
+var _hoisted_10 = {
+  key: 2,
   "class": "mt-6 pt-6 flex justify-center items-center gap-2 text-sm"
 };
-var _hoisted_10 = ["disabled"];
-var _hoisted_11 = {
+var _hoisted_11 = ["disabled"];
+var _hoisted_12 = {
   "class": "px-3 py-1 border rounded bg-gray-200 font-semibold"
 };
-var _hoisted_12 = ["disabled"];
+var _hoisted_13 = ["disabled"];
 function render(_ctx, _cache, $props, $setup, $data, $options) {
   var _$setup$logs;
-  return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_1, [_cache[8] || (_cache[8] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
+  return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_1, [_cache[9] || (_cache[9] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
     "class": "text-4xl mx-auto w-full mb-8"
-  }, "Login Logs", -1 /* CACHED */)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("    style=\"display: grid; grid-template-columns: auto auto; column-gap: 10px;\""), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_2, [((_$setup$logs = $setup.logs) === null || _$setup$logs === void 0 ? void 0 : _$setup$logs.length) === 0 ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_3, _toConsumableArray(_cache[2] || (_cache[2] = [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("p", {
+  }, "Login Logs", -1 /* CACHED */)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("    style=\"display: grid; grid-template-columns: auto auto; column-gap: 10px;\""), $setup.canViewAuditTrail ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_2, [((_$setup$logs = $setup.logs) === null || _$setup$logs === void 0 ? void 0 : _$setup$logs.length) === 0 ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_3, _toConsumableArray(_cache[2] || (_cache[2] = [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("p", {
     "class": "text-gray-800 text-2xl font-bold"
   }, "No logs found.", -1 /* CACHED */)])))) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($setup.logs, function (log) {
     return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", {
@@ -167,19 +175,21 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     }, "Date:", -1 /* CACHED */)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($setup.formatDate(log === null || log === void 0 ? void 0 : log.created_at)), 1 /* TEXT */)]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("p", null, [_cache[7] || (_cache[7] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", {
       "class": "font-bold"
     }, "Time:", -1 /* CACHED */)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($setup.formatTime(log === null || log === void 0 ? void 0 : log.created_at)), 1 /* TEXT */)]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("p", _hoisted_8, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($setup.formatRelative(log === null || log === void 0 ? void 0 : log.created_at)), 1 /* TEXT */)]);
-  }), 128 /* KEYED_FRAGMENT */))]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" Pagination Controls "), $setup.pagination && $setup.pagination.last_page > 1 ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_9, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
+  }), 128 /* KEYED_FRAGMENT */))])) : ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_9, _toConsumableArray(_cache[8] || (_cache[8] = [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("p", {
+    "class": "text-3xl font-semibold"
+  }, "You do not have permission to view these logs.", -1 /* CACHED */)])))), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" Pagination Controls "), $setup.canViewAuditTrail && $setup.pagination && $setup.pagination.last_page > 1 ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_10, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
     "class": "px-3 py-1 border rounded disabled:opacity-50",
     onClick: _cache[0] || (_cache[0] = function ($event) {
       return $setup.changePage($setup.pagination.current_page - 1);
     }),
     disabled: $setup.pagination.current_page === 1
-  }, "Previous", 8 /* PROPS */, _hoisted_10), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", _hoisted_11, "Page " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($setup.pagination.current_page) + " of " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($setup.pagination.last_page), 1 /* TEXT */), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
+  }, "Previous", 8 /* PROPS */, _hoisted_11), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", _hoisted_12, "Page " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($setup.pagination.current_page) + " of " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($setup.pagination.last_page), 1 /* TEXT */), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
     "class": "px-3 py-1 border rounded disabled:opacity-50",
     onClick: _cache[1] || (_cache[1] = function ($event) {
       return $setup.changePage($setup.pagination.current_page + 1);
     }),
     disabled: $setup.pagination.current_page === $setup.pagination.last_page
-  }, "Next", 8 /* PROPS */, _hoisted_12)])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true)]);
+  }, "Next", 8 /* PROPS */, _hoisted_13)])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true)]);
 }
 
 /***/ }),

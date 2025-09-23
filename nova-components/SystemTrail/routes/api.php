@@ -27,8 +27,8 @@ Route::get('/', function(Request $request) {
             ->orderBy('action_events.created_at', 'desc')
             ->paginate(10);
         $user = auth()->user();
-
-        return ['logs' => $logs, "user" => $user];
+        $userCanView = $request->user()->can('view audit_trail_system');
+        return ['logs' => $logs, "user" => $user, 'canView' => $userCanView];
     } catch(\Throwable $e) {
         Log::error('Failed to load system audit trail.', [
             'message' => $e->getMessage(),

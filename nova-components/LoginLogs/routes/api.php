@@ -23,8 +23,8 @@ Route::get('/', function(Request $request) {
             ->paginate(20);
 
         $user = auth()->user();
-
-        return ['logs' => $logs, "user" => $user];
+        $userCanView = $request->user()->can('view audit_trail_login');
+        return ['logs' => $logs, "user" => $user, 'canView' => $userCanView];
 
     } catch(\Throwable $e) {
         Log::error('Failed to load login audit trail.', [

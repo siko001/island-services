@@ -4912,9 +4912,11 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
       prev_page_url: null
     });
     var user = (0,vue__WEBPACK_IMPORTED_MODULE_1__.ref)(null);
+    var canViewAuditTrail = (0,vue__WEBPACK_IMPORTED_MODULE_1__.ref)(false);
     var fetchLogs = /*#__PURE__*/function () {
       var _ref = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee() {
         var url,
+          _document$querySelect,
           response,
           _args = arguments,
           _t;
@@ -4933,18 +4935,16 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
                 top: 0,
                 behavior: 'smooth'
               });
-              document.querySelector('.main-system-template').scrollTo({
+              (_document$querySelect = document.querySelector('.main-system-template')) === null || _document$querySelect === void 0 || _document$querySelect.scrollTo({
                 top: 0,
                 behavior: 'smooth'
               });
-              _context.n = 4;
-              break;
+              return _context.a(2, response);
             case 3:
               _context.p = 3;
               _t = _context.v;
               console.error('Failed to load logs:', _t);
-            case 4:
-              return _context.a(2);
+              return _context.a(2, null);
           }
         }, _callee, null, [[1, 3]]);
       }));
@@ -4952,17 +4952,17 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
         return _ref.apply(this, arguments);
       };
     }();
-    var canViewAuditTrail = (0,vue__WEBPACK_IMPORTED_MODULE_1__.ref)(false);
     (0,vue__WEBPACK_IMPORTED_MODULE_1__.onMounted)(/*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee2() {
-      var _user$value$permissio;
+      var response;
       return _regenerator().w(function (_context2) {
         while (1) switch (_context2.n) {
           case 0:
             _context2.n = 1;
             return fetchLogs();
           case 1:
-            if (user.value) {
-              canViewAuditTrail.value = ((_user$value$permissio = user.value.permissions) === null || _user$value$permissio === void 0 ? void 0 : _user$value$permissio.includes('view audit_trail_system')) || user.value.can_view_audit_trail_system;
+            response = _context2.v;
+            if (response !== null && response !== void 0 && response.data) {
+              canViewAuditTrail.value = response.data.canView;
             }
           case 2:
             return _context2.a(2);
@@ -5060,70 +5060,77 @@ var _hoisted_1 = {
     "max-height": "2000px",
     "height": "140vh"
   },
-  "class": "p-8 relative h-[100vh] sm:p-8 scrollbar-hidden overflow-scroll main-system-template"
+  "class": "p-4 relative h-[100vh] sm:p-8 scrollbar-hidden overflow-scroll main-system-template"
 };
 var _hoisted_2 = {
+  key: 0
+};
+var _hoisted_3 = {
   key: 0,
   "class": "bg-white shadow rounded-lg p-6 mb-4 border border-gray-200"
 };
-var _hoisted_3 = {
+var _hoisted_4 = {
   "class": "flex items-center justify-between mb-2"
 };
-var _hoisted_4 = {
+var _hoisted_5 = {
   "class": "text-lg font-semibold text-gray-800"
 };
-var _hoisted_5 = {
+var _hoisted_6 = {
   "class": "px-2 py-1 text-xs rounded bg-green-100 text-green-800 font-medium"
 };
-var _hoisted_6 = {
+var _hoisted_7 = {
   "class": "grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-gray-700"
 };
-var _hoisted_7 = {
+var _hoisted_8 = {
   key: 0,
   "class": "text-red-600"
 };
-var _hoisted_8 = {
+var _hoisted_9 = {
   key: 1,
   "class": "text-gray-400"
 };
-var _hoisted_9 = {
+var _hoisted_10 = {
   key: 0,
   "class": "mt-4"
 };
-var _hoisted_10 = {
+var _hoisted_11 = {
   "class": "font-semibold text-gray-800 mb-1"
 };
-var _hoisted_11 = {
+var _hoisted_12 = {
   "class": "bg-gray-50 rounded p-3 text-xs"
 };
-var _hoisted_12 = {
+var _hoisted_13 = {
   "class": "list-disc pl-5 space-y-1"
 };
-var _hoisted_13 = {
+var _hoisted_14 = {
   "class": "font-bold text-black"
 };
-var _hoisted_14 = {
+var _hoisted_15 = {
   "class": "text-gray-700"
 };
-var _hoisted_15 = {
+var _hoisted_16 = {
   key: 1,
   "class": "mt-6 flex justify-center space-x-2"
 };
-var _hoisted_16 = ["disabled"];
-var _hoisted_17 = {
+var _hoisted_17 = ["disabled"];
+var _hoisted_18 = {
   "class": "px-3 py-1 border rounded bg-gray-200 font-semibold"
 };
-var _hoisted_18 = ["disabled"];
+var _hoisted_19 = ["disabled"];
+var _hoisted_20 = {
+  key: 1,
+  "class": "bg-red-100 text-red-800 p-8 rounded-lg mb-4"
+};
 function render(_ctx, _cache, $props, $setup, $data, $options) {
-  return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_1, [_cache[14] || (_cache[14] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
+  return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_1, [_cache[15] || (_cache[15] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
     "class": "text-4xl mx-auto w-full mb-8"
-  }, "System Logs", -1 /* CACHED */)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", null, [$setup.logs.data.length === 0 ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_2, _toConsumableArray(_cache[2] || (_cache[2] = [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("p", {
+  }, "System Logs", -1 /* CACHED */)), $setup.canViewAuditTrail ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_2, [$setup.logs.data.length === 0 ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_3, _toConsumableArray(_cache[2] || (_cache[2] = [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("p", {
     "class": "text-gray-800 text-2xl font-bold"
   }, "No logs found.", -1 /* CACHED */)])))) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($setup.logs.data, function (log, index) {
     return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", {
       key: log.id,
       "class": "bg-white shadow rounded-lg p-6 mb-4 border border-gray-200"
-    }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_3, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h3", _hoisted_4, " Log #" + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(log.id) + ": " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(log.name), 1 /* TEXT */), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", _hoisted_5, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($setup.capitalizeFirst(log.status)), 1 /* TEXT */)]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_6, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", null, [_cache[3] || (_cache[3] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", {
+    }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_4, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h3", _hoisted_5, " Log #" + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(log.id) + ": " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(log.name), 1 /* TEXT */), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", _hoisted_6, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($setup.capitalizeFirst(log.status)), 1 /* TEXT */)]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_7, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", null, [_cache[3] || (_cache[3] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", {
       "class": "font-medium"
     }, "Batch ID:", -1 /* CACHED */)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" #" + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(log.batch_id), 1 /* TEXT */)]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", null, [_cache[4] || (_cache[4] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", {
       "class": "font-medium"
@@ -5141,24 +5148,26 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
       "class": "font-medium"
     }, "Updated:", -1 /* CACHED */)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($setup.formatDate(log.updated_at)), 1 /* TEXT */)]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", null, [_cache[11] || (_cache[11] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", {
       "class": "font-medium"
-    }, "Exception:", -1 /* CACHED */)), _cache[12] || (_cache[12] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)()), log.exception ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("span", _hoisted_7, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(log.exception), 1 /* TEXT */)) : ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("span", _hoisted_8, "None"))])])]), log.changes && log.changes !== '[]' ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_9, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_10, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($setup.changeTitle(log.name)), 1 /* TEXT */), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_11, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("ul", _hoisted_12, [((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($setup.parseChanges(log.changes), function (value, key) {
+    }, "Exception:", -1 /* CACHED */)), _cache[12] || (_cache[12] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)()), log.exception ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("span", _hoisted_8, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(log.exception), 1 /* TEXT */)) : ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("span", _hoisted_9, "None"))])])]), log.changes && log.changes !== '[]' ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_10, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_11, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($setup.changeTitle(log.name)), 1 /* TEXT */), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_12, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("ul", _hoisted_13, [((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($setup.parseChanges(log.changes), function (value, key) {
       return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("li", {
         key: key
-      }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", _hoisted_13, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($setup.formatKey(key)) + ":", 1 /* TEXT */), _cache[13] || (_cache[13] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)()), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", _hoisted_14, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($setup.formatValue(value)), 1 /* TEXT */)]);
+      }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", _hoisted_14, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($setup.formatKey(key)) + ":", 1 /* TEXT */), _cache[13] || (_cache[13] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)()), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", _hoisted_15, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($setup.formatValue(value)), 1 /* TEXT */)]);
     }), 128 /* KEYED_FRAGMENT */))])])])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true)]);
-  }), 128 /* KEYED_FRAGMENT */)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(console.log($setup.logs.data.length)) + " ", 1 /* TEXT */), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" Pagination Links "), $setup.logs.data.length > 1 ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_15, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
+  }), 128 /* KEYED_FRAGMENT */)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" Pagination Links "), $setup.logs.data.length > 1 ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_16, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
     disabled: !$setup.logs.prev_page_url,
     onClick: _cache[0] || (_cache[0] = function ($event) {
       return $setup.fetchLogs($setup.logs.prev_page_url);
     }),
     "class": "px-3 py-1 border rounded disabled:opacity-50"
-  }, " Previous ", 8 /* PROPS */, _hoisted_16), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", _hoisted_17, "Page " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($setup.logs.current_page) + " of " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($setup.logs.last_page), 1 /* TEXT */), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
+  }, " Previous ", 8 /* PROPS */, _hoisted_17), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", _hoisted_18, "Page " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($setup.logs.current_page) + " of " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($setup.logs.last_page), 1 /* TEXT */), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
     disabled: !$setup.logs.next_page_url,
     onClick: _cache[1] || (_cache[1] = function ($event) {
       return $setup.fetchLogs($setup.logs.next_page_url);
     }),
     "class": "px-3 py-1 border rounded disabled:opacity-50"
-  }, " Next ", 8 /* PROPS */, _hoisted_18)])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true)])]);
+  }, " Next ", 8 /* PROPS */, _hoisted_19)])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true)])) : ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_20, _toConsumableArray(_cache[14] || (_cache[14] = [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("p", {
+    "class": "text-3xl font-semibold"
+  }, "You do not have permission to view these logs.", -1 /* CACHED */)]))))]);
 }
 
 /***/ }),

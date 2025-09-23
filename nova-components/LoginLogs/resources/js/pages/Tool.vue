@@ -1,8 +1,8 @@
 <template>
-  <div style="overflow:scroll; scrollbar-width: none;max-height:2000px; height:140vh;" class="p-4  sm:p-8 relative scrollbar-hidden overflow-scroll main-login-template">
+  <div style="overflow:scroll; scrollbar-width: none; max-height:900px; height:90vh;" class="px-4 py-0 sm:p-8 relative scrollbar-hidden overflow-scroll main-login-template">
     <div class="text-4xl mx-auto w-full  mb-8">Login Logs</div>
     <!--    style="display: grid; grid-template-columns: auto auto; column-gap: 10px;"-->
-    <div class=" overflow-hidden grid md:grid-cols-2 gap-4 sm:gap-8">
+    <div v-if="canViewAuditTrail" class=" overflow-hidden grid md:grid-cols-2 gap-4 sm:gap-8">
       <div v-if="logs?.length === 0" class="bg-white shadow rounded-lg p-6 mb-4 border border-gray-200">
         <p class="text-gray-800 text-2xl font-bold">No logs found.</p>
       </div>
@@ -31,8 +31,13 @@
       </div>
 
     </div>
+
+    <div v-else class="bg-red-100 text-red-800 p-8 rounded-lg mb-4">
+      <p class="text-3xl font-semibold">You do not have permission to view these logs.</p>
+    </div>
+
     <!-- Pagination Controls -->
-    <div v-if="pagination && pagination.last_page > 1" class="mt-6 pt-6 flex justify-center items-center gap-2 text-sm ">
+    <div v-if="(canViewAuditTrail && pagination && pagination.last_page > 1)" class="mt-6 pt-6 flex justify-center items-center gap-2 text-sm ">
       <button class="px-3 py-1 border rounded disabled:opacity-50" @click="changePage(pagination.current_page - 1)" :disabled="pagination.current_page === 1">Previous</button>
       <span class="px-3 py-1 border rounded bg-gray-200 font-semibold">Page {{ pagination.current_page }} of {{ pagination.last_page }}</span>
       <button class="px-3 py-1 border rounded disabled:opacity-50" @click="changePage(pagination.current_page + 1)" :disabled="pagination.current_page === pagination.last_page">Next</button>
@@ -55,10 +60,13 @@ const formatRelative = dt => {
 
 const logs = ref([]);
 const pagination = ref(null);
+const canViewAuditTrail = ref(false);
+
 
 const fetchLogs = (page = 1) => {
   Nova.request().get(`/nova-vendor/login-logs?page=${page}`).then(response => {
-    logs.value = response.data.logs.data; // paginated array
+    logs.value = response.data.logs.data;
+    canViewAuditTrail.value = response.data.canView;
     pagination.value = {
       current_page: response.data.logs.current_page,
       last_page: response.data.logs.last_page,

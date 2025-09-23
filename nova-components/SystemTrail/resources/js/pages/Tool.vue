@@ -1,7 +1,7 @@
 <template>
-  <div style="max-height:2000px; height:140vh;" class="p-8 relative h-[100vh] sm:p-8  scrollbar-hidden overflow-scroll main-system-template">
+  <div style="max-height:2000px; height:140vh;" class="p-4 relative h-[100vh] sm:p-8  scrollbar-hidden overflow-scroll main-system-template">
     <div class="text-4xl mx-auto w-full  mb-8">System Logs</div>
-    <div>
+    <div v-if="canViewAuditTrail">
       <div v-if="logs.data.length === 0" class="bg-white shadow rounded-lg p-6 mb-4 border border-gray-200">
         <p class="text-gray-800 text-2xl font-bold">No logs found.</p>
       </div>
@@ -63,7 +63,6 @@
           </div>
         </div>
       </div>
-      {{ console.log(logs.data.length) }}
       <!-- Pagination Links -->
       <div v-if="logs.data.length > 1" class="mt-6 flex justify-center space-x-2">
         <button :disabled="!logs.prev_page_url" @click="fetchLogs(logs.prev_page_url)" class="px-3 py-1 border rounded disabled:opacity-50">
@@ -77,6 +76,11 @@
         </button>
       </div>
     </div>
+
+    <div v-else class="bg-red-100 text-red-800 p-8 rounded-lg mb-4">
+      <p class="text-3xl font-semibold">You do not have permission to view these logs.</p>
+    </div>
+
   </div>
 </template>
 
@@ -90,28 +94,30 @@ export default {
 
   setup() {
     const logs = ref({current_page: 1, last_page: 1, next_page_url: null, prev_page_url: null});
-
     const user = ref(null);
+    const canViewAuditTrail = ref(false);
+
 
     const fetchLogs = async(url = '/nova-vendor/system-trail') => {
       try {
         const response = await axios.get(url);
         logs.value = response.data.logs;
         user.value = response.data.user;
-        window.scrollTo({top: 0, behavior: 'smooth'});
-        document.querySelector('.main-system-template').scrollTo({top: 0, behavior: 'smooth'});
 
+        window.scrollTo({top: 0, behavior: 'smooth'});
+        document.querySelector('.main-system-template')?.scrollTo({top: 0, behavior: 'smooth'});
+
+        return response;
       } catch(error) {
         console.error('Failed to load logs:', error);
+        return null;  // or throw error if preferred
       }
     };
 
-    const canViewAuditTrail = ref(false);
-
     onMounted(async() => {
-      await fetchLogs();
-      if(user.value) {
-        canViewAuditTrail.value = user.value.permissions?.includes('view audit_trail_system') || user.value.can_view_audit_trail_system;
+      const response = await fetchLogs();
+      if(response?.data) {
+        canViewAuditTrail.value = response.data.canView;
       }
     });
 
