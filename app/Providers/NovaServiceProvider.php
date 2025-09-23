@@ -6,6 +6,8 @@ use App\Helpers\NovaResources;
 use App\Nova\CollectionNote;
 use App\Nova\DeliveryNote;
 use App\Nova\DirectSale;
+use App\Nova\Lenses\Post\CollectionNote\ProcessedCollectionNote;
+use App\Nova\Lenses\Post\CollectionNote\UnprocessedCollectionNote;
 use App\Nova\Lenses\Post\DeliveryNote\ProcessedDeliveryNotes;
 use App\Nova\Lenses\Post\DeliveryNote\UnprocessedDeliveryNotes;
 use App\Nova\Lenses\Post\DirectSale\ProcessedDirectSales;
@@ -111,7 +113,11 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
                         MenuItem::lens(DirectSale::class, ProcessedDirectSales::class)->name('Processed')->canSee(fn($request) => $request->user()?->can('view processed direct_sale') ?? false)
                     ])->collapsable(),
 
-                    MenuItem::resource(CollectionNote::class)
+                    MenuGroup::make("Collection Notes", [
+                        MenuItem::resource(CollectionNote::class)->name("All / Create"),
+                        MenuItem::lens(CollectionNote::class, UnprocessedCollectionNote::class)->name('Unprocessed')->canSee(fn($request) => $request->user()?->can('view unprocessed collection_note') ?? false),
+                        MenuItem::lens(CollectionNote::class, ProcessedCollectionNote::class)->name('Processed')->canSee(fn($request) => $request->user()?->can('view processed collection_note') ?? false)
+                    ])->collapsable(),
 
                 ])->icon('cog-8-tooth')
                     ->collapsable(),
