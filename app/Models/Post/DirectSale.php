@@ -58,7 +58,7 @@ class DirectSale extends Model
 
     public function salesman(): BelongsTo
     {
-        return $this->belongsTo('App\Models\User', 'salesman_id');
+        return $this->belongsTo(User::class, 'salesman_id');
     }
 
     public function operator(): BelongsTo

@@ -57,7 +57,7 @@ class DeliveryNote extends Model
 
     public function salesman(): BelongsTo
     {
-        return $this->belongsTo('App\Models\User', 'salesman_id');
+        return $this->belongsTo(User::class, 'salesman_id');
     }
 
     public function operator(): BelongsTo
@@ -89,11 +89,6 @@ class DeliveryNote extends Model
     {
         return $this->hasMany(DeliveryNoteProduct::class);
     }
-
-    //    public function priceType()
-    //    {
-    //        return $this->belongsTo(PriceType::class, 'price_type_id');
-    //    }
 
     public static function boot(): void
     {
