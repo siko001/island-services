@@ -2,6 +2,7 @@
 
 namespace App\Models\Post;
 
+use App\Helpers\HelperFunctions;
 use App\Models\Customer\Customer;
 use App\Models\General\Area;
 use App\Models\General\Location;
@@ -94,7 +95,6 @@ class DirectSale extends Model
     {
         parent::boot();
         static::updating(function($directSale) {
-            Log::info($directSale->isDirty('status'));
             if($directSale->isDirty('status') && $directSale->status == 1 && !$directSale->processed_at) {
                 $directSale->processed_at = Carbon::now();
 
@@ -110,5 +110,12 @@ class DirectSale extends Model
             }
         });
 
+    }
+
+    public function replicate(array $except = null): DirectSale
+    {
+        $new = parent::replicate($except);
+        $new->direct_sale_number = HelperFunctions::generateOrderNumber('direct_sale', $new);
+        return $new;
     }
 }

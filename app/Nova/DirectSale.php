@@ -10,6 +10,7 @@ use App\Nova\Parts\Post\SharedFields\DeliveryDetails;
 use App\Nova\Parts\Post\SharedFields\FinancialDetails;
 use App\Nova\Parts\Post\SharedFields\OrderHeader;
 use App\Traits\ResourcePolicies;
+use Illuminate\Http\Request;
 use Laravel\Nova\Actions\Action;
 use Laravel\Nova\Card;
 use Laravel\Nova\Fields\Field;
@@ -104,5 +105,26 @@ class DirectSale extends Resource
         return [
             new ProcessDirectSale(),
         ];
+    }
+
+    public function authorizedToUpdate(\Illuminate\Http\Request $request): bool
+    {
+        if($request->user()->cannot('update direct_sale')) {
+            return false;
+        }
+        return !self::model()->status;
+    }
+
+    public function authorizedToDelete(\Illuminate\Http\Request $request): bool
+    {
+        if($request->user()->cannot('delete direct_sale')) {
+            return false;
+        }
+        return !self::model()->status;
+    }
+
+    public function authorizedToReplicate(Request $request): bool
+    {
+        return !self::model()->status;
     }
 }

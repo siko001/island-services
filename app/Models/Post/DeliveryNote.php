@@ -2,6 +2,7 @@
 
 namespace App\Models\Post;
 
+use App\Helpers\HelperFunctions;
 use App\Models\Customer\Customer;
 use App\Models\General\Area;
 use App\Models\General\Location;
@@ -96,9 +97,7 @@ class DeliveryNote extends Model
     {
         parent::boot();
         static::updating(function($deliveryNote) {
-            Log::info($deliveryNote->isDirty('status'));
             if($deliveryNote->isDirty('status') && $deliveryNote->status == 1 && !$deliveryNote->processed_at) {
-
                 $deliveryNote->processed_at = Carbon::now();
                 foreach($deliveryNote->deliveryNoteProducts as $lineItem) {
                     Log::info('running: ' . $lineItem);
@@ -112,5 +111,12 @@ class DeliveryNote extends Model
             }
         });
 
+    }
+
+    public function replicate(array $except = null): DeliveryNote
+    {
+        $new = parent::replicate($except);
+        $new->delivery_note_number = HelperFunctions::generateOrderNumber('delivery_note', $new);
+        return $new;
     }
 }
