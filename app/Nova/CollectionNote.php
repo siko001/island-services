@@ -2,6 +2,7 @@
 
 namespace App\Nova;
 
+use App\Nova\Actions\CollectionNote\ProcessCollectionNote;
 use App\Nova\Lenses\Post\CollectionNote\ProcessedCollectionNote;
 use App\Nova\Lenses\Post\CollectionNote\UnprocessedCollectionNote;
 use App\Nova\Parts\Post\SharedFields\AdditionalDetails;
@@ -105,7 +106,9 @@ class CollectionNote extends Resource
      */
     public function actions(NovaRequest $request): array
     {
-        return [];
+        return [
+            new ProcessCollectionNote
+        ];
     }
 
     //Dont include clients with account closed
