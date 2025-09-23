@@ -115,7 +115,7 @@ class DirectSale extends Resource
 
     public function authorizedToUpdate(Request $request): bool
     {
-        if($request->user()->cannot('update direct_sale')) {
+        if($request->user()->cannot('update ' . self::$policyKey)) {
             return false;
         }
         return !self::model()->status;
@@ -123,7 +123,7 @@ class DirectSale extends Resource
 
     public function authorizedToDelete(Request $request): bool
     {
-        if($request->user()->cannot('delete direct_sale')) {
+        if($request->user()->cannot('delete ' . self::$policyKey)) {
             return false;
         }
         return !self::model()->status;
