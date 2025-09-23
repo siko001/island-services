@@ -3,6 +3,7 @@
 namespace App\Nova;
 
 use App\Helpers\HelperFunctions;
+use Illuminate\Http\Request;
 use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\Heading;
 use Laravel\Nova\Fields\Number;
@@ -366,5 +367,13 @@ class DeliveryNoteProduct extends Resource
     public function actions(NovaRequest $request): array
     {
         return [];
+    }
+
+    public static function authorizedToCreate(Request $request)
+    {
+        $deliveryNoteId = $request->viaResourceId ?? null;
+        $deliveryNote = \App\Models\Post\DeliveryNote::find($deliveryNoteId);
+        $status = $deliveryNote ? $deliveryNote->status : null;
+        return !$status;
     }
 }
