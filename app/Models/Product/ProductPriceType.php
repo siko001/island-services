@@ -4,6 +4,7 @@ namespace App\Models\Product;
 
 use App\Models\General\VatCode;
 use App\Observers\ProductPriceTypeObserver;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 
 class ProductPriceType extends Pivot
@@ -21,18 +22,18 @@ class ProductPriceType extends Pivot
         'is_rental' => 'boolean',
     ];
 
-    public function vat()
+    public function vat(): BelongsTo
     {
         return $this->belongsTo(VatCode::class, 'id');
     }
 
-    public function priceType()
+    public function priceType(): BelongsTo
     {
 
         return $this->belongsTo(PriceType::class, 'price_type_id');
     }
 
-    protected static function booted()
+    protected static function booted(): void
     {
         parent::booted();
         ProductPriceType::observe(new ProductPriceTypeObserver());

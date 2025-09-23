@@ -6,6 +6,7 @@ use App\Models\General\VatCode;
 use App\Models\Product\PriceType;
 use App\Models\Product\Product;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class DeliveryNoteProduct extends Model
 {
@@ -29,22 +30,22 @@ class DeliveryNoteProduct extends Model
         'bcrs_price' => 'decimal:2',
     ];
 
-    public function deliveryNote()
+    public function deliveryNote(): BelongsTo
     {
         return $this->belongsTo(DeliveryNote::class);
     }
 
-    public function product()
+    public function product(): BelongsTo
     {
         return $this->belongsTo(Product::class);
     }
 
-    public function priceType()
+    public function priceType(): BelongsTo
     {
         return $this->belongsTo(PriceType::class, 'price_type_id');
     }
 
-    public function vatCode()
+    public function vatCode(): BelongsTo
     {
         return $this->belongsTo(VatCode::class);
     }

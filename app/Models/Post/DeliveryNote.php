@@ -10,6 +10,8 @@ use App\Models\General\OrderType;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\Log;
 
 class DeliveryNote extends Model
@@ -53,37 +55,37 @@ class DeliveryNote extends Model
         'credit_limit' => 'integer'
     ];
 
-    public function salesman()
+    public function salesman(): BelongsTo
     {
         return $this->belongsTo('App\Models\User', 'salesman_id');
     }
 
-    public function operator()
+    public function operator(): BelongsTo
     {
         return $this->belongsTo(User::class, 'operator_id');
     }
 
-    public function orderType()
+    public function orderType(): BelongsTo
     {
         return $this->belongsTo(OrderType::class, 'order_type_id');
     }
 
-    public function customer()
+    public function customer(): BelongsTo
     {
         return $this->belongsTo(Customer::class, 'customer_id');
     }
 
-    public function area()
+    public function area(): BelongsTo
     {
         return $this->belongsTo(Area::class, 'customer_area');
     }
 
-    public function location()
+    public function location(): BelongsTo
     {
         return $this->belongsTo(Location::class, 'customer_location');
     }
 
-    public function deliveryNoteProducts()
+    public function deliveryNoteProducts(): HasMany
     {
         return $this->hasMany(DeliveryNoteProduct::class);
     }
@@ -93,7 +95,7 @@ class DeliveryNote extends Model
     //        return $this->belongsTo(PriceType::class, 'price_type_id');
     //    }
 
-    public static function boot()
+    public static function boot(): void
     {
         parent::boot();
         static::updating(function($deliveryNote) {

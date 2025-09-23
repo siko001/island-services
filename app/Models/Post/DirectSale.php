@@ -56,7 +56,7 @@ class DirectSale extends Model
         'credit_limit' => 'integer'
     ];
 
-    public function salesman()
+    public function salesman(): BelongsTo
     {
         return $this->belongsTo('App\Models\User', 'salesman_id');
     }
@@ -91,7 +91,7 @@ class DirectSale extends Model
         return $this->hasMany(DirectSaleProduct::class);
     }
 
-    public static function boot()
+    public static function boot(): void
     {
         parent::boot();
         static::updating(function($directSale) {

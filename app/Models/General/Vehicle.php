@@ -5,6 +5,8 @@ namespace App\Models\General;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Vehicle extends Model
 {
@@ -38,12 +40,12 @@ class Vehicle extends Model
     /**
      * Get the area that owns the vehicle.
      */
-    public function area()
+    public function area(): BelongsTo
     {
         return $this->belongsTo(Area::class);
     }
 
-    public function drivers()
+    public function drivers(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'driver_vehicle', 'vehicle_id', 'user_id');
     }
