@@ -2,6 +2,8 @@
 
 namespace App\Nova;
 
+use App\Nova\Lenses\Post\CollectionNote\ProcessedCollectionNote;
+use App\Nova\Lenses\Post\CollectionNote\UnprocessedCollectionNote;
 use App\Nova\Parts\Post\SharedFields\AdditionalDetails;
 use App\Nova\Parts\Post\SharedFields\DeliveryDetails;
 use App\Nova\Parts\Post\SharedFields\FinancialDetails;
@@ -91,7 +93,10 @@ class CollectionNote extends Resource
      */
     public function lenses(NovaRequest $request): array
     {
-        return [];
+        return [
+            new ProcessedCollectionNote(),
+            new UnprocessedCollectionNote(),
+        ];
     }
 
     /**
