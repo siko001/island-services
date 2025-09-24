@@ -24,6 +24,7 @@ class LoginTrail extends Tool
     {
         return MenuSection::make('Login')
             ->path('/login-logs')
-            ->icon('clipboard-document-list');
+            ->icon("empty");
+        //            ->icon('clipboard-document-list');
     }
 }

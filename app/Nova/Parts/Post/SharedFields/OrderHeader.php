@@ -4,6 +4,7 @@ namespace App\Nova\Parts\Post\SharedFields;
 
 use App\Helpers\HelperFunctions;
 use App\Nova\Customer;
+use Illuminate\Support\Str;
 use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\Date;
@@ -18,7 +19,7 @@ class OrderHeader
             Boolean::make("Processed", 'status')->readonly()->onlyOnDetail(),
             Boolean::make("Processed", 'status')->readonly()->onlyOnIndex()->sortable(),
 
-            Text::make('Delivery Note Number', $orderType . '_number')
+            Text::make(Str::title(str_replace('_', ' ', $orderType)) . ' Number', $orderType . '_number')
                 ->immutable()
                 ->default(function() use ($orderType, $model) {
                     return HelperFunctions::generateOrderNumber($orderType, $model);

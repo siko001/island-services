@@ -10,6 +10,7 @@ use App\Nova\Parts\Post\SharedFields\DeliveryDetails;
 use App\Nova\Parts\Post\SharedFields\FinancialDetails;
 use App\Nova\Parts\Post\SharedFields\OrderHeader;
 use App\Traits\ResourcePolicies;
+use Illuminate\Http\Request;
 use Laravel\Nova\Actions\Action;
 use Laravel\Nova\Card;
 use Laravel\Nova\Fields\Field;
@@ -120,8 +121,30 @@ class DeliveryNote extends Resource
         ];
     }
 
+    //Dont include clients with account closed
     public static function relatableCustomers(NovaRequest $request, $query)
     {
         return $query->where('account_closed', false);
+    }
+
+    public function authorizedToUpdate(Request $request): bool
+    {
+        if($request->user()->cannot('update ' . self::$policyKey)) {
+            return false;
+        }
+        return !self::model()->status;
+    }
+
+    public function authorizedToDelete(Request $request): bool
+    {
+        if($request->user()->cannot('delete ' . self::$policyKey)) {
+            return false;
+        }
+        return !self::model()->status;
+    }
+
+    public function authorizedToReplicate(Request $request): bool
+    {
+        return !self::model()->status;
     }
 }

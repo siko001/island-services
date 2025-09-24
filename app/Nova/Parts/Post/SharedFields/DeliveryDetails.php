@@ -22,6 +22,7 @@ class DeliveryDetails
 
         switch($orderType) {
             case 'delivery_note':
+            case 'collection_note':
                 $fields[] = Date::make('Delivery Date', 'delivery_date')
                     ->dependsOn(['customer', 'customer_area', 'customer_location'], function($field, $request, FormData $formData) {
                         $customerId = $formData->get('customer');
@@ -41,14 +42,12 @@ class DeliveryDetails
                     })
                     ->rules('required', 'date', 'after_or_equal:order_date')
                     ->sortable();
-
+                break;
             case 'direct_sale':
                 $fields[] = Date::make('Delivery Date', 'delivery_date')
                     ->default(\Carbon\Carbon::now())
                     ->sortable();
                 break;
-            //            case 'collection_note':
-            //                break;
             default:
                 break;
         }
@@ -75,8 +74,8 @@ class DeliveryDetails
                     ->onlyOnForms()
                     ->rules('required');
                 break;
-
             case 'delivery_note':
+            case 'collection_note':
                 $fields[] = Select::make('Area', 'customer_area')
                     ->options($areasOptions)
                     ->sortable()
@@ -104,8 +103,6 @@ class DeliveryDetails
                     });
 
                 break;
-            //            case 'collection_note':
-            //                break;
             default:
                 break;
         }

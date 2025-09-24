@@ -3,8 +3,11 @@
 namespace App\Providers;
 
 use App\Helpers\NovaResources;
+use App\Nova\CollectionNote;
 use App\Nova\DeliveryNote;
 use App\Nova\DirectSale;
+use App\Nova\Lenses\Post\CollectionNote\ProcessedCollectionNote;
+use App\Nova\Lenses\Post\CollectionNote\UnprocessedCollectionNote;
 use App\Nova\Lenses\Post\DeliveryNote\ProcessedDeliveryNotes;
 use App\Nova\Lenses\Post\DeliveryNote\UnprocessedDeliveryNotes;
 use App\Nova\Lenses\Post\DirectSale\ProcessedDirectSales;
@@ -13,6 +16,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Gate;
 use IslandServices\LoginLogs\LoginTrail;
+use IslandServices\SystemTrail\SystemTrail;
 use Laravel\Fortify\Features;
 use Laravel\Nova\Menu\MenuGroup;
 use Laravel\Nova\Menu\MenuItem;
@@ -38,7 +42,8 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
         //JS
         Nova::script('desktop-branding', public_path('assets/js/desktopBranding.js'));
         Nova::script('mobile-branding', public_path('assets/js/mobileBranding.js'));
-        Nova::script('change-button-text', public_path('assets/js/changeDeliveryNoteProductButton.js'));
+        Nova::script('change-element-text', public_path('assets/js/changeOrderElements.js')); // DeliveryNote , DirectSale, CollectionNote Buttons and Empty Dialog overrides
+        Nova::script('change-attachment-element-text', public_path('assets/js/changeOrderProductsElements.js')); // DeliveryNote_Products , DirectSale_Products, CollectionNote_Products Buttons overrides
 
         Nova::resources(
             array_merge(
@@ -66,7 +71,8 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
 
             //System Audit Trail
             if($user && $user->can('view audit_trail_system')) {
-                $auditTrailItems[] = MenuItem::make('System', '/audit-trails/system');
+                //                $auditTrailItems[] = MenuItem::make('System', '/audit-trails/system');
+                $auditTrailItems[] = (new SystemTrail())->menu($request);
             }
             if(!empty($auditTrailItems)) {
                 $adminItems[] = MenuGroup::make('Audit Trails', $auditTrailItems)->collapsable();
@@ -108,6 +114,12 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
                         MenuItem::resource(DirectSale::class)->name("All / Create"),
                         MenuItem::lens(DirectSale::class, UnprocessedDirectSales::class)->name('Unprocessed')->canSee(fn($request) => $request->user()?->can('view unprocessed direct_sale') ?? false),
                         MenuItem::lens(DirectSale::class, ProcessedDirectSales::class)->name('Processed')->canSee(fn($request) => $request->user()?->can('view processed direct_sale') ?? false)
+                    ])->collapsable(),
+
+                    MenuGroup::make("Collection Notes", [
+                        MenuItem::resource(CollectionNote::class)->name("All / Create"),
+                        MenuItem::lens(CollectionNote::class, UnprocessedCollectionNote::class)->name('Unprocessed')->canSee(fn($request) => $request->user()?->can('view unprocessed collection_note') ?? false),
+                        MenuItem::lens(CollectionNote::class, ProcessedCollectionNote::class)->name('Processed')->canSee(fn($request) => $request->user()?->can('view processed collection_note') ?? false)
                     ])->collapsable(),
 
                 ])->icon('cog-8-tooth')
@@ -206,6 +218,7 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
         return [
             NovaPermissionTool::make(),
             new LoginTrail(),
+            new SystemTrail(),
         ];
     }
 

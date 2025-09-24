@@ -2,6 +2,7 @@
 
 namespace Database\Seeders\Post;
 
+use App\Helpers\HelperFunctions;
 use App\Models\Customer\Customer;
 use App\Models\General\Area;
 use App\Models\General\AreaLocation;
@@ -120,7 +121,7 @@ class DirectSaleSeeder extends Seeder
 
                 // Create direct sale
                 $deliveryNote = DirectSale::create([
-                    'direct_sale_number' => DirectSale::generateDeliveryNoteNumber(),
+                    'direct_sale_number' => HelperFunctions::generateOrderNumber("direct_sale", DirectSale::class),
                     'order_date' => $randomDate,
                     'delivery_date' => $deliveryDate,
                     'salesman_id' => $salesman->id,

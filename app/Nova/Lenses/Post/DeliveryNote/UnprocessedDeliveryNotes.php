@@ -3,6 +3,7 @@
 namespace App\Nova\Lenses\Post\DeliveryNote;
 
 use App\Nova\Parts\Post\SharedFields\OrderLensFields;
+use App\Traits\LensPolicy;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Contracts\Pagination\Paginator;
 use Laravel\Nova\Actions\Action;
@@ -16,6 +17,10 @@ use Laravel\Nova\Query\Search\SearchableRelation;
 
 class UnprocessedDeliveryNotes extends Lens
 {
+    use LensPolicy;
+
+    public static string $policyKey = "unprocessed delivery_note";
+
     public static function searchableColumns(): array
     {
         return [

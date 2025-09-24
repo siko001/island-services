@@ -6,6 +6,7 @@ use App\Nova\Area;
 use App\Nova\Classes;
 use App\Nova\ClientStatus;
 use App\Nova\ClientType;
+use App\Nova\CollectionNote;
 use App\Nova\Complaint;
 use App\Nova\Customer;
 use App\Nova\CustomerGroup;
@@ -70,7 +71,8 @@ class NovaResources
     {
         return [
             DeliveryNote::class,
-            DirectSale::class
+            DirectSale::class,
+            CollectionNote::class,
         ];
     }
 

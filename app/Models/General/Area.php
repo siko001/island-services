@@ -49,7 +49,7 @@ class Area extends Model
         return $this->hasMany(Vehicle::class);
     }
 
-    public static function boot()
+    public static function boot(): void
     {
         parent::boot();
         Area::observe(AreaObserver::class);

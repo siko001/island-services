@@ -2,6 +2,7 @@
 
 namespace App\Models\Post;
 
+use App\Helpers\HelperFunctions;
 use App\Models\Customer\Customer;
 use App\Models\General\Area;
 use App\Models\General\Location;
@@ -55,9 +56,9 @@ class DirectSale extends Model
         'credit_limit' => 'integer'
     ];
 
-    public function salesman()
+    public function salesman(): BelongsTo
     {
-        return $this->belongsTo('App\Models\User', 'salesman_id');
+        return $this->belongsTo(User::class, 'salesman_id');
     }
 
     public function operator(): BelongsTo
@@ -90,11 +91,10 @@ class DirectSale extends Model
         return $this->hasMany(DirectSaleProduct::class);
     }
 
-    public static function boot()
+    public static function boot(): void
     {
         parent::boot();
         static::updating(function($directSale) {
-            Log::info($directSale->isDirty('status'));
             if($directSale->isDirty('status') && $directSale->status == 1 && !$directSale->processed_at) {
                 $directSale->processed_at = Carbon::now();
 
@@ -110,5 +110,12 @@ class DirectSale extends Model
             }
         });
 
+    }
+
+    public function replicate(array $except = null): DirectSale
+    {
+        $new = parent::replicate($except);
+        $new->direct_sale_number = HelperFunctions::generateOrderNumber('direct_sale', $new);
+        return $new;
     }
 }

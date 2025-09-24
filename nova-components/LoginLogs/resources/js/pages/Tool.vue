@@ -1,12 +1,14 @@
 <template>
-  <div style="overflow:scroll; scrollbar-width: none;" class="p-4 h-[100vh] sm:p-8 relative scrollbar-hidden overflow-scroll">
-    <div class="text-4xl mx-auto w-full flex justify-center mb-8">Login Logs</div>
-    <div class=" overflow-hidden  flex flex-col gap-4 sm:gap-8">
+  <div style="overflow:scroll; scrollbar-width: none; max-height:900px; height:90vh;" class="px-4 py-0 sm:p-8 relative scrollbar-hidden overflow-scroll main-login-template">
+    <div class="text-4xl mx-auto w-full  mb-8">Login Logs</div>
+    <!--    style="display: grid; grid-template-columns: auto auto; column-gap: 10px;"-->
+    <div v-if="canViewAuditTrail" class=" overflow-hidden grid md:grid-cols-2 gap-4 sm:gap-8">
       <div v-if="logs?.length === 0" class="bg-white shadow rounded-lg p-6 mb-4 border border-gray-200">
         <p class="text-gray-800 text-2xl font-bold">No logs found.</p>
       </div>
-      <div v-for="log in logs" :key="log.id" class="bg-neutral-800 dark:bg-neutral-200  sm:w-full p-4 py-8 sm:p-8 rounded-xl max-w-[850px] text-black w-full mx-auto shadow">
+      <div v-for="log in logs" :key="log.id" class=" bg-white  border-gray-200 sm:w-full p-4 py-8 sm:p-8 rounded-xl max-w-[850px] relative text-black w-full mx-auto shadow">
         <div class="flex flex-col-reverse sm:flex-row items-start justify-between sm:items-center gap-2 sm:gap-8">
+          <div class="absolute top-2 left-2 text-xs">Log #<span class="font-bold">{{ log.id }}</span></div>
           <div>
             <p>
               <span class="font-semibold">
@@ -27,12 +29,18 @@
         <p class="relative max-sm:left-0.5 -bottom-4 text-xs text-black">
           {{ formatRelative(log?.created_at) }} </p>
       </div>
-      <!-- Pagination Controls -->
-      <div v-if="pagination && pagination.last_page > 1" class="mt-6 flex justify-center items-center gap-2 text-sm text-black">
-        <button class="px-2 py-1 rounded bg-gray-200" @click="changePage(pagination.current_page - 1)" :disabled="pagination.current_page === 1">Previous</button>
-        <span class="text-dark dark:text-white">Page {{ pagination.current_page }} of {{ pagination.last_page }}</span>
-        <button class="px-2 py-1 rounded bg-gray-200" @click="changePage(pagination.current_page + 1)" :disabled="pagination.current_page === pagination.last_page">Next</button>
-      </div>
+
+    </div>
+
+    <div v-else class="bg-red-100 text-red-800 p-8 rounded-lg mb-4">
+      <p class="text-3xl font-semibold">You do not have permission to view these logs.</p>
+    </div>
+
+    <!-- Pagination Controls -->
+    <div v-if="(canViewAuditTrail && pagination && pagination.last_page > 1)" class="mt-6 pt-6 flex justify-center items-center gap-2 text-sm ">
+      <button class="px-3 py-1 border rounded disabled:opacity-50" @click="changePage(pagination.current_page - 1)" :disabled="pagination.current_page === 1">Previous</button>
+      <span class="px-3 py-1 border rounded bg-gray-200 font-semibold">Page {{ pagination.current_page }} of {{ pagination.last_page }}</span>
+      <button class="px-3 py-1 border rounded disabled:opacity-50" @click="changePage(pagination.current_page + 1)" :disabled="pagination.current_page === pagination.last_page">Next</button>
     </div>
   </div>
 </template>
@@ -52,10 +60,13 @@ const formatRelative = dt => {
 
 const logs = ref([]);
 const pagination = ref(null);
+const canViewAuditTrail = ref(false);
+
 
 const fetchLogs = (page = 1) => {
   Nova.request().get(`/nova-vendor/login-logs?page=${page}`).then(response => {
-    logs.value = response.data.logs.data; // paginated array
+    logs.value = response.data.logs.data;
+    canViewAuditTrail.value = response.data.canView;
     pagination.value = {
       current_page: response.data.logs.current_page,
       last_page: response.data.logs.last_page,
@@ -67,6 +78,8 @@ const fetchLogs = (page = 1) => {
 const changePage = (page) => {
   if(page >= 1 && page <= pagination.value.last_page) {
     fetchLogs(page);
+    window.scrollTo({top: 0, behavior: 'smooth'});
+    document.querySelector('.main-login-template').scrollTo({top: 0, behavior: 'smooth'});
   }
 };
 
