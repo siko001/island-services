@@ -3,6 +3,8 @@
 namespace App\Nova\Parts\Post\SharedFields;
 
 use App\Helpers\HelperFunctions;
+use App\Models\User;
+use App\Nova\Offer;
 use App\Nova\OrderType;
 use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\FormData;
@@ -17,7 +19,7 @@ class AdditionalDetails
 
         $fields[] = Select::make('Operator', 'operator_id')
             ->immutable()
-            ->options(\App\Models\User::all()->pluck('name', 'id'))
+            ->options(User::all()->pluck('name', 'id'))
             ->default(fn() => auth()->user()->id)
             ->sortable()
             ->hideFromIndex()
@@ -28,10 +30,10 @@ class AdditionalDetails
             case 'direct_sale':
                 $fields[] = Select::make('Salesman', 'salesman_id')
                     ->options(function() {
-                        return \App\Models\User::getSalesmenRoles();
+                        return User::getSalesmenRoles();
                     })
                     ->default(function() {
-                        return \App\Models\User::where('is_default_salesman', true)->value('id');
+                        return User::where('is_default_salesman', true)->value('id');
                     })
                     ->displayUsingLabels()
                     ->sortable()
@@ -45,12 +47,13 @@ class AdditionalDetails
                 break;
             case 'delivery_note':
             case 'collection_note':
+            case 'prepaid_offer':
                 $fields[] = Select::make('Salesman', 'salesman_id')
                     ->options(function() {
-                        return \App\Models\User::getSalesmenRoles();
+                        return User::getSalesmenRoles();
                     })
                     ->default(function() {
-                        return \App\Models\User::where('is_default_salesman', true)->value('id');
+                        return User::where('is_default_salesman', true)->value('id');
                     })
                     ->displayUsingLabels()
                     ->sortable()
@@ -60,7 +63,7 @@ class AdditionalDetails
                         if($customerId) {
                             HelperFunctions::fillFromDependentField($field, $formData, \App\Models\Customer\Customer::class, 'customer', 'user_id');
                         } else {
-                            $field->setValue(\App\Models\User::where('is_default_salesman', true)->value('id'));
+                            $field->setValue(User::where('is_default_salesman', true)->value('id'));
                         }
                     });
 
@@ -73,6 +76,15 @@ class AdditionalDetails
 
             default:
                 break;
+
+        }
+
+        switch($orderType) {
+            case 'prepaid_offer':
+                $fields[] = BelongsTo::make('Offer', 'offer', Offer::class)
+                    ->sortable()
+                    ->rules('required');
+
         }
 
         return $fields;

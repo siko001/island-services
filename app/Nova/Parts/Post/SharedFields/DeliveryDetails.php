@@ -76,6 +76,7 @@ class DeliveryDetails
                 break;
             case 'delivery_note':
             case 'collection_note':
+            case 'prepaid_offer':
                 $fields[] = Select::make('Area', 'customer_area')
                     ->options($areasOptions)
                     ->sortable()
