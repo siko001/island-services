@@ -62,6 +62,7 @@ class PermissionGenerator
             'process delivery_note',
             'process direct_sale',
             'process collection_note',
+            'process prepaid_offer',
         ];
 
         return self::PermissionLoop($actionPermissions, $output, $createdCount);
