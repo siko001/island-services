@@ -107,7 +107,7 @@ class PrepaidOffer extends Model
     public static function boot()
     {
         parent::boot();
-        static::saving(function($model) {
+        static::created(function($model) {
             $offerProducts = OfferProduct::where('offer_id', $model->offer_id)->get();
 
             foreach($offerProducts as $offerProduct) {

@@ -23,6 +23,8 @@ class PrepaidOfferProduct extends Model
         'bcrs_deposit',
         'total_price',
         'timestamps',
+        'total_taken',
+        'total_remaining',
     ];
     protected $casts = [
         'price' => 'decimal:2',

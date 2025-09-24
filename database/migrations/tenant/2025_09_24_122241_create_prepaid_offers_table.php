@@ -66,6 +66,8 @@ return new class extends Migration {
             $table->decimal('deposit', 10, 2)->default(0.00);
             $table->decimal('bcrs_deposit', 10, 2)->default(0.00);
             $table->decimal('total_price', 10, 2)->default(0.00);
+            $table->integer('total_taken')->default(0);
+            $table->integer('total_remaining')->default(0);
             $table->timestamps();
         });
     }
