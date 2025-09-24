@@ -19,6 +19,7 @@ use App\Nova\MonetoryValue;
 use App\Nova\Offer;
 use App\Nova\OrderType;
 use App\Nova\Permission;
+use App\Nova\PrepaidOffer;
 use App\Nova\PriceType;
 use App\Nova\Product;
 use App\Nova\Role;
@@ -73,6 +74,7 @@ class NovaResources
             DeliveryNote::class,
             DirectSale::class,
             CollectionNote::class,
+            PrepaidOffer::class
         ];
     }
 
