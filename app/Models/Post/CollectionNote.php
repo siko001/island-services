@@ -11,6 +11,7 @@ use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class CollectionNote extends Model
 {
@@ -83,12 +84,10 @@ class CollectionNote extends Model
         return $this->belongsTo(Location::class, 'customer_location');
     }
 
-
-    //    Create and uncomment
-    //    public function collectionNoteProducts()
-    //    {
-    //        return $this->hasMany(CollectionNoteProducts::class);
-    //    }
+    public function collectionNoteProducts(): HasMany
+    {
+        return $this->hasMany(CollectionNoteProduct::class);
+    }
 
     public static function boot()
     {

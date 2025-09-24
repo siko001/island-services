@@ -14,6 +14,7 @@ use Illuminate\Http\Request;
 use Laravel\Nova\Actions\Action;
 use Laravel\Nova\Card;
 use Laravel\Nova\Fields\Field;
+use Laravel\Nova\Fields\HasMany;
 use Laravel\Nova\Filters\Filter;
 use Laravel\Nova\Http\Requests\NovaRequest;
 use Laravel\Nova\Lenses\Lens;
@@ -65,10 +66,9 @@ class CollectionNote extends Resource
                 Tab::make("Delivery Details", (new DeliveryDetails)("collection_note")),
                 Tab::make("Financial Details", new FinancialDetails()),
                 Tab::make("Additional Details", (new AdditionalDetails)("collection_note"))
-            ])
+            ]),
 
-            //Continue Here to Add Products
-        ];
+            HasMany::make('Products', 'collectionNoteProducts', \App\Nova\CollectionNoteProduct::class),];
     }
 
     /**

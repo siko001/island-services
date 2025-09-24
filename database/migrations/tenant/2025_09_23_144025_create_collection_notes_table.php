@@ -49,6 +49,18 @@ return new class extends Migration {
             $table->date('processed_at')->nullable();
             $table->timestamps();
         });
+
+        Schema::create('collection_note_products', function(Blueprint $table) {
+            $table->id();
+            $table->foreignId('collection_note_id')->constrained()->onDelete('cascade');
+            $table->foreignId('product_id')->constrained('products')->onDelete('cascade');
+
+            $table->integer('quantity')->default(1);
+            $table->string('make')->nullable();
+            $table->string('model')->nullable();
+            $table->string('serial_number')->nullable();
+            $table->timestamps();
+        });
     }
 
     /**
@@ -57,5 +69,6 @@ return new class extends Migration {
     public function down(): void
     {
         Schema::dropIfExists('collection_notes');
+        Schema::dropIfExists('collection_note_products');
     }
 };
