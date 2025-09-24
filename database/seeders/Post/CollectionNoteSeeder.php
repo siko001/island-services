@@ -91,8 +91,6 @@ class CollectionNoteSeeder extends Seeder
 
                 $processed = rand(0, 1);
 
-                $this->command->info("Customer Area: {$customerArea}, Location: {$customerLocation}");
-
                 $areaLocation = null;
                 if($customerArea && $customerLocation) {
                     $areaLocation = AreaLocation::where('area_id', $customerArea)
@@ -119,7 +117,7 @@ class CollectionNoteSeeder extends Seeder
                 }
 
                 // Create collection note
-                $deliveryNote = CollectionNote::create([
+                $collectionNote = CollectionNote::create([
                     'collection_note_number' => HelperFunctions::generateOrderNumber("collection_note", CollectionNote::class),
                     'order_date' => $randomDate,
                     'delivery_date' => $deliveryDate,
@@ -146,10 +144,10 @@ class CollectionNoteSeeder extends Seeder
                     'created_at' => $randomDate,
                 ]);
 
-                $this->command->info("Created collection note #" . ($i + 1) . ": " . $deliveryNote->delivery_note_number . " for " . $customer->client);
+                $this->command->info("Created collection note #" . ($i + 1) . ": " . $collectionNote->collection_note_number . " for " . $customer->client);
             } catch(\Exception $e) {
                 $this->command->error("Error creating collection note: {$e->getMessage()}");
-                Log::error("Error in DeliveryNoteSeeder: {$e->getMessage()}");
+                Log::error("Error in CollectionNoteSeeder: {$e->getMessage()}");
             }
         }
 

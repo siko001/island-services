@@ -120,7 +120,7 @@ class DirectSaleSeeder extends Seeder
                 }
 
                 // Create direct sale
-                $deliveryNote = DirectSale::create([
+                $directSale = DirectSale::create([
                     'direct_sale_number' => HelperFunctions::generateOrderNumber("direct_sale", DirectSale::class),
                     'order_date' => $randomDate,
                     'delivery_date' => $deliveryDate,
@@ -147,10 +147,10 @@ class DirectSaleSeeder extends Seeder
                     'created_at' => $randomDate,
                 ]);
 
-                $this->command->info("Created direct sale #" . ($i + 1) . ": " . $deliveryNote->delivery_note_number . " for " . $customer->client);
+                $this->command->info("Created direct sale #" . ($i + 1) . ": " . $directSale->direct_sale_number . " for " . $customer->client);
             } catch(\Exception $e) {
                 $this->command->error("Error creating direct sale: {$e->getMessage()}");
-                Log::error("Error in DeliveryNoteSeeder: {$e->getMessage()}");
+                Log::error("Error in DirectSaleSeeder: {$e->getMessage()}");
             }
         }
 
