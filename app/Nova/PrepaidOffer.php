@@ -1,0 +1,101 @@
+<?php
+
+namespace App\Nova;
+
+use App\Nova\Parts\Post\SharedFields\AdditionalDetails;
+use App\Nova\Parts\Post\SharedFields\DeliveryDetails;
+use App\Nova\Parts\Post\SharedFields\FinancialDetails;
+use App\Nova\Parts\Post\SharedFields\OrderHeader;
+use Laravel\Nova\Actions\Action;
+use Laravel\Nova\Card;
+use Laravel\Nova\Fields\Field;
+use Laravel\Nova\Fields\HasMany;
+use Laravel\Nova\Filters\Filter;
+use Laravel\Nova\Http\Requests\NovaRequest;
+use Laravel\Nova\Lenses\Lens;
+use Laravel\Nova\Query\Search\SearchableRelation;
+use Laravel\Nova\Tabs\Tab;
+
+class PrepaidOffer extends Resource
+{
+    /**
+     * The model the resource corresponds to.
+     * @var class-string<\App\Models\Post\PrepaidOffer>
+     */
+    public static $model = \App\Models\Post\PrepaidOffer::class;
+    /**
+     * The single value that should be used to represent the resource when being displayed.
+     * @var string
+     */
+    public static $title = 'prepaid_offer_number';
+
+    public static function searchableColumns(): array
+    {
+        return [
+            'prepaid_offer_number',
+            new SearchableRelation('customer', 'client'),
+            new SearchableRelation('customer', 'account_number'),
+        ];
+    }
+
+    /**
+     * Get the fields displayed by the resource.
+     * @return array<int, Field>
+     */
+    public function fields(NovaRequest $request): array
+    {
+        return [
+            ... (new OrderHeader())('prepaid_offer', \App\Models\Post\PrepaidOffer::class),
+
+            Tab::group('Information', [
+                Tab::make("Delivery Details", (new DeliveryDetails)("prepaid_offer")),
+                Tab::make("Financial Details", (new FinancialDetails)('prepaid_offer')),
+                Tab::make("Additional Details", (new AdditionalDetails)("prepaid_offer")),
+            ]),
+
+            HasMany::make('Offer\'s Products', 'prepaidOfferProducts', PrepaidOfferProduct::class)
+        ];
+    }
+
+    /**
+     * Get the cards available for the resource.
+     * @return array<int, Card>
+     */
+    public function cards(NovaRequest $request): array
+    {
+        return [];
+    }
+
+    /**
+     * Get the filters available for the resource.
+     * @return array<int, Filter>
+     */
+    public function filters(NovaRequest $request): array
+    {
+        return [];
+    }
+
+    /**
+     * Get the lenses available for the resource.
+     * @return array<int, Lens>
+     */
+    public function lenses(NovaRequest $request): array
+    {
+        return [];
+    }
+
+    /**
+     * Get the actions available for the resource.
+     * @return array<int, Action>
+     */
+    public function actions(NovaRequest $request): array
+    {
+        return [];
+    }
+
+    //Dont include clients with account closed
+    public static function relatableCustomers(NovaRequest $request, $query)
+    {
+        return $query->where('account_closed', false);
+    }
+}
