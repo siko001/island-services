@@ -42,7 +42,8 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
         //JS
         Nova::script('desktop-branding', public_path('assets/js/desktopBranding.js'));
         Nova::script('mobile-branding', public_path('assets/js/mobileBranding.js'));
-        Nova::script('change-button-text', public_path('assets/js/changeDeliveryNoteProductButton.js'));
+        Nova::script('change-element-text', public_path('assets/js/changeOrderElements.js')); // DeliveryNote , DirectSale, CollectionNote Buttons and Empty Dialog overrides
+        Nova::script('change-attachment-element-text', public_path('assets/js/changeOrderProductsElements.js')); // DeliveryNote_Products , DirectSale_Products, CollectionNote_Products Buttons overrides
 
         Nova::resources(
             array_merge(
