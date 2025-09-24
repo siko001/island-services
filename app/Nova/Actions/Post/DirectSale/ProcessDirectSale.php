@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Nova\Actions\DirectSale;
+namespace App\Nova\Actions\Post\DirectSale;
 
 use App\Models\Post\DirectSale;
 use Illuminate\Bus\Queueable;

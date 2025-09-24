@@ -2,6 +2,7 @@
 
 namespace App\Nova;
 
+use App\Nova\Actions\Post\PrepaidOffer\ProcessPrepaidOffer;
 use App\Nova\Parts\Post\SharedFields\AdditionalDetails;
 use App\Nova\Parts\Post\SharedFields\DeliveryDetails;
 use App\Nova\Parts\Post\SharedFields\FinancialDetails;
@@ -95,7 +96,9 @@ class PrepaidOffer extends Resource
      */
     public function actions(NovaRequest $request): array
     {
-        return [];
+        return [
+            new ProcessPrepaidOffer(),
+        ];
     }
 
     //Dont include clients with account closed

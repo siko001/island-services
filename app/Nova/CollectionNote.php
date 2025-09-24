@@ -2,7 +2,7 @@
 
 namespace App\Nova;
 
-use App\Nova\Actions\CollectionNote\ProcessCollectionNote;
+use App\Nova\Actions\Post\CollectionNote\ProcessCollectionNote;
 use App\Nova\Lenses\Post\CollectionNote\ProcessedCollectionNote;
 use App\Nova\Lenses\Post\CollectionNote\UnprocessedCollectionNote;
 use App\Nova\Parts\Post\SharedFields\AdditionalDetails;

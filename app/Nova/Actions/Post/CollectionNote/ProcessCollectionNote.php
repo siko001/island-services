@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Nova\Actions\CollectionNote;
+namespace App\Nova\Actions\Post\CollectionNote;
 
 use App\Models\Post\CollectionNote;
 use Illuminate\Bus\Queueable;

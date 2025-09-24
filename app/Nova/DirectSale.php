@@ -2,7 +2,7 @@
 
 namespace App\Nova;
 
-use App\Nova\Actions\DirectSale\ProcessDirectSale;
+use App\Nova\Actions\Post\DirectSale\ProcessDirectSale;
 use App\Nova\Lenses\Post\DirectSale\ProcessedDirectSales;
 use App\Nova\Lenses\Post\DirectSale\UnprocessedDirectSales;
 use App\Nova\Parts\Post\SharedFields\AdditionalDetails;

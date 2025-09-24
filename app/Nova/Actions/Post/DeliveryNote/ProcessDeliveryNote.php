@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Nova\Actions\DeliveryNote;
+namespace App\Nova\Actions\Post\DeliveryNote;
 
 use App\Models\Post\DeliveryNote;
 use Illuminate\Bus\Queueable;
