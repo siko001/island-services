@@ -17,6 +17,7 @@ class PrepaidOffer extends Model
 {
     protected $table = 'prepaid_offers';
     protected $fillable = [
+        'prepaid_order_number',
         'order_date',
         "salesman_id",
         "operator_id",
@@ -124,5 +125,15 @@ class PrepaidOffer extends Model
                 ]);
             }
         });
+
+        //        static::updating(function($model) {
+        //            if($model->isDirty('terminated') && $model->terminated == 1) {
+        //                foreach($model->prepaidOfferProducts as $lineItem) {
+        //                    $lineItem->total_taken = $lineItem->quantity;
+        //                    $lineItem->save();
+        //
+        //                }
+        //            }
+        //        });
     }
 }

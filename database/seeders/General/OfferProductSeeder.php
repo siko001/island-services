@@ -9,7 +9,7 @@ class OfferProductSeeder extends Seeder
 {
     public function run(): void
     {
-        $total = 50;
+        $total = 100;
 
         $this->command->info("Creating {$total} Offer Products...");
 
