@@ -6,6 +6,8 @@ use App\Nova\Parts\Post\SharedFields\AdditionalDetails;
 use App\Nova\Parts\Post\SharedFields\DeliveryDetails;
 use App\Nova\Parts\Post\SharedFields\FinancialDetails;
 use App\Nova\Parts\Post\SharedFields\OrderHeader;
+use App\Traits\ResourcePolicies;
+use Illuminate\Http\Request;
 use Laravel\Nova\Actions\Action;
 use Laravel\Nova\Card;
 use Laravel\Nova\Fields\Field;
@@ -18,6 +20,9 @@ use Laravel\Nova\Tabs\Tab;
 
 class PrepaidOffer extends Resource
 {
+    use ResourcePolicies;
+
+    public static string $policyKey = 'direct_sale';
     /**
      * The model the resource corresponds to.
      * @var class-string<\App\Models\Post\PrepaidOffer>
@@ -97,5 +102,26 @@ class PrepaidOffer extends Resource
     public static function relatableCustomers(NovaRequest $request, $query)
     {
         return $query->where('account_closed', false);
+    }
+
+    public function authorizedToUpdate(Request $request): bool
+    {
+        if($request->user()->cannot('update ' . self::$policyKey)) {
+            return false;
+        }
+        return !self::model()->status;
+    }
+
+    public function authorizedToDelete(Request $request): bool
+    {
+        if($request->user()->cannot('delete ' . self::$policyKey)) {
+            return false;
+        }
+        return !self::model()->status;
+    }
+
+    public function authorizedToReplicate(Request $request): bool
+    {
+        return !self::model()->status;
     }
 }
