@@ -62,6 +62,7 @@ class PermissionGenerator
             'process delivery_note',
             'process direct_sale',
             'process collection_note',
+            'process prepaid_offer',
         ];
 
         return self::PermissionLoop($actionPermissions, $output, $createdCount);
@@ -88,6 +89,9 @@ class PermissionGenerator
             'view unprocessed direct_sale',
             'view processed collection_note',
             'view unprocessed collection_note',
+            'view processed prepaid_offer',
+            'view unprocessed prepaid_offer',
+            'view terminated prepaid_offer',
         ];
 
         return self::PermissionLoop($lensPermissions, $output, $createdCount);

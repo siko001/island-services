@@ -1,25 +1,29 @@
 <?php
 
-namespace App\Nova\Parts\Post\SharedFields;
+namespace App\Nova\Parts\Post\PrepaidOffer;
 
 use App\Nova\Customer;
-use Illuminate\Support\Str;
+use App\Nova\Offer;
 use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\Date;
 use Laravel\Nova\Fields\Text;
 
-class OrderLensFields
+class PrepaidOfferLensFields
 {
-    public function __invoke($orderType): array
+    public function __invoke(): array
     {
+
         return [
-            Boolean::make("Processed", 'status')->readonly(),
-            Text::make(Str::title(str_replace('_', ' ', $orderType)) . ' Number', $orderType . '_number')->sortable(),
+            Boolean::make("Terminated", 'terminated')->sortable(),
+            Boolean::make("Processed", 'status')->sortable(),
+            Text::make("Prepaid Offer Number", 'prepaid_offer_number')->sortable(),
             Date::make('Order Date', 'order_date')->sortable(),
             BelongsTo::make('Customer', 'customer', Customer::class)->sortable(),
             Text::make('Account Number', 'customer_account_number')->sortable(),
             Text::make('Customer Email')->sortable(),
+            BelongsTo::make('Offer', 'offer', Offer::class)->sortable(),
         ];
+
     }
 }

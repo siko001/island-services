@@ -18,6 +18,7 @@ class PostTabSeeder extends Seeder
             DirectSaleProductSeeder::class,
             CollectionNoteSeeder::class,
             CollectionNoteProductSeeder::class,
+            PrepaidOfferSeeder::class,
         ];
 
         // Loop through each seeder and call it

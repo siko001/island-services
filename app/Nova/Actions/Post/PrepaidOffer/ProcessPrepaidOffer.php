@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Nova\Actions\DirectSale;
+namespace App\Nova\Actions\Post\PrepaidOffer;
 
-use App\Models\Post\DirectSale;
+use App\Models\Post\PrepaidOffer;
 use Illuminate\Bus\Queueable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Support\Collection;
@@ -12,31 +12,37 @@ use Laravel\Nova\Fields\ActionFields;
 use Laravel\Nova\Fields\Field;
 use Laravel\Nova\Http\Requests\NovaRequest;
 
-class ProcessDirectSale extends Action
+class ProcessPrepaidOffer extends Action
 {
     use InteractsWithQueue;
     use Queueable;
 
-    /**
-     * Perform the action on the given models.
-     * @return ActionResponse
-     */
-
     public function handle(ActionFields $fields, Collection $models): ActionResponse
     {
-        //
-        $processedDirectSale = 0;
-        foreach($models as $directSale) {
-            if($directSale->status == 1) {
+        $processedPrepaidOffers = 0;
+        foreach($models as $prepaidOffer) {
+            if($prepaidOffer->status == 1) {
                 continue;
             }
-            $directSale->status = 1;
-            $directSale->save();
-            $processedDirectSale++;
+
+            $product = $prepaidOffer->prepaidOfferProducts;
+            if(!empty($product)) {
+                foreach($prepaidOffer->prepaidOfferProducts as $product) {
+                    $product->total_remaining = $product->quantity;
+                    $product->save();
+                }
+            } else {
+                return Action::message("Please make sure you are selecting an offer that contains products");
+            }
+            $prepaidOffer->status = 1;
+            $prepaidOffer->save();
+            $processedPrepaidOffers++;
+
         }
         return Action::message(
-            "Processed {$processedDirectSale} Direct Sale" . ($processedDirectSale > 1 ? 's' : '')
+            "Processed {$processedPrepaidOffers} Prepaid Offer" . ($processedPrepaidOffers > 1 ? 's' : '')
         );
+
     }
 
     /**
@@ -50,7 +56,7 @@ class ProcessDirectSale extends Action
 
     public function authorizedToSee(\Illuminate\Http\Request $request)
     {
-        if(!auth()->user()->can('process direct_sale')) {
+        if(!auth()->user()->can('process prepaid_offer')) {
             return false;
         }
 
@@ -70,15 +76,15 @@ class ProcessDirectSale extends Action
             return true;
         }
 
-        $resources = DirectSale::whereIn('id', $selectedResourceIds)->get();
+        $resources = PrepaidOffer::whereIn('id', $selectedResourceIds)->get();
 
         if(!$editViewResourceId && $resources->isEmpty()) {
             return false;
         }
 
         if($editViewResourceId) {
-            $directSale = DirectSale::find($editViewResourceId);
-            return $directSale && !$directSale->status == 1;
+            $prepaidOffer = PrepaidOffer::find($editViewResourceId);
+            return $prepaidOffer && !$prepaidOffer->status == 1;
         }
 
         return $resources->contains(fn($r) => !$r->status);

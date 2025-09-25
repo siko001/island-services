@@ -6,15 +6,15 @@ use App\Helpers\HelperFunctions;
 use App\Models\Customer\Customer;
 use App\Models\General\Area;
 use App\Models\General\AreaLocation;
-use App\Models\General\Location;
+use App\Models\General\Offer;
 use App\Models\General\OrderType;
-use App\Models\Post\DirectSale;
+use App\Models\Post\PrepaidOffer;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Log;
 
-class DirectSaleSeeder extends Seeder
+class PrepaidOfferSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -35,13 +35,19 @@ class DirectSaleSeeder extends Seeder
             return;
         }
 
+        $offers = Offer::all();
+        if($offers->isEmpty()) {
+            $this->command->error('No Offers found. Please create offers and attach products first.');
+            return;
+        }
+
         // Check if we have salesmen
         $salesmen = User::whereHas('roles', function($query) {
             $query->where('name', 'like', '%salesman%');
         })->get();
 
         if($salesmen->isEmpty()) {
-            $salesmen = User::all(); // Fallback to all users if no salesmen found
+            $salesmen = User::all();
             if($salesmen->isEmpty()) {
                 $this->command->error('No users found. Please create users first.');
                 return;
@@ -54,12 +60,12 @@ class DirectSaleSeeder extends Seeder
         })->get();
 
         if($operators->isEmpty()) {
-            $operators = $salesmen; // Fallback to salesmen if no operators found
+            $operators = $salesmen;
         }
 
-        $this->command->info('Creating direct sales...');
+        $this->command->info('Creating Prepaid Offer...');
 
-        // Create 50 direct sales
+        // Create 50 Prepaid Offer
         $count = 50;
         for($i = 0; $i < $count; $i++) {
             try {
@@ -67,32 +73,26 @@ class DirectSaleSeeder extends Seeder
                 $customer = $customers->random();
 
                 // Get customer details
-                $customerArea = Area::where('is_direct_sale', true)->first()->id;
-                $customerLocation = Location::where('is_direct_sale', true)->first()->id;
+                $customerArea = $customer->delivery_details_area_id;
+                $customerLocation = $customer->delivery_details_locality_id;
                 $customerAddress = $customer->delivery_details_address;
                 $customerEmail = $customer->delivery_details_email_one;
                 $customerAccountNumber = $customer->account_number;
 
-                // Get random salesman and operator
                 $salesman = $salesmen->random();
                 $operator = $operators->random();
-
-                // Get random order type
                 $orderType = $orderTypes->random();
+                $offer = $offers->random();
 
                 $randomDate = Carbon::now()->subDays(rand(0, 7));
-
-                // Get the next delivery date based on the customer's area and location
                 $deliveryDate = AreaLocation::getNextDeliveryDate($customerArea, $customerLocation, $customer->id);
-
-                // If no delivery date could be determined, default to at least 2 days after order date
                 if(!$deliveryDate) {
                     $deliveryDate = $randomDate;
                 }
 
                 $processed = rand(0, 1);
-
-                $this->command->info("Customer Area: {$customerArea}, Location: {$customerLocation}");
+                $terminated = false;
+                $processed && $terminated = rand(0, 1);
 
                 $areaLocation = null;
                 if($customerArea && $customerLocation) {
@@ -111,28 +111,27 @@ class DirectSaleSeeder extends Seeder
                         'Sunday' => $areaLocation->sunday,
                     ])->filter(fn($delivered) => $delivered)->keys()->toArray();
 
-                    $this->command->info("Delivery days: " . implode(', ', $days));
-
                     $daysForDelivery = implode(', ', $days);
                 } else {
                     $this->command->warn('No area-location found or invalid area/location IDs.');
                     $daysForDelivery = 'No delivery information';
                 }
 
-                // Create direct sale
-                $directSale = DirectSale::create([
-                    'direct_sale_number' => HelperFunctions::generateOrderNumber("direct_sale", DirectSale::class),
+                // Create Prepaid Offer
+                $prepaidOffer = PrepaidOffer::create([
+                    'prepaid_offer_number' => HelperFunctions::generateOrderNumber("prepaid_offer", PrepaidOffer::class),
                     'order_date' => $randomDate,
-                    'delivery_date' => $deliveryDate,
                     'salesman_id' => $salesman->id,
                     'operator_id' => $operator->id,
                     'order_type_id' => $orderType->id,
                     'days_for_delivery' => $daysForDelivery,
                     'delivery_instructions' => "Delivery instructions for {$customer->client}",
                     'delivery_directions' => "Directions for {$customer->client}",
-                    'remarks' => Area::where('is_direct_sale', true, '')->first()->delivery_note_remark,
-                    'processed_at' => $processed ? $deliveryDate : null,
+                    'remarks' => Area::where('id', $customerArea)->first()->delivery_note_remark,
+                    'offer_id' => $offer->id,
+                    'processed_at' => $processed ? $randomDate : null,
                     'status' => $processed,
+                    'terminated' => false,
                     'customer_id' => $customer->id,
                     'customer_account_number' => $customerAccountNumber,
                     'customer_email' => $customerEmail,
@@ -140,20 +139,29 @@ class DirectSaleSeeder extends Seeder
                     'customer_location' => $customerLocation,
                     'customer_address' => $customerAddress,
                     'balance_on_delivery' => $customer->balance_del,
-                    'credit_on_delivery' => $customer->credit_limit_del,
                     'balance_on_deposit' => $customer->balance_dep,
-                    'credit_on_deposit' => $customer->credit_limit_dep,
-                    'credit_limit' => $customer->credit_terms_current,
                     'created_at' => $randomDate,
+                    'terminated_at' => null,
+                    'net' => $offer->offerProducts->sum('total_price'),
+                    'bcrs' => $offer->offerProducts->sum('bcrs_deposit'),
+                    'vat' => round($offer->offerProducts->sum('total_price') * 0.18, 2),
+                    'last_delivery_date' => null,
                 ]);
 
-                $this->command->info("Created direct sale #" . ($i + 1) . ": " . $directSale->direct_sale_number . " for " . $customer->client);
+                if($terminated) {
+                    $prepaidOffer->terminated = true;
+                    $prepaidOffer->terminated_at = Carbon::now();
+                    $prepaidOffer->save();
+
+                }
+
+                $this->command->info("Created Prepaid Offer #" . ($i + 1) . ": " . $prepaidOffer->perpaid_offer_number . " for " . $customer->client);
             } catch(\Exception $e) {
-                $this->command->error("Error creating direct sale: {$e->getMessage()}");
-                Log::error("Error in DirectSaleSeeder: {$e->getMessage()}");
+                $this->command->error("Error creating Prepaid Offer: {$e->getMessage()}");
+                Log::error("Error in PrepaidOfferSeeder: {$e->getMessage()}");
             }
         }
 
-        $this->command->info("Successfully created {$count} direct sales.");
+        $this->command->info("Successfully created {$count} Prepaid Offer.");
     }
 }

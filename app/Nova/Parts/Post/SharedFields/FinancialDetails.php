@@ -8,9 +8,11 @@ use Laravel\Nova\Fields\Number;
 
 class FinancialDetails
 {
-    public function __invoke(): array
+    public function __invoke($orderType = null): array
     {
-        return [
+        $fields = [];
+
+        $fields = [
             Number::make('Balance On Delivery', 'balance_on_delivery')
                 ->dependsOn('customer', function($field, $request, FormData $formData) {
                     HelperFunctions::fillFromDependentField($field, $formData, \App\Models\Customer\Customer::class, 'customer', 'balance_del');
@@ -29,24 +31,32 @@ class FinancialDetails
                 ->rules('numeric', 'min:0')
                 ->default(0.00),
 
-            Number::make('Credit Limit On Delivery', 'credit_on_delivery')
-                ->dependsOn('customer', function($field, $request, FormData $formData) {
-                    HelperFunctions::fillFromDependentField($field, $formData, \App\Models\Customer\Customer::class, 'customer', 'credit_limit_del');
-                })
-                ->hideFromIndex()
-                ->sortable()
-                ->rules('numeric', 'min:0')
-                ->default(0.00),
-
-            Number::make('Credit Limit On Deposit', 'credit_on_deposit')
-                ->dependsOn('customer', function($field, $request, FormData $formData) {
-                    HelperFunctions::fillFromDependentField($field, $formData, \App\Models\Customer\Customer::class, 'customer', 'credit_limit_dep');
-                })
-                ->hideFromIndex()
-                ->sortable()
-                ->rules('numeric', 'min:0')
-                ->default(0.00),
-
         ];
+
+        switch($orderType) {
+            case "prepaid_offer":
+                break;
+            default:
+                $fields[] = Number::make('Credit Limit On Delivery', 'credit_on_delivery')
+                    ->dependsOn('customer', function($field, $request, FormData $formData) {
+                        HelperFunctions::fillFromDependentField($field, $formData, \App\Models\Customer\Customer::class, 'customer', 'credit_limit_del');
+                    })
+                    ->hideFromIndex()
+                    ->sortable()
+                    ->rules('numeric', 'min:0')
+                    ->default(0.00);
+
+                $fields[] = Number::make('Credit Limit On Deposit', 'credit_on_deposit')
+                    ->dependsOn('customer', function($field, $request, FormData $formData) {
+                        HelperFunctions::fillFromDependentField($field, $formData, \App\Models\Customer\Customer::class, 'customer', 'credit_limit_dep');
+                    })
+                    ->hideFromIndex()
+                    ->sortable()
+                    ->rules('numeric', 'min:0')
+                    ->default(0.00);
+                break;
+        }
+
+        return $fields;
     }
 }

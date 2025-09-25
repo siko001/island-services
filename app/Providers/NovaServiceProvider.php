@@ -12,6 +12,10 @@ use App\Nova\Lenses\Post\DeliveryNote\ProcessedDeliveryNotes;
 use App\Nova\Lenses\Post\DeliveryNote\UnprocessedDeliveryNotes;
 use App\Nova\Lenses\Post\DirectSale\ProcessedDirectSales;
 use App\Nova\Lenses\Post\DirectSale\UnprocessedDirectSales;
+use App\Nova\Lenses\Post\PrepaidOffer\ProcessedPrepaidOffer;
+use App\Nova\Lenses\Post\PrepaidOffer\TerminatedPrepaidOffer;
+use App\Nova\Lenses\Post\PrepaidOffer\UnprocessedPrepaidOffer;
+use App\Nova\PrepaidOffer;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Gate;
@@ -120,6 +124,13 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
                         MenuItem::resource(CollectionNote::class)->name("All / Create"),
                         MenuItem::lens(CollectionNote::class, UnprocessedCollectionNote::class)->name('Unprocessed')->canSee(fn($request) => $request->user()?->can('view unprocessed collection_note') ?? false),
                         MenuItem::lens(CollectionNote::class, ProcessedCollectionNote::class)->name('Processed')->canSee(fn($request) => $request->user()?->can('view processed collection_note') ?? false)
+                    ])->collapsable(),
+
+                    MenuGroup::make("Prepaid Offers", [
+                        MenuItem::resource(PrepaidOffer::class)->name("All / Create"),
+                        MenuItem::lens(PrepaidOffer::class, UnprocessedPrepaidOffer::class)->name('Unprocessed')->canSee(fn($request) => $request->user()?->can('view unprocessed prepaid_offer') ?? false),
+                        MenuItem::lens(PrepaidOffer::class, ProcessedPrepaidOffer::class)->name('Processed')->canSee(fn($request) => $request->user()?->can('view processed prepaid_offer') ?? false),
+                        MenuItem::lens(PrepaidOffer::class, TerminatedPrepaidOffer::class)->name('Terminated')->canSee(fn($request) => $request->user()?->can('view terminated prepaid_offer') ?? false)
                     ])->collapsable(),
 
                 ])->icon('cog-8-tooth')

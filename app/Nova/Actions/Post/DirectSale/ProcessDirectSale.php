@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Nova\Actions\CollectionNote;
+namespace App\Nova\Actions\Post\DirectSale;
 
-use App\Models\Post\CollectionNote;
+use App\Models\Post\DirectSale;
 use Illuminate\Bus\Queueable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Support\Collection;
@@ -12,7 +12,7 @@ use Laravel\Nova\Fields\ActionFields;
 use Laravel\Nova\Fields\Field;
 use Laravel\Nova\Http\Requests\NovaRequest;
 
-class ProcessCollectionNote extends Action
+class ProcessDirectSale extends Action
 {
     use InteractsWithQueue;
     use Queueable;
@@ -25,17 +25,17 @@ class ProcessCollectionNote extends Action
     public function handle(ActionFields $fields, Collection $models): ActionResponse
     {
         //
-        $processedCollectionNote = 0;
-        foreach($models as $collectionNote) {
-            if($collectionNote->status == 1) {
+        $processedDirectSale = 0;
+        foreach($models as $directSale) {
+            if($directSale->status == 1) {
                 continue;
             }
-            $collectionNote->status = 1;
-            $collectionNote->save();
-            $processedCollectionNote++;
+            $directSale->status = 1;
+            $directSale->save();
+            $processedDirectSale++;
         }
         return Action::message(
-            "Processed {$processedCollectionNote} Collection Note" . ($processedCollectionNote > 1 ? 's' : '')
+            "Processed {$processedDirectSale} Direct Sale" . ($processedDirectSale > 1 ? 's' : '')
         );
     }
 
@@ -50,7 +50,7 @@ class ProcessCollectionNote extends Action
 
     public function authorizedToSee(\Illuminate\Http\Request $request)
     {
-        if(!auth()->user()->can('process collection_note')) {
+        if(!auth()->user()->can('process direct_sale')) {
             return false;
         }
 
@@ -70,15 +70,15 @@ class ProcessCollectionNote extends Action
             return true;
         }
 
-        $resources = CollectionNote::whereIn('id', $selectedResourceIds)->get();
+        $resources = DirectSale::whereIn('id', $selectedResourceIds)->get();
 
         if(!$editViewResourceId && $resources->isEmpty()) {
             return false;
         }
 
         if($editViewResourceId) {
-            $collectionNote = CollectionNote::find($editViewResourceId);
-            return $collectionNote && !$collectionNote->status == 1;
+            $directSale = DirectSale::find($editViewResourceId);
+            return $directSale && !$directSale->status == 1;
         }
 
         return $resources->contains(fn($r) => !$r->status);

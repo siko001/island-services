@@ -2,9 +2,10 @@
 
 namespace App\Nova;
 
-use App\Nova\Actions\Post\DirectSale\ProcessDirectSale;
-use App\Nova\Lenses\Post\DirectSale\ProcessedDirectSales;
-use App\Nova\Lenses\Post\DirectSale\UnprocessedDirectSales;
+use App\Nova\Actions\Post\PrepaidOffer\ProcessPrepaidOffer;
+use App\Nova\Lenses\Post\PrepaidOffer\ProcessedPrepaidOffer;
+use App\Nova\Lenses\Post\PrepaidOffer\TerminatedPrepaidOffer;
+use App\Nova\Lenses\Post\PrepaidOffer\UnprocessedPrepaidOffer;
 use App\Nova\Parts\Post\SharedFields\AdditionalDetails;
 use App\Nova\Parts\Post\SharedFields\DeliveryDetails;
 use App\Nova\Parts\Post\SharedFields\FinancialDetails;
@@ -21,26 +22,26 @@ use Laravel\Nova\Lenses\Lens;
 use Laravel\Nova\Query\Search\SearchableRelation;
 use Laravel\Nova\Tabs\Tab;
 
-class DirectSale extends Resource
+class PrepaidOffer extends Resource
 {
     use ResourcePolicies;
 
     public static string $policyKey = 'direct_sale';
     /**
      * The model the resource corresponds to.
-     * @var class-string<\App\Models\Post\DeliveryNote>
+     * @var class-string<\App\Models\Post\PrepaidOffer>
      */
-    public static $model = \App\Models\Post\DirectSale::class;
+    public static $model = \App\Models\Post\PrepaidOffer::class;
     /**
      * The single value that should be used to represent the resource when being displayed.
      * @var string
      */
-    public static $title = 'direct_sale_number';
+    public static $title = 'prepaid_offer_number';
 
     public static function searchableColumns(): array
     {
         return [
-            'direct_sale_number',
+            'prepaid_offer_number',
             new SearchableRelation('customer', 'client'),
             new SearchableRelation('customer', 'account_number'),
         ];
@@ -53,16 +54,15 @@ class DirectSale extends Resource
     public function fields(NovaRequest $request): array
     {
         return [
-            ... (new OrderHeader())('direct_sale', \App\Models\Post\DirectSale::class),
+            ... (new OrderHeader())('prepaid_offer', \App\Models\Post\PrepaidOffer::class),
 
             Tab::group('Information', [
-                Tab::make("Delivery Details", (new DeliveryDetails)("direct_sale")),
-                Tab::make("Financial Details", new FinancialDetails()),
-                Tab::make("Additional Details", (new AdditionalDetails)("direct_sale")),
+                Tab::make("Delivery Details", (new DeliveryDetails)("prepaid_offer")),
+                Tab::make("Financial Details", (new FinancialDetails)('prepaid_offer')),
+                Tab::make("Additional Details", (new AdditionalDetails)("prepaid_offer")),
             ]),
 
-            HasMany::make('Products', 'directSaleProducts', DirectSaleProduct::class),
-
+            HasMany::make('Offer\'s Products', 'prepaidOfferProducts', PrepaidOfferProduct::class)
         ];
     }
 
@@ -91,8 +91,9 @@ class DirectSale extends Resource
     public function lenses(NovaRequest $request): array
     {
         return [
-            new ProcessedDirectSales(),
-            new UnprocessedDirectSales(),
+            new ProcessedPrepaidOffer(),
+            new UnprocessedPrepaidOffer(),
+            new TerminatedPrepaidOffer(),
         ];
     }
 
@@ -103,7 +104,7 @@ class DirectSale extends Resource
     public function actions(NovaRequest $request): array
     {
         return [
-            new ProcessDirectSale(),
+            new ProcessPrepaidOffer(),
         ];
     }
 

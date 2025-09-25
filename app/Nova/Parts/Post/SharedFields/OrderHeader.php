@@ -15,38 +15,44 @@ class OrderHeader
 {
     public function __invoke($orderType, $model): array
     {
-        $fields = [
-            Boolean::make("Processed", 'status')->readonly()->onlyOnDetail(),
-            Boolean::make("Processed", 'status')->readonly()->onlyOnIndex()->sortable(),
+        $fields = [];
 
-            Text::make(Str::title(str_replace('_', ' ', $orderType)) . ' Number', $orderType . '_number')
-                ->immutable()
-                ->default(function() use ($orderType, $model) {
-                    return HelperFunctions::generateOrderNumber($orderType, $model);
-                })
-                ->help('this field is auto generated')
-                ->sortable()
-                ->rules('required', 'max:255', 'unique:delivery_notes,delivery_note_number,{{resourceId}}')
-                ->creationRules('unique:delivery_notes,delivery_note_number'),
+        switch($orderType) {
+            case 'prepaid_offer':
+                $fields[] = Boolean::make("Terminated")->readonly()->showOnDetail()->showOnDetail()->hideWhenCreating()->hideWhenUpdating();
+                break;
+            default:
+                break;
+        }
 
-            Date::make('Order Date', 'order_date')->default(\Carbon\Carbon::now())
-                ->sortable()
-                ->rules('date'),
+        $fields[] = Boolean::make("Processed", 'status')->readonly()->showOnDetail()->showOnDetail()->hideWhenCreating()->hideWhenUpdating();
+        $fields[] = Text::make(Str::title(str_replace('_', ' ', $orderType)) . ' Number', $orderType . '_number')
+            ->immutable()
+            ->default(function() use ($orderType, $model) {
+                return HelperFunctions::generateOrderNumber($orderType, $model);
+            })
+            ->help('this field is auto generated')
+            ->sortable()
+            ->rules('required', 'max:255', 'unique:' . $orderType . 's,' . $orderType . '_number,{{resourceId}}')
+            ->creationRules('unique:' . $orderType . 's,' . $orderType . '_number');
 
-            BelongsTo::make('Customer', 'customer', Customer::class)->sortable(),
+        $fields[] = Date::make('Order Date', 'order_date')->default(\Carbon\Carbon::now())
+            ->sortable()
+            ->rules('date');
 
-            Text::make('Account Number', 'customer_account_number')
-                ->hideFromIndex()
-                ->dependsOn('customer', function($field, $request, FormData $formData) {
-                    HelperFunctions::fillFromDependentField($field, $formData, \App\Models\Customer\Customer::class, 'customer', 'account_number');
-                    $formData['customer'] && $field->immutable();
-                }),
-            Text::make('Customer Email')
-                ->dependsOn('customer', function($field, $request, FormData $formData) {
-                    HelperFunctions::fillFromDependentField($field, $formData, \App\Models\Customer\Customer::class, 'customer', 'delivery_details_email_one');
-                }),
+        $fields[] = BelongsTo::make('Customer', 'customer', Customer::class)->sortable();
 
-        ];
+        $fields[] = Text::make('Account Number', 'customer_account_number')
+            ->hideFromIndex()
+            ->dependsOn('customer', function($field, $request, FormData $formData) {
+                HelperFunctions::fillFromDependentField($field, $formData, \App\Models\Customer\Customer::class, 'customer', 'account_number');
+                $formData['customer'] && $field->immutable();
+            });
+        $fields[] = Text::make('Customer Email')
+            ->dependsOn('customer', function($field, $request, FormData $formData) {
+                HelperFunctions::fillFromDependentField($field, $formData, \App\Models\Customer\Customer::class, 'customer', 'delivery_details_email_one');
+            });
+
         return $fields;
     }
 }

@@ -2,23 +2,22 @@
 
 namespace App\Nova;
 
-use Illuminate\Http\Request;
 use Laravel\Nova\Actions\Action;
 use Laravel\Nova\Card;
-use Laravel\Nova\Fields\BelongsToMany;
+use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\Field;
-use Laravel\Nova\Fields\Text;
+use Laravel\Nova\Fields\Number;
 use Laravel\Nova\Filters\Filter;
 use Laravel\Nova\Http\Requests\NovaRequest;
 use Laravel\Nova\Lenses\Lens;
 
-class Permission extends Resource
+class PrepaidOfferProduct extends Resource
 {
     /**
      * The model the resource corresponds to.
-     * @var class-string<\App\Models\Admin\Permission>
+     * @var class-string<\App\Models\Post\PrepaidOfferProduct>
      */
-    public static $model = \App\Models\Admin\Permission::class;
+    public static $model = \App\Models\Post\PrepaidOfferProduct::class;
     /**
      * The single value that should be used to represent the resource when being displayed.
      * @var string
@@ -29,7 +28,7 @@ class Permission extends Resource
      * @var array
      */
     public static $search = [
-        'name',
+        'id',
     ];
 
     /**
@@ -38,11 +37,20 @@ class Permission extends Resource
      */
     public function fields(NovaRequest $request): array
     {
-
         return [
-            Text::make('Name', 'name')->sortable()->rules('required', 'max:255'),
-            BelongsToMany::make('Roles'),
-            BelongsToMany::make('Users', 'users', User::class),
+            BelongsTo::make('Prepaid Offer', 'prepaidOffer', PrepaidOffer::class),
+            BelongsTo::make('Product', 'product', Product::class)->sortable(),
+            BelongsTo::make('Price Type', 'priceType', PriceType::class)->sortable(),
+            BelongsTo::make('VAT Code', 'vatCode', VatCode::class)->sortable(),
+            Number::make('Quantity in Offer', 'quantity')->sortable()->textAlign('left'),
+            Number::make('Unit Price', 'price')->sortable()->textAlign('left'),
+            Number::make('Total Price (Ex. Vat)', 'total_price')->sortable()->textAlign('left'),
+            Number::make('Deposit', 'deposit')->sortable()->textAlign('left'),
+            Number::make('BCRS Deposit', 'bcrs_deposit')->sortable()->textAlign('left'),
+
+            Number::make('Total Remaining')->sortable(),
+            Number::make('Total Taken')->sortable(),
+
         ];
     }
 
@@ -80,31 +88,5 @@ class Permission extends Resource
     public function actions(NovaRequest $request): array
     {
         return [];
-    }
-
-    //Resource authorization methods
-    public function authorizedToUpdate(Request $request): bool
-    {
-        return false; // Disable the "Edit" button
-    }
-
-    public function authorizedToDelete(Request $request): bool
-    {
-        return false; // Disable the "Delete" button
-    }
-
-    public static function authorizedToCreate(Request $request): bool
-    {
-        return false; //disable the Create
-    }
-
-    public static function authorizedToViewAny(Request $request): bool
-    {
-        return $request->user() && $request->user()->can('view any permission');
-    }
-
-    public function authorizedToView(Request $request): bool
-    {
-        return $request->user() && $request->user()->can('view permission');
     }
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Nova\Actions\User;
+namespace App\Nova\Actions\Admin\User;
 
 use App\Models\User;
 use Illuminate\Bus\Queueable;

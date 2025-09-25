@@ -191,6 +191,7 @@ class HelperFunctions
             'delivery_note' => 'DN',
             'direct_sale' => 'DS',
             'collection_note' => 'CN',
+            'prepaid_offer' => 'PPO',
         ];
         $initials = $initialsMap[$orderType] ?? 'ON';
 

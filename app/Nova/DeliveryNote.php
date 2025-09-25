@@ -2,7 +2,7 @@
 
 namespace App\Nova;
 
-use App\Nova\Actions\DeliveryNote\ProcessDeliveryNote;
+use App\Nova\Actions\Post\DeliveryNote\ProcessDeliveryNote;
 use App\Nova\Lenses\Post\DeliveryNote\ProcessedDeliveryNotes;
 use App\Nova\Lenses\Post\DeliveryNote\UnprocessedDeliveryNotes;
 use App\Nova\Parts\Post\SharedFields\AdditionalDetails;
