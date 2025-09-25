@@ -1,6 +1,8 @@
 <?php
 
 use App\Helpers\HelperFunctions;
+use App\Models\Admin\Permission;
+use App\Models\Admin\Role;
 use App\Models\Tenant;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -294,4 +296,15 @@ Artisan::command('central:user:delete', function() {
     $user->delete();
 
     $this->info("✅ Central user '{$email}' deleted successfully.");
+});
+
+Artisan::command('update-admin:permission', function() {
+    $superAdmin = Role::where('name', 'Super Admin')->first();
+    if(!$superAdmin) {
+        $this->error('Super Admin role not found.');
+        return;
+    }
+
+    $superAdmin->syncPermissions(Permission::all());
+    $this->info('All permissions have been assigned to the Super Admin role.');
 });
