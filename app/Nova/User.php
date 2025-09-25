@@ -45,6 +45,7 @@ class User extends Resource
     public static $search = [
         'id', 'name', 'email',
     ];
+    public static $perPageOptions = [10, 15, 25];
 
     /**
      * Get the fields displayed by the resource.
