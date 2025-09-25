@@ -3,6 +3,9 @@
 namespace App\Nova;
 
 use App\Nova\Actions\Post\PrepaidOffer\ProcessPrepaidOffer;
+use App\Nova\Lenses\Post\PrepaidOffer\ProcessedPrepaidOffer;
+use App\Nova\Lenses\Post\PrepaidOffer\TerminatedPrepaidOffer;
+use App\Nova\Lenses\Post\PrepaidOffer\UnprocessedPrepaidOffer;
 use App\Nova\Parts\Post\SharedFields\AdditionalDetails;
 use App\Nova\Parts\Post\SharedFields\DeliveryDetails;
 use App\Nova\Parts\Post\SharedFields\FinancialDetails;
@@ -87,7 +90,11 @@ class PrepaidOffer extends Resource
      */
     public function lenses(NovaRequest $request): array
     {
-        return [];
+        return [
+            new ProcessedPrepaidOffer(),
+            new UnprocessedPrepaidOffer(),
+            new TerminatedPrepaidOffer(),
+        ];
     }
 
     /**

@@ -42,13 +42,14 @@ class PrepaidOfferProduct extends Resource
             BelongsTo::make('Product', 'product', Product::class)->sortable(),
             BelongsTo::make('Price Type', 'priceType', PriceType::class)->sortable(),
             BelongsTo::make('VAT Code', 'vatCode', VatCode::class)->sortable(),
-            Number::make('Quantity', 'quantity')->sortable(),
-            Number::make('Unit Price', 'price')->sortable(),
-            Number::make('Total Price (Ex. Vat)', 'total_price')->sortable(),
-            Number::make('Deposit', 'deposit')->sortable(),
-            Number::make('BCRS Deposit', 'bcrs_deposit')->sortable(),
-            Number::make('Total Taken')->sortable(),
+            Number::make('Quantity in Offer', 'quantity')->sortable()->textAlign('left'),
+            Number::make('Unit Price', 'price')->sortable()->textAlign('left'),
+            Number::make('Total Price (Ex. Vat)', 'total_price')->sortable()->textAlign('left'),
+            Number::make('Deposit', 'deposit')->sortable()->textAlign('left'),
+            Number::make('BCRS Deposit', 'bcrs_deposit')->sortable()->textAlign('left'),
+
             Number::make('Total Remaining')->sortable(),
+            Number::make('Total Taken')->sortable(),
 
         ];
     }

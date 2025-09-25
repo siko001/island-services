@@ -79,12 +79,10 @@ class AdditionalDetails
 
         }
 
-        switch($orderType) {
-            case 'prepaid_offer':
-                $fields[] = BelongsTo::make('Offer', 'offer', Offer::class)
-                    ->sortable()
-                    ->rules('required');
-
+        if($orderType == 'prepaid_offer') {
+            $fields[] = BelongsTo::make('Offer', 'offer', Offer::class)
+                ->sortable()
+                ->rules('required');
         }
 
         return $fields;
