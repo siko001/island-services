@@ -19,7 +19,9 @@
         "build-system-logs": "cd nova-components/SystemLogs && npm run dev",
         "build-system-logs-prod": "cd nova-components/SystemLogs && npm run prod",
         "build-system-trail": "cd nova-components/SystemTrail && npm run dev",
-        "build-system-trail-prod": "cd nova-components/SystemTrail && npm run prod"
+        "build-system-trail-prod": "cd nova-components/SystemTrail && npm run prod",
+        "build-pending-order-info": "cd nova-components/PendingOrderInfo && npm run dev",
+        "build-pending-order-info-prod": "cd nova-components/PendingOrderInfo && npm run prod"
     },
     "devDependencies": {
         "@tailwindcss/vite": "^4.0.0",

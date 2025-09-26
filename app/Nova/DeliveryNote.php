@@ -11,6 +11,7 @@ use App\Nova\Parts\Post\SharedFields\FinancialDetails;
 use App\Nova\Parts\Post\SharedFields\OrderHeader;
 use App\Traits\ResourcePolicies;
 use Illuminate\Http\Request;
+use IslandServices\PendingOrderInfo\PendingOrderInfo;
 use Laravel\Nova\Actions\Action;
 use Laravel\Nova\Card;
 use Laravel\Nova\Fields\Field;
@@ -61,12 +62,14 @@ class DeliveryNote extends Resource
     public function fields(NovaRequest $request): array
     {
         return [
+            PendingOrderInfo::make('Prepaid & Delivery Info'),
             ... (new OrderHeader())('delivery_note', \App\Models\Post\DeliveryNote::class),
 
             Tab::group('Information', [
                 Tab::make("Delivery Details", (new DeliveryDetails)("delivery_note")),
                 Tab::make("Financial Details", new FinancialDetails()),
                 Tab::make("Additional Details", (new AdditionalDetails)("delivery_note"))
+
             ]),
 
             HasMany::make('Products', 'deliveryNoteProducts', DeliveryNoteProduct::class),
