@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\Post\DeliveryNote;
+use App\Models\Post\DirectSale;
 use App\Models\Post\PrepaidOffer;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -16,12 +17,15 @@ use IslandServices\PendingOrderInfo\PendingOrderHelper;
 | as many additional routes to this file as your tool may require.
 |
 */
+
 Route::get('/', function(Request $request) {
     $id = $request->query('id');
-    $pendingDeliveryNotes = PendingOrderHelper::getPendingDeliveryNotes($id);
-    $pendingPrepaidOffers = PendingOrderHelper::getPendingPrepaidOffers($id);
-    $client = PendingOrderHelper::getCustomerDetails($id);
+    $type = $request->query('type', 'delivery-notes');
+    $model = $type === 'direct-sales' ? DirectSale::class : DeliveryNote::class;
 
+    $client = PendingOrderHelper::getCustomerDetails($id, $model);
+    $pendingDeliveryNotes = PendingOrderHelper::getPendingDeliveryNotes($id, $model);
+    $pendingPrepaidOffers = PendingOrderHelper::getPendingPrepaidOffers($id, $model);
     $info = !empty($pendingDeliveryNotes) || !empty($pendingPrepaidOffers);
 
     return response()->json([

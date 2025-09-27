@@ -4,35 +4,37 @@ namespace IslandServices\PendingOrderInfo;
 
 use App\Models\Post\DeliveryNote;
 use App\Models\Post\PrepaidOffer;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Collection;
 
 class PendingOrderHelper
 {
-    public static function getPendingDeliveryNotes($id)
+    public static function getPendingDeliveryNotes($id, $model): Collection|JsonResponse
     {
-        $deliveryNote = DeliveryNote::with('customer')->find($id);
-        if(!$deliveryNote) {
+        $instance = $model::with('customer')->find($id);
+        $excludeId = $model == DeliveryNote::class ? $id : null;
+
+        if(!$instance) {
             return response()->json(['error' => 'Not found.'], 404);
         }
 
-        $client = $deliveryNote->customer;
-
-        return DeliveryNote::with(['area', 'location'])
-            ->where('customer_id', $client->id)
+        $query = DeliveryNote::with(['area', 'location'])
+            ->where('customer_id', $instance->customer->id)
             ->whereHas('deliveryNoteProducts')
-            ->where('id', '!=', $deliveryNote->id)
-            ->where('status', 0)
-            ->get();
+            ->where('status', 0);
+
+        $excludeId && $query->where('id', '!=', $excludeId);
+        return $query->get();
     }
 
-    public static function getPendingPrepaidOffers($id)
+    public static function getPendingPrepaidOffers($id, $model): Collection|JsonResponse
     {
-        $deliveryNote = DeliveryNote::with('customer')->find($id);
-        if(!$deliveryNote) {
+        $direct_sale = $model::with('customer')->find($id);
+        if(!$direct_sale) {
             return response()->json(['error' => 'Not found.'], 404);
         }
 
-        $client = $deliveryNote->customer;
+        $client = $direct_sale->customer;
 
         return PrepaidOffer::with(['area', 'location'])
             ->where('customer_id', $client->id)
@@ -41,16 +43,16 @@ class PendingOrderHelper
             ->get();
     }
 
-    public static function getCustomerDetails($id)
+    public static function getCustomerDetails($id, $model)
     {
-        $deliveryNote = DeliveryNote::with('customer')->find($id);
-        if(!$deliveryNote) {
+        $direct_sale = $model::with('customer')->find($id);
+        if(!$direct_sale) {
             return response()->json(['error' => 'Not found.'], 404);
         }
-        return $deliveryNote->customer;
+        return $direct_sale->customer;
     }
 
-    public static function getOrderProducts($relationship, $record): Collection
+    public static function getOrderProducts($relationship, $record)
     {
         if($relationship) {
             $products = $record->$relationship()->with(['product', 'priceType'])->get();

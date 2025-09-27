@@ -159,7 +159,10 @@ export default {
 
 
     //Create the Button to show the modal on close
-    const element = document.querySelector('[dusk="delivery-notes-detail-component"]')?.children[0]?.children[0];
+    const deliveryNoteDetail = document.querySelector('[dusk="delivery-notes-detail-component"]')?.children[0]?.children[0];
+    const directSaleDetail = document.querySelector('[dusk="direct-sales-detail-component"]')?.children[0]?.children[0];
+    const element = deliveryNoteDetail || directSaleDetail;
+
     if(element) {
       element.classList.add('flex', 'justify-between', 'items-center', 'gap-6')
       const openContainer = document.createElement('div');
@@ -178,7 +181,8 @@ export default {
     fetchData() {
       Nova.request().get(`/nova-vendor/pending-order-info`, {
         params: {
-          id: this.resourceId
+          id: this.resourceId,
+          type: this.resourceName,
         }
       }).then(response => {
         this.info = response?.data.info;

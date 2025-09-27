@@ -62,7 +62,7 @@ class DeliveryNote extends Resource
     public function fields(NovaRequest $request): array
     {
         return [
-            PendingOrderInfo::make('Prepaid & Delivery Info'),
+            PendingOrderInfo::make(),
             ... (new OrderHeader())('delivery_note', \App\Models\Post\DeliveryNote::class),
 
             Tab::group('Information', [

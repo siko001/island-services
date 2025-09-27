@@ -176,13 +176,15 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
     };
   },
   mounted: function mounted() {
-    var _document$querySelect;
+    var _document$querySelect, _document$querySelect2;
     this.fetchData();
     document.addEventListener('keydown', this.onEscPress);
     document.addEventListener('mousedown', this.onClickOutside);
 
     //Create the Button to show the modal on close
-    var element = (_document$querySelect = document.querySelector('[dusk="delivery-notes-detail-component"]')) === null || _document$querySelect === void 0 || (_document$querySelect = _document$querySelect.children[0]) === null || _document$querySelect === void 0 ? void 0 : _document$querySelect.children[0];
+    var deliveryNoteDetail = (_document$querySelect = document.querySelector('[dusk="delivery-notes-detail-component"]')) === null || _document$querySelect === void 0 || (_document$querySelect = _document$querySelect.children[0]) === null || _document$querySelect === void 0 ? void 0 : _document$querySelect.children[0];
+    var directSaleDetail = (_document$querySelect2 = document.querySelector('[dusk="direct-sales-detail-component"]')) === null || _document$querySelect2 === void 0 || (_document$querySelect2 = _document$querySelect2.children[0]) === null || _document$querySelect2 === void 0 ? void 0 : _document$querySelect2.children[0];
+    var element = deliveryNoteDetail || directSaleDetail;
     if (element) {
       element.classList.add('flex', 'justify-between', 'items-center', 'gap-6');
       var openContainer = document.createElement('div');
@@ -199,7 +201,8 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
       var _this = this;
       Nova.request().get("/nova-vendor/pending-order-info", {
         params: {
-          id: this.resourceId
+          id: this.resourceId,
+          type: this.resourceName
         }
       }).then(function (response) {
         _this.info = response === null || response === void 0 ? void 0 : response.data.info;
