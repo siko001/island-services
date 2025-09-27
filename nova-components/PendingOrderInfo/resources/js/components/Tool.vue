@@ -46,7 +46,7 @@
       <!--End Order Grid-->
 
       <!--Start Product Grid-->
-      <div class="grid md:grid-cols-2 md:gap-2 ">
+      <div style="overflow:scroll" class="grid md:grid-cols-2 md:gap-2 ">
 
         <!-- Start Delivery Note Products -->
         <div class="grid-container text-black" id="delivery-note-products">
@@ -57,11 +57,11 @@
               <TableHeader :headers="['Product', 'Price Type', 'Quantity', 'Price', 'Deposit']"/>
               <tbody>
               <tr v-for="(product, index) in deliveryNoteProducts" :key="product.id || index">
-                <td class="border px-2 py-1">{{ product.product_name }}</td>
-                <td class="border px-2 py-1">{{ product.price_type_name }}</td>
-                <td class="border px-2 py-1">{{ product.quantity }}</td>
-                <td class="border px-2 py-1">{{ product.unit_price }}</td>
-                <td class="border px-2 py-1">{{ product.deposit_price }}</td>
+                <td class="border product-row">{{ product.product_name }}</td>
+                <td class="border product-row">{{ product.price_type_name }}</td>
+                <td class="border product-row">{{ product.quantity }}</td>
+                <td class="border product-row">{{ product.unit_price }}</td>
+                <td class="border product-row">{{ product.deposit_price }}</td>
               </tr>
               <BlankRows :rows="deliveryNoteProducts" :quantity="5" :columnCount="5"/>
               </tbody>
@@ -78,12 +78,12 @@
             <table style="width:100%" class="min-w-full border">
               <TableHeader :headers="['Product', 'Price Type', 'Remaining', 'Taken', 'Price']"/>
               <tbody>
-              <tr v-for="(product, index) in prepaidOfferProducts" :key="product.id || index">
-                <td class="border px-2 py-1">{{ product.product_name }}</td>
-                <td class="border px-2 py-1">{{ product.price_type_name }}</td>
-                <td class="border px-2 py-1">{{ product.total_remaining }}</td>
-                <td class="border px-2 py-1">{{ product.total_taken }}</td>
-                <td class="border px-2 py-1">{{ product.price }}</td>
+              <tr class="overflow-scroll" v-for="(product, index) in prepaidOfferProducts" :key="product.id || index">
+                <td class="border product-row">{{ product.product_name }}</td>
+                <td class="border product-row">{{ product.price_type_name }}</td>
+                <td class="border product-row">{{ product.total_remaining }}</td>
+                <td class="border product-row">{{ product.total_taken }}</td>
+                <td class="border product-row">{{ product.price }}</td>
               </tr>
               <BlankRows :rows="prepaidOfferProducts" :quantity="5" :columnCount="5"/>
               </tbody>
@@ -96,10 +96,20 @@
       <!--End Product Grid-->
 
       <!--   Start button container   -->
-      <div class="flex items-center gap-4 mt-4 flex-wrap text-black">
-        <div v-if="selectedOrderType === 'delivery_note'">Amend Delivery Note {{ selectedDeliveryNoteNumber }}</div>
-        <div v-if="selectedOrderType === 'prepaid_offer'">Convert Offer {{ selectedPrepaidOfferNumber }}</div>
-        <div class="px-3 py-1.5 border close-button rounded-md" @click="closeModal">Cancel</div>
+      <div class="flex items-center gap-4 mt-4 flex-wrap text-black ml-2">
+
+        <!--Amend Button-->
+        <a :href="`/admin/resources/delivery-notes/${orderId}/edit`" class="px-2 py-1 cursor-pointer amend-button rounded-md" v-if="selectedOrderType ===
+        'delivery_note'"> Amend Delivery Note {{ selectedDeliveryNoteNumber }} </a>
+
+        <!-- Convert Button -->
+        <button @click="convertOffer" class="px-2 py-1 cursor-pointer covert-button rounded-md" v-if="selectedOrderType === 'prepaid_offer'">Convert Offer {{
+            selectedPrepaidOfferNumber
+          }}
+        </button>
+
+        <!-- Close Button -->
+        <div class="px-2 py-1 cursor-pointer close-button rounded-md" @click="closeModal">Cancel</div>
       </div>
       <!--   End button container   -->
 
@@ -136,6 +146,7 @@ export default {
       deliveryNoteProducts: [],
       selectedDeliveryNoteNumber: null,
       selectedPrepaidOfferNumber: null,
+      orderId: null,
 
 
     };
@@ -181,15 +192,17 @@ export default {
     async getProductDetails(orderNumber) {
       try {
         const response = await Nova.request().get(`/nova-vendor/pending-order-info/get-custom-prods/${orderNumber}`);
-        const {type, products} = response.data;
+        const {type, products, orderId} = response.data;
 
 
         if(type === 'prepaid_offer') {
           this.prepaidOfferProducts = products || [];
+          this.orderId = orderId || null;
         }
 
         if(type === 'delivery_note') {
           this.deliveryNoteProducts = products || [];
+          this.orderId = orderId || null;
         }
 
       } catch(error) {
@@ -258,6 +271,14 @@ export default {
           this.getProductDetails(orderNumber);
         }
     },
+
+
+    // Convert Prepaid Offer
+    convertOffer() {
+      if(this.selectedOrderType === 'prepaid_offer' && this.selectedPrepaidOfferNumber) {
+        window.location.href = `/admin/resources/prepaid-offers/${this.orderId}/edit?convert=true`;
+      }
+    }
 
   }
 }

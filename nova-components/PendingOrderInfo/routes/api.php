@@ -72,6 +72,7 @@ Route::get('/get-custom-prods/{orderNumber}', function($orderNumber) {
 
     return response()->json([
         'order' => $record,
+        "orderId" => $record->id,
         'products' => $products,
         'type' => $type,
     ]);
