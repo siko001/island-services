@@ -62,7 +62,7 @@ class DeliveryNote extends Resource
     public function fields(NovaRequest $request): array
     {
         return [
-            PendingOrderInfo::make(),
+
             ... (new OrderHeader())('delivery_note', \App\Models\Post\DeliveryNote::class),
 
             Tab::group('Information', [
@@ -75,7 +75,6 @@ class DeliveryNote extends Resource
             HasMany::make('Products', 'deliveryNoteProducts', DeliveryNoteProduct::class),
 
         ];
-        //        Still to do load-sheet number (when in a load sheet) Products has many rel
     }
 
     /**
@@ -88,6 +87,7 @@ class DeliveryNote extends Resource
             Metrics\DeliveryNote\TotalDeliveryNotes::make()->defaultRange('TODAY')->refreshWhenActionsRun(),
             Metrics\DeliveryNote\NewDeliveryNotes::make()->defaultRange('TODAY')->refreshWhenActionsRun(),
             Metrics\DeliveryNote\ProcessedDeliveryNotes::make()->defaultRange('TODAY')->refreshWhenActionsRun(),
+            PendingOrderInfo::make(),
 
         ];
     }

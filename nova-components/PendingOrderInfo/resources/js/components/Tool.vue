@@ -1,4 +1,7 @@
 <template>
+  <div v-if="panel">
+    <h3>{{ panel.name }}</h3>
+  </div>
   <div v-if="(deliveryNotes && deliveryNotes.length) || (prepaidOffers && prepaidOffers.length)" id="custom-modal">
     <div class="border px-8 py-6 shadow-black shadow-2xl rounded-md overflow-scroll">
 
@@ -153,6 +156,7 @@ export default {
   },
 
   mounted() {
+    console.log('Tool mounted with props:', this.$props.panel)
     this.fetchData();
     document.addEventListener('keydown', this.onEscPress);
     document.addEventListener('mousedown', this.onClickOutside);
@@ -164,13 +168,36 @@ export default {
     const element = deliveryNoteDetail || directSaleDetail;
 
     if(element) {
+      // Resource Header
       element.classList.add('flex', 'justify-between', 'items-center', 'gap-6')
+
+      // Containing Wrapper
+      const wrapper = document.createElement('div');
+      wrapper.classList.add('flex', 'items-center', 'gap-3');
+
+      // Open Modal Button
       const openContainer = document.createElement('div');
       openContainer.classList.add('border', 'px-2', 'py-1', 'cursor-pointer', 'hidden', 'whitespace-nowrap', 'rounded-sm', 'hover-button');
       openContainer.id = 'open-order-info-button';
       openContainer.addEventListener('click', this.openModal)
       openContainer.innerText = "Open Order info"
-      element.appendChild(openContainer);
+
+      // // Edit Button
+      // const editButton = document.createElement('a');
+      // editButton.classList.add('border', 'px-2', 'py-1', 'cursor-pointer', 'whitespace-nowrap', 'rounded-sm', 'hover-button');
+      // editButton.href = `/admin/resources/${this.resourceName}/${this.resourceId}/edit`;
+      // editButton.innerText = "Edit"
+      //
+      // // Action Buttons
+      // const actionButton = document.createElement('div');
+      // actionButton.addEventListener('click', this.actionRequest);
+      // actionButton.classList.add('border', 'px-2', 'py-1', 'cursor-pointer', 'whitespace-nowrap', 'rounded-sm', 'hover-button');
+      // actionButton.innerText = "Actions"
+
+      wrapper.appendChild(openContainer)
+      // wrapper.appendChild(actionButton)
+      // wrapper.appendChild(editButton)
+      element.appendChild(wrapper);
     }
   },
 
@@ -282,6 +309,22 @@ export default {
       if(this.selectedOrderType === 'prepaid_offer' && this.selectedPrepaidOfferNumber) {
         window.location.href = `/admin/resources/prepaid-offers/${this.orderId}/edit?convert=true`;
       }
+    },
+
+    actionRequest() {
+      Nova.request().post(`/nova-vendor/pending-order-info/action-request`, {
+        id: this.resourceId,
+        type: this.resourceName,
+      }).then(response => {
+        if(response.data.success) {
+          alert('Action request sent successfully.');
+        } else {
+          alert('Failed to send action request.');
+        }
+      }).catch(error => {
+        console.error('Error sending action request:', error);
+        alert('An error occurred while sending the action request.');
+      });
     }
 
   }

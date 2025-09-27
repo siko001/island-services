@@ -14,7 +14,7 @@ class PendingOrderHelper
         $instance = $model::with('customer')->find($id);
         $excludeId = $model == DeliveryNote::class ? $id : null;
 
-        if(!$instance) {
+        if(!$instance || $instance->status == 1) {
             return response()->json(['error' => 'Not found.'], 404);
         }
 
@@ -29,12 +29,12 @@ class PendingOrderHelper
 
     public static function getPendingPrepaidOffers($id, $model): Collection|JsonResponse
     {
-        $direct_sale = $model::with('customer')->find($id);
-        if(!$direct_sale) {
+        $order = $model::with('customer')->find($id);
+        if(!$order || $order->status == 1) {
             return response()->json(['error' => 'Not found.'], 404);
         }
 
-        $client = $direct_sale->customer;
+        $client = $order->customer;
 
         return PrepaidOffer::with(['area', 'location'])
             ->where('customer_id', $client->id)

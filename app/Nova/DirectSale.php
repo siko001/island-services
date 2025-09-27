@@ -54,7 +54,7 @@ class DirectSale extends Resource
     public function fields(NovaRequest $request): array
     {
         return [
-            PendingOrderInfo::make(),
+
             ... (new OrderHeader())('direct_sale', \App\Models\Post\DirectSale::class),
 
             Tab::group('Information', [
@@ -74,7 +74,9 @@ class DirectSale extends Resource
      */
     public function cards(NovaRequest $request): array
     {
-        return [];
+        return [
+            PendingOrderInfo::make(),
+        ];
     }
 
     /**
