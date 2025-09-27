@@ -45,6 +45,19 @@
     box-shadow: 2px 2px 2px #00a8c6;
 }
 
+.close-button {
+    border: 1px solid black
+}
+
+.selected-row {
+    background: #e2e8f0 !important;
+}
+
+.order-parent:hover > .element {
+    background: #e2e8f077 !important;
+    cursor: pointer;
+}
+
 @media (max-width: 1280px ) {
     #custom-modal {
         min-width: 90%

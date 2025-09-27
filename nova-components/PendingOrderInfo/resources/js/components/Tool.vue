@@ -2,109 +2,59 @@
   <div v-if="(deliveryNotes && deliveryNotes.length) || (prepaidOffers && prepaidOffers.length)" id="custom-modal">
     <div class="border px-8 py-6 shadow-black shadow-2xl rounded-md overflow-scroll">
 
+      <!-- Start Header -->
       <div class="flex gap-6 justify-between items-center mb-2">
-
         <h2 class="text-xl text-black">Order info for client : <span class="font-bold">{{ clientDetails.client }}</span></h2>
-
-        <div @click="closeModal" class="text-red-500 cursor-pointer">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
-            <path stroke-linecap="round" stroke-linejoin="round" d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
-          </svg>
-        </div>
-
+        <CloseButton @close="closeModal"/>
       </div>
+      <!-- End Header -->
 
+      <!--Start Order Grid-->
       <div class="grid md:grid-cols-2 md:gap-2 ">
 
+        <!--Start Delivery Notes -->
         <div id="delivery-note-container" class="grid-container text-black ">
           <h2 class="font-semibold order-heading mb-2"> Pending Delivery Notes </h2>
           <div class="table-container" style="overflow-x:scroll;">
             <table style="width:100%;" class="min-w-full border">
-              <thead class="bg-gray-100">
-              <tr>
-                <th class="border px-2 py-1 text-left">Delivery Note no.</th>
-                <th class="border px-2 py-1 text-left">Delivery Date</th>
-                <th class="border px-2 py-1 text-left">Area</th>
-                <th class="border px-2 py-1 text-left">Location</th>
-              </tr>
-              </thead>
+              <TableHeader :headers="['Delivery Note no.', 'Delivery Date', 'Area', 'Location']"/>
               <tbody>
-              <tr v-for="(offer, index) in deliveryNotes" :key="offer.id || index">
-                <td class="border px-2 py-1 cursor-pointer text-blue-600 underline" @click="getProductDetails(offer.delivery_note_number)">
-                  {{ offer.delivery_note_number }}
-                </td>
-                <td class="border px-2 py-1">{{ covertDate(offer.delivery_date) }}</td>
-                <td class="border px-2 py-1">{{ mapAreaToName(offer.customer_area) }}</td>
-                <td class="border px-2 py-1">{{ mapLocationToName(offer.customer_location) }}</td>
-              </tr>
-              <!-- Pad with empty rows if less than 5 -->
-              <tr v-for="n in (3 - deliveryNotes.length)" v-if="deliveryNotes && deliveryNotes.length < 3" :key="'empty-'+n">
-                <td class="border px-2 py-1">&nbsp;</td>
-                <td class="border px-2 py-1">&nbsp;</td>
-                <td class="border px-2 py-1">&nbsp;</td>
-                <td class="border px-2 py-1">&nbsp;</td>
-              </tr>
+              <OrderLoop :orders="deliveryNotes" :selectedOrderNumber="selectedDeliveryNoteNumber" :selectedOrderType="'delivery_note'" orderType="delivery_note" :getOrderNumber="order => order.delivery_note_number" :getOrderDate="order => order.delivery_date" :formatDate="covertDate" :getAreaName="order => order.area ? order.area.name : 'Unknown Area'" :getLocationName="order => order.location ? order.location.name : 'Unknown Location'" @select="selectOrder"/>
+              <BlankRows :rows="deliveryNotes" :quantity="3" :columnCount="4"/>
               </tbody>
-
             </table>
           </div>
-
         </div>
+        <!--End Delivery Notes -->
 
+        <!--Start Prepaid Offers-->
         <div id="prepaid-offer-container" class="grid-container text-black ">
           <h2 class="font-semibold order-heading  mb-2">Client Prepaid Offer</h2>
           <div class="table-container" style="overflow-x:scroll">
             <table style="width:100%;" class="min-w-full border">
-              <thead class="bg-gray-100">
-              <tr>
-                <th class="border px-2 py-1 text-left">Prepaid Offer no.</th>
-                <th class="border px-2 py-1 text-left">Order Date</th>
-                <th class="border px-2 py-1 text-left">Area</th>
-                <th class="border px-2 py-1 text-left">Location</th>
-              </tr>
-              </thead>
+              <TableHeader :headers="['Prepaid Offer no.', 'Order Date', 'Area', 'Location']"/>
               <tbody>
-              <tr v-for="(offer, index) in prepaidOffers" :key="offer.id || index">
-                <td class="border px-2 py-1 cursor-pointer text-blue-600 underline" @click="getProductDetails(offer.prepaid_offer_number)">
-                  {{ offer.prepaid_offer_number }}
-                </td>
-                <td class="border px-2 py-1">{{ covertDate(offer.order_date) }}</td>
-                <td class="border px-2 py-1">{{ mapAreaToName(offer.customer_area) }}</td>
-                <td class="border px-2 py-1">{{ mapLocationToName(offer.customer_location) }}</td>
-              </tr>
-
-              <!-- Pad with empty rows if less than 5 -->
-              <tr v-for="n in (3 - prepaidOffers.length)" v-if="prepaidOffers && prepaidOffers.length < 3" :key="'prepaid-empty-'+n">
-                <td class="border px-2 py-1">&nbsp;</td>
-                <td class="border px-2 py-1">&nbsp;</td>
-                <td class="border px-2 py-1">&nbsp;</td>
-                <td class="border px-2 py-1">&nbsp;</td>
-              </tr>
+              <OrderLoop :orders="prepaidOffers" :selectedOrderNumber="selectedPrepaidOfferNumber" :selectedOrderType="'prepaid_offer'" orderType="prepaid_offer" :getOrderNumber="order => order.prepaid_offer_number" :getOrderDate="order => order.order_date" :formatDate="covertDate" :getAreaName="order => order.area ? order.area.name : 'Unknown Area'" :getLocationName="order => order.location ? order.location.name : 'Unknown Location'" @select="selectOrder"/>
+              <BlankRows :rows="prepaidOffers" :quantity="3" :columnCount="4"/>
               </tbody>
             </table>
           </div>
-
         </div>
+        <!--End Prepaid Offers-->
 
       </div>
+      <!--End Order Grid-->
 
-      <!--Product Grid-->
+      <!--Start Product Grid-->
       <div class="grid md:grid-cols-2 md:gap-2 ">
 
-        <!-- Delivery Note Products -->
+        <!-- Start Delivery Note Products -->
         <div class="grid-container text-black" id="delivery-note-products">
-          <h2 class="font-semibold order-heading mb-2">Delivery Note Products</h2>
+          <h2 class="font-semibold order-heading mb-2">
+            Delivery Note Products {{ selectedDeliveryNoteNumber ? selectedDeliveryNoteNumber : '' }} </h2>
           <div class="product-table-container overflow-x-scroll">
             <table style="width:100%;" class="min-w-full border">
-              <thead class="bg-gray-100">
-              <tr>
-                <th class="border px-2 py-1 text-left">Product</th>
-                <th class="border px-2 py-1 text-left">Price Type</th>
-                <th class="border px-2 py-1 text-left">Quantity</th>
-                <th class="border px-2 py-1 text-left">Price</th>
-                <th class="border px-2 py-1 text-left">Deposit</th>
-              </tr>
-              </thead>
+              <TableHeader :headers="['Product', 'Price Type', 'Quantity', 'Price', 'Deposit']"/>
               <tbody>
               <tr v-for="(product, index) in deliveryNoteProducts" :key="product.id || index">
                 <td class="border px-2 py-1">{{ product.product_name }}</td>
@@ -113,33 +63,20 @@
                 <td class="border px-2 py-1">{{ product.unit_price }}</td>
                 <td class="border px-2 py-1">{{ product.deposit_price }}</td>
               </tr>
-              <!-- Pad with empty rows if less than 5 -->
-              <tr v-for="n in (5 - (deliveryNoteProducts ? deliveryNoteProducts.length : 0))" v-if="deliveryNoteProducts && deliveryNoteProducts.length < 5" :key="'empty-'+n">
-                <td class="border px-2 py-1">&nbsp;</td>
-                <td class="border px-2 py-1">&nbsp;</td>
-                <td class="border px-2 py-1">&nbsp;</td>
-                <td class="border px-2 py-1">&nbsp;</td>
-                <td class="border px-2 py-1">&nbsp;</td>
-              </tr>
+              <BlankRows :rows="deliveryNoteProducts" :quantity="5" :columnCount="5"/>
               </tbody>
             </table>
           </div>
         </div>
+        <!-- End Delivery Note Products -->
 
-        <!--   Prepaid Offer Products   -->
+        <!--  Start Prepaid Offer Products   -->
         <div class="grid-container text-black" id="prepaid-offer-products">
-          <h2 class="font-semibold order-heading mb-2">Prepaid Offer Products</h2>
+          <h2 class="font-semibold order-heading mb-2">
+            Prepaid Offer Products {{ selectedPrepaidOfferNumber ? selectedPrepaidOfferNumber : '' }} </h2>
           <div class="product-table-container overflow-x-scroll">
             <table style="width:100%" class="min-w-full border">
-              <thead class="bg-gray-100">
-              <tr>
-                <th class="border px-2 py-1 text-left">Product</th>
-                <th class="border px-2 py-1 text-left">Price Type</th>
-                <th class="border px-2 py-1 text-left">Remaining</th>
-                <th class="border px-2 py-1 text-left">Taken</th>
-                <th class="border px-2 py-1 text-left">Price</th>
-              </tr>
-              </thead>
+              <TableHeader :headers="['Product', 'Price Type', 'Remaining', 'Taken', 'Price']"/>
               <tbody>
               <tr v-for="(product, index) in prepaidOfferProducts" :key="product.id || index">
                 <td class="border px-2 py-1">{{ product.product_name }}</td>
@@ -148,26 +85,24 @@
                 <td class="border px-2 py-1">{{ product.total_taken }}</td>
                 <td class="border px-2 py-1">{{ product.price }}</td>
               </tr>
-
-              <!-- Pad with empty rows if less than 5 -->
-              <tr v-for="n in (5 - prepaidOfferProducts.length)" v-if="prepaidOfferProducts && prepaidOfferProducts.length < 5" :key="'empty-'+n">
-                <td class="border px-2 py-1">&nbsp;</td>
-                <td class="border px-2 py-1">&nbsp;</td>
-                <td class="border px-2 py-1">&nbsp;</td>
-                <td class="border px-2 py-1">&nbsp;</td>
-                <td class="border px-2 py-1">&nbsp;</td>
-              </tr>
+              <BlankRows :rows="prepaidOfferProducts" :quantity="5" :columnCount="5"/>
               </tbody>
             </table>
           </div>
         </div>
+        <!-- End Prepaid Offer Products   -->
 
       </div>
-      <div>
-        <div></div>
-        <div></div>
-        <div></div>
+      <!--End Product Grid-->
+
+      <!--   Start button container   -->
+      <div class="flex items-center gap-4 mt-4 flex-wrap text-black">
+        <div v-if="selectedOrderType === 'delivery_note'">Amend Delivery Note {{ selectedDeliveryNoteNumber }}</div>
+        <div v-if="selectedOrderType === 'prepaid_offer'">Convert Offer {{ selectedPrepaidOfferNumber }}</div>
+        <div class="px-3 py-1.5 border close-button rounded-md" @click="closeModal">Cancel</div>
       </div>
+      <!--   End button container   -->
+
     </div>
 
   </div>
@@ -175,7 +110,19 @@
 
 <script>
 
+import CloseButton from "./CloseButton.vue";
+import TableHeader from './TableHeader.vue'
+import BlankRows from './BlankRows.vue'
+import OrderLoop from "./OrderLoop.vue";
+
 export default {
+  components: {
+    OrderLoop,
+    CloseButton,
+    TableHeader,
+    BlankRows,
+  },
+
   props: ['resourceName', 'resourceId', 'panel'],
 
   data() {
@@ -184,13 +131,13 @@ export default {
       deliveryNotes: null,
       prepaidOffers: null,
       clientDetails: null,
-      areaLocation: {
-        areas: [],
-        locations: [],
-      },
+
       prepaidOfferProducts: [],
       deliveryNoteProducts: [],
-      isMobile: window.innerWidth < 768,
+      selectedDeliveryNoteNumber: null,
+      selectedPrepaidOfferNumber: null,
+
+
     };
   },
 
@@ -199,8 +146,10 @@ export default {
     document.addEventListener('keydown', this.onEscPress);
     document.addEventListener('mousedown', this.onClickOutside);
 
+
+    //Create the Button to show the modal on close
     const element = document.querySelector('[dusk="delivery-notes-detail-component"]')?.children[0]?.children[0];
-    if(element) { //Create the Button to show the modal on close
+    if(element) {
       element.classList.add('flex', 'justify-between', 'items-center', 'gap-6')
       const openContainer = document.createElement('div');
       openContainer.classList.add('border', 'px-2', 'py-1', 'cursor-pointer', 'hidden', 'whitespace-nowrap', 'rounded-sm', 'hover-button');
@@ -213,6 +162,8 @@ export default {
 
 
   methods: {
+
+    // Api call to fetch data DNs, POs, Client Info
     fetchData() {
       Nova.request().get(`/nova-vendor/pending-order-info`, {
         params: {
@@ -223,13 +174,31 @@ export default {
         this.deliveryNotes = response?.data.delivery_notes;
         this.prepaidOffers = response?.data.prepaid_offers;
         this.clientDetails = response?.data.client_info;
-        this.areaLocation.areas = response?.data.area_location.areas;
-        this.areaLocation.locations = response?.data.area_location.locations;
-
       });
     },
 
+    // Api call to fetch products for selected order
+    async getProductDetails(orderNumber) {
+      try {
+        const response = await Nova.request().get(`/nova-vendor/pending-order-info/get-custom-prods/${orderNumber}`);
+        const {type, products} = response.data;
 
+
+        if(type === 'prepaid_offer') {
+          this.prepaidOfferProducts = products || [];
+        }
+
+        if(type === 'delivery_note') {
+          this.deliveryNoteProducts = products || [];
+        }
+
+      } catch(error) {
+        console.error('Failed to load product details', error);
+      }
+    },
+
+
+    // Modal and Button Handlers
     showButton() {
       document.getElementById('open-order-info-button')?.classList.remove('hidden');
     },
@@ -265,15 +234,7 @@ export default {
       }
     },
 
-
-    mapAreaToName(id) {
-      return this.areaLocation.areas[id] || 'Unknown Area';
-    },
-
-    mapLocationToName(id) {
-      return this.areaLocation.locations[id] || 'Unknown Location';
-    },
-
+    // Date formatting
     covertDate(dateString) {
       if(!dateString) return '';
       const date = new Date(dateString);
@@ -284,26 +245,19 @@ export default {
     },
 
 
-    async getProductDetails(orderNumber) {
-      try {
-        const response = await Nova.request().get(`/nova-vendor/pending-order-info/get-custom-prods/${orderNumber}`);
-        const {type, products} = response.data;
-
-        console.log(response.data)
-
-        if(type === 'prepaid_offer') {
-          this.prepaidOfferProducts = products || [];
+    // Order Selection and Product Fetching
+    selectOrder({orderNumber, orderType}) {
+      if(orderType === 'delivery_note') {
+        this.selectedDeliveryNoteNumber = orderNumber;
+        this.selectedOrderType = 'delivery_note';
+        this.getProductDetails(orderNumber);
+      } else
+        if(orderType === 'prepaid_offer') {
+          this.selectedPrepaidOfferNumber = orderNumber;
+          this.selectedOrderType = 'prepaid_offer';
+          this.getProductDetails(orderNumber);
         }
-
-        if(type === 'delivery_note') {
-          this.deliveryNoteProducts = products || [];
-        }
-
-      } catch(error) {
-        console.error('Failed to load product details', error);
-      }
-    }
-
+    },
 
   }
 }
