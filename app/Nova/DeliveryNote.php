@@ -88,7 +88,6 @@ class DeliveryNote extends Resource
             Metrics\DeliveryNote\NewDeliveryNotes::make()->defaultRange('TODAY')->refreshWhenActionsRun(),
             Metrics\DeliveryNote\ProcessedDeliveryNotes::make()->defaultRange('TODAY')->refreshWhenActionsRun(),
             PendingOrderInfo::make(),
-
         ];
     }
 

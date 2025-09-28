@@ -71,7 +71,11 @@ export default {
     orderId: {
       type: [String, Number],
       default: null
-    }
+    },
+    currentOrderId: {
+      type: [String, Number],
+      default: null
+    },
   },
   methods: {
 
@@ -105,10 +109,10 @@ export default {
         alert(errors.join('\n'))
         return
       }
-
       this.$emit('submit', {
-        id: this.orderId,
+        prepaidOfferId: this.orderId,
         order_number: this.selectedPrepaidOfferNumber,
+        orderId: this.currentOrderId,
         products: productsToSubmit
       });
 

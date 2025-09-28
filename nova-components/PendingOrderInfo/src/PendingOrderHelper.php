@@ -65,6 +65,7 @@ class PendingOrderHelper
                     'product_name' => $item->product->name ?? '',
                     'price_type_id' => $item->price_type_id,
                     'price_type_name' => $item->priceType->name ?? '',
+                    'vat_code_id' => $item->vat_code_id,
                     //Only Prepaid
                     'total_remaining' => $item->total_remaining ?? null,
                     'total_taken' => $item->total_taken ?? null,
@@ -76,5 +77,37 @@ class PendingOrderHelper
                 ];
             });
         }
+    }
+
+    public static function convertPrepaidOfferToDeliveryNote($model, $offerId, $products)
+    {
+        $offer = $model::where('id', $offerId)->first();
+        $relationship = $model == DeliveryNote::class ? 'deliveryNoteProducts' : 'directSaleProducts';
+        foreach($products as $product) {
+            $offer->$relationship()->create([
+                'product_id' => $product['product_id'],
+                'price_type_id' => $product['price_type_id'],
+                'vat_code_id' => $product['vat_code_id'],
+                'quantity' => $product['to_convert'],
+                'unit_price' => $product['price'],
+            ]);
+        }
+        return $offer->load($relationship);
+    }
+
+    public static function deductPrepaidOfferProducts($prepaidId, $products)
+    {
+        $offer = PrepaidOffer::where('id', $prepaidId)->first();
+
+        foreach($products as $product) {
+            $offerProduct = $offer->prepaidOfferProducts()->where('product_id', $product['product_id'])
+                ->where('price_type_id', $product['price_type_id'])
+                ->first();
+            if($offerProduct) {
+                $offerProduct->decrement('total_remaining', $product['to_convert']);
+                $offerProduct->increment('total_taken', $product['to_convert']);
+            }
+        }
+        return $offer->load('prepaidOfferProducts');
     }
 }

@@ -81,3 +81,51 @@ Route::get('/get-custom-prods/{orderNumber}', function($orderNumber) {
         'type' => $type,
     ]);
 });
+
+Route::post('/convert-offer/{id}', function(Request $request) {
+    $request->validate([
+        'products' => 'required|array',
+        'products.*.id' => 'required|integer|exists:prepaid_offer_products,id',
+        'products.*.to_convert' => 'required|integer|min:0',
+    ]);
+
+    //Prepaid Offer ID and Number to validate
+    $prepaidOrderId = $request->route('id');
+    $orderNumber = $request->input('order_number');
+
+    //Delivery Note or Direct Sale ID to convert to
+    $orderId = $request->input('orderId');
+
+    //    Confirm the Prepaid Offer exists and matches the number
+    $prepaidOffer = PrepaidOffer::where('id', $prepaidOrderId)->where('prepaid_offer_number', $orderNumber)->first();
+    if(!$prepaidOffer) {
+        return response()->json(['error' => 'Prepaid Offer not found'], 404);
+    }
+
+    //    Confirm the products belong to the offer and they have enough remaining to convert
+    $productIds = collect($request->input('products'))->pluck('id')->toArray();
+    $products = $prepaidOffer->prepaidOfferProducts()->whereIn('id', $productIds)->get()->keyBy('id');
+    foreach($request->input('products') as $prod) {
+        if(!isset($products[$prod['id']])) {
+            return response()->json(['error' => 'Product ID ' . $prod['id'] . ' does not belong to this Prepaid Offer'], 400);
+        }
+        if($prod['to_convert'] > $products[$prod['id']]->total_remaining) {
+            return response()->json(['error' => 'Product ID ' . $prod['id'] . ' has insufficient remaining quantity'], 400);
+        }
+    }
+
+    $result = PendingOrderHelper::convertPrepaidOfferToDeliveryNote(DeliveryNote::class, $orderId, $request->input('products'));
+    $deductions = $result && PendingOrderHelper::deductPrepaidOfferProducts($prepaidOrderId, $request->input('products'));
+
+    //      Refactor to cleanup
+    //      Input should be disable if product take all.
+    //      PPO should not show if products are all taken
+    //      Refactor for Delivery And Direct Sale
+    //      PrepaidOffer boot method should terminate if all products taken
+    //      Add an addition column to the offer-products table for order_number tracking
+    //      In the Boot delete method of PrepaidOfferProduct and DirectSaleProduct, to restore the quantity to the PrepaidOffer
+
+    $response = $result && $deductions ? 'success' : 'failed';
+    return response()->json(['result' => $response, 'converted_products' => $result]);
+
+});

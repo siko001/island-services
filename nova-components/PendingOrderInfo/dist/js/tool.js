@@ -48,6 +48,10 @@ __webpack_require__.r(__webpack_exports__);
     orderId: {
       type: [String, Number],
       "default": null
+    },
+    currentOrderId: {
+      type: [String, Number],
+      "default": null
     }
   },
   methods: {
@@ -81,8 +85,9 @@ __webpack_require__.r(__webpack_exports__);
         return;
       }
       this.$emit('submit', {
-        id: this.orderId,
+        prepaidOfferId: this.orderId,
         order_number: this.selectedPrepaidOfferNumber,
+        orderId: this.currentOrderId,
         products: productsToSubmit
       });
     }
@@ -230,7 +235,8 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
       selectedPrepaidOfferNumber: null,
       orderId: null,
       selectedOrderType: null,
-      modalButtonRef: null
+      modalButtonRef: null,
+      resourceIdd: null
     };
   },
   mounted: function mounted() {
@@ -270,6 +276,9 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
         _this2.deliveryNotes = response === null || response === void 0 ? void 0 : response.data.delivery_notes;
         _this2.prepaidOffers = response === null || response === void 0 ? void 0 : response.data.prepaid_offers;
         _this2.clientDetails = response === null || response === void 0 ? void 0 : response.data.client_info;
+        _this2.resourceIdd = _this2.resourceId;
+      })["catch"](function (error) {
+        console.error('Failed to load initial data', error);
       });
     },
     // Api call to fetch products for selected order
@@ -369,9 +378,6 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
       (_document$getElementB4 = document.getElementById('conversion-modal')) === null || _document$getElementB4 === void 0 || _document$getElementB4.classList.add('hidden');
       document.removeEventListener('keydown', this.onEscPress);
       this.closeOverlay();
-
-      // Add a small delay before showing the button to ensure DOM is updated
-      // This is especially important after page navigation
       setTimeout(function () {
         _this5.showButton();
       }, 100);
@@ -381,10 +387,27 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
       (_document$getElementB5 = document.getElementById('conversion-modal')) === null || _document$getElementB5 === void 0 || _document$getElementB5.classList.remove('hidden');
       (_document$getElementB6 = document.getElementById('custom-modal')) === null || _document$getElementB6 === void 0 || _document$getElementB6.classList.add('hidden');
     },
+    closeEverything: function closeEverything() {
+      this.closeConversionModal();
+      this.closeModal();
+      this.closeOverlay();
+    },
     sendConversionRequest: function sendConversionRequest(payload) {
       var _this6 = this;
-      console.log('Submitting conversion for ', payload.id, ': ', payload);
-      Nova.request().post("/nova-vendor/pending-order-info/convert-offer/".concat(payload.id), payload).then(function (response) {
+      Nova.request().post("/nova-vendor/pending-order-info/convert-offer/".concat(payload.prepaidOfferId), payload).then(function (response) {
+        if (response.data.result === 'success') {
+          _this6.$inertia.reload({
+            preserveScroll: true,
+            preserveState: false
+          });
+          Nova.$emit('refresh-resource-fields');
+          Nova.$emit('refresh-resources');
+          _this6.fetchData();
+          _this6.closeEverything();
+          Nova.success('✅ Conversion successful!');
+        } else {
+          Nova.error('❌ Conversion failed. Please try again.');
+        }
         setTimeout(function () {
           _this6.showButton();
         }, 200);
@@ -1014,13 +1037,14 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     "class": "overlay"
   }, null, -1 /* CACHED */)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_ConversionModal, {
     "client-details": $data.clientDetails,
+    currentOrderId: this.resourceIdd,
     "selected-prepaid-offer-number": $data.selectedPrepaidOfferNumber,
     "prepaid-offer-products": $data.prepaidOfferProducts,
     "order-id": $data.orderId,
     onClose: $options.closeConversionModal,
     onSubmit: $options.sendConversionRequest,
     onBack: $options.handleBackFromConversion
-  }, null, 8 /* PROPS */, ["client-details", "selected-prepaid-offer-number", "prepaid-offer-products", "order-id", "onClose", "onSubmit", "onBack"]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_OrderInfoModal, {
+  }, null, 8 /* PROPS */, ["client-details", "currentOrderId", "selected-prepaid-offer-number", "prepaid-offer-products", "order-id", "onClose", "onSubmit", "onBack"]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_OrderInfoModal, {
     "client-details": $data.clientDetails,
     "delivery-notes": $data.deliveryNotes,
     "prepaid-offers": $data.prepaidOffers,

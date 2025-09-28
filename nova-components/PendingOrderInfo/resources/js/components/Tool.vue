@@ -1,6 +1,6 @@
 <template>
   <div class="overlay"></div>
-  <ConversionModal :client-details="clientDetails" :selected-prepaid-offer-number="selectedPrepaidOfferNumber" :prepaid-offer-products="prepaidOfferProducts" :order-id="orderId" @close="closeConversionModal" @submit="sendConversionRequest" @back="handleBackFromConversion"/>
+  <ConversionModal :client-details="clientDetails" :currentOrderId="this.resourceIdd" :selected-prepaid-offer-number="selectedPrepaidOfferNumber" :prepaid-offer-products="prepaidOfferProducts" :order-id="orderId" @close="closeConversionModal" @submit="sendConversionRequest" @back="handleBackFromConversion"/>
 
   <OrderInfoModal :client-details="clientDetails" :delivery-notes="deliveryNotes" :prepaid-offers="prepaidOffers" :selected-delivery-note-number="selectedDeliveryNoteNumber" :selected-prepaid-offer-number="selectedPrepaidOfferNumber" :selected-order-type="selectedOrderType" :delivery-note-products="deliveryNoteProducts" :prepaid-offer-products="prepaidOfferProducts" :order-id="orderId" @close="closeModal" @select-order="selectOrder" @convert-offer="convertOffer"/>
 
@@ -36,6 +36,7 @@ export default {
       orderId: null,
       selectedOrderType: null,
       modalButtonRef: null,
+      resourceIdd: null,
     };
   },
 
@@ -71,6 +72,9 @@ export default {
         this.deliveryNotes = response?.data.delivery_notes;
         this.prepaidOffers = response?.data.prepaid_offers;
         this.clientDetails = response?.data.client_info;
+        this.resourceIdd = this.resourceId;
+      }).catch(error => {
+        console.error('Failed to load initial data', error);
       });
     },
 
@@ -163,9 +167,6 @@ export default {
       document.getElementById('conversion-modal')?.classList.add('hidden');
       document.removeEventListener('keydown', this.onEscPress);
       this.closeOverlay();
-
-      // Add a small delay before showing the button to ensure DOM is updated
-      // This is especially important after page navigation
       setTimeout(() => {
         this.showButton();
       }, 100);
@@ -177,10 +178,29 @@ export default {
     },
 
 
-    sendConversionRequest(payload) {
-      console.log('Submitting conversion for ', payload.id, ': ', payload);
-      Nova.request().post(`/nova-vendor/pending-order-info/convert-offer/${payload.id}`, payload).then(response => {
+    closeEverything() {
+      this.closeConversionModal();
+      this.closeModal();
+      this.closeOverlay();
+    },
 
+    sendConversionRequest(payload) {
+      Nova.request().post(`/nova-vendor/pending-order-info/convert-offer/${payload.prepaidOfferId}`, payload).then(response => {
+
+        if(response.data.result === 'success') {
+          this.$inertia.reload({
+            preserveScroll: true,
+            preserveState: false,
+          })
+          Nova.$emit('refresh-resource-fields')
+          Nova.$emit('refresh-resources')
+          this.fetchData();
+          this.closeEverything();
+
+          Nova.success('✅ Conversion successful!')
+        } else {
+          Nova.error('❌ Conversion failed. Please try again.')
+        }
 
         setTimeout(() => {
           this.showButton();
