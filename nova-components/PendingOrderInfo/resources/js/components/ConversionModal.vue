@@ -1,12 +1,12 @@
 <template>
   <div class="hidden" id="conversion-modal">
-    <div class="border px-8 py-6 shadow-black shadow-2xl rounded-md overflow-scroll">
+    <div class=" border-color border px-8 py-6  rounded-md overflow-scroll">
 
       <!-- Start Header -->
       <div class="flex gap-6 justify-between items-start mb-2">
         <div class="mb-2">
-          <h2 class="text-xl text-black">Client : <span class="font-bold">{{ clientDetails?.client ?? "" }}</span></h2>
-          <h2 class="text-xl text-black">Converting : <span class="font-bold">{{ selectedPrepaidOfferNumber ?? "" }}</span></h2>
+          <h2 class="text-xl ttext-color">Client : <span class="font-bold">{{ clientDetails?.client ?? "" }}</span></h2>
+          <h2 class="text-xl ttext-color">Converting : <span class="font-bold">{{ selectedPrepaidOfferNumber ?? "" }}</span></h2>
         </div>
         <CloseButton width="1.8" height="1.8" @close="closeConversionModal"/>
       </div>
@@ -21,19 +21,21 @@
           <BlankRows :rows="prepaidOfferProducts" :quantity="6" :columnCount="6"/>
           </tbody>
         </table>
-
-        <div class="flex items-center gap-4 mt-6 mb-6 flex-wrap text-black">
-
-          <!-- Convert Button -->
-          <button type="button" @click="submitConversion" class="px-2 py-1 cursor-pointer covert-button rounded-md">
-            Convert Offer {{ selectedPrepaidOfferNumber }}
-          </button>
-
-          <!-- Close Button -->
-          <div class="px-2 py-1 cursor-pointer close-button rounded-md" @click="closeConversionModal">Cancel</div>
-
-        </div>
       </form>
+
+      <div class="flex items-center gap-4 mt-6 mb-6 flex-wrap text-black">
+
+        <!-- Convert Button -->
+        <button type="button" @click="submitConversion" class="px-2 py-1 cursor-pointer covert-button rounded-md">
+          Convert Offer {{ selectedPrepaidOfferNumber }}
+        </button>
+
+        <!-- Close Button -->
+        <div class="px-2 py-1 cursor-pointer close-button rounded-md" @click="closeConversionModal">Close</div>
+
+        <!-- Back Button -->
+        <div class="px-2 py-1 cursor-pointer close-button rounded-md" @click="back">Back</div>
+      </div>
 
     </div>
   </div>
@@ -72,6 +74,11 @@ export default {
     }
   },
   methods: {
+
+    back() {
+      this.$emit('back');
+    },
+
     closeConversionModal() {
       this.$emit('close');
     },

@@ -1,10 +1,10 @@
 <template>
   <div id="custom-modal" v-if="(deliveryNotes && deliveryNotes.length) || (prepaidOffers && prepaidOffers.length)">
-    <div class="border px-8 py-6 shadow-black shadow-2xl rounded-md overflow-scroll">
+    <div class="border-color border px-8 py-6   rounded-md overflow-scroll">
 
       <!-- Start Header -->
       <div class="flex gap-6 justify-between items-center mb-2">
-        <h2 class="text-xl text-black">Order info for client : <span class="font-bold">{{ clientDetails.client }}</span></h2>
+        <h2 class="text-xl text-color">Order info for client : <span class="font-bold">{{ clientDetails.client }}</span></h2>
         <CloseButton @close="closeModal"/>
       </div>
       <!-- End Header -->
@@ -97,7 +97,7 @@
         </button>
 
         <!-- Close Button -->
-        <div class="px-2 py-1 cursor-pointer close-button rounded-md" @click="closeModal">Cancel</div>
+        <div class="px-2 py-1 cursor-pointer close-button rounded-md" @click="closeModal">Close</div>
       </div>
       <!--   End button container   -->
 

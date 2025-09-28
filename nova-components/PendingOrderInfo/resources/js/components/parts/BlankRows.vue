@@ -1,6 +1,6 @@
 <template>
-  <tr v-for="n in blankRowsCount" :key="'empty-'+n">
-    <td v-for="c in columnCount" :key="'empty-col-'+c+'-row-'+n" class="border px-2 py-1">&nbsp;</td>
+  <tr v-for="n in blankRowsCount" :key="'empty-'+n" class="">
+    <td v-for="c in columnCount" :key="'empty-col-'+c+'-row-'+n" class="border border-color px-2 py-1 table-row-bg">&nbsp;</td>
   </tr>
 </template>
 

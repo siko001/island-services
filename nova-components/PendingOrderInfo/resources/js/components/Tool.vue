@@ -1,5 +1,6 @@
 <template>
-  <ConversionModal :client-details="clientDetails" :selected-prepaid-offer-number="selectedPrepaidOfferNumber" :prepaid-offer-products="prepaidOfferProducts" :order-id="orderId" @close="closeConversionModal" @submit="sendConversionRequest"/>
+  <div class="overlay"></div>
+  <ConversionModal :client-details="clientDetails" :selected-prepaid-offer-number="selectedPrepaidOfferNumber" :prepaid-offer-products="prepaidOfferProducts" :order-id="orderId" @close="closeConversionModal" @submit="sendConversionRequest" @back="handleBackFromConversion"/>
 
   <OrderInfoModal :client-details="clientDetails" :delivery-notes="deliveryNotes" :prepaid-offers="prepaidOffers" :selected-delivery-note-number="selectedDeliveryNoteNumber" :selected-prepaid-offer-number="selectedPrepaidOfferNumber" :selected-order-type="selectedOrderType" :delivery-note-products="deliveryNoteProducts" :prepaid-offer-products="prepaidOfferProducts" :order-id="orderId" @close="closeModal" @select-order="selectOrder" @convert-offer="convertOffer"/>
 
@@ -41,7 +42,6 @@ export default {
   mounted() {
     this.fetchData();
     document.addEventListener('keydown', this.onEscPress);
-    document.addEventListener('mousedown', this.onClickOutside);
 
     // Set modalButtonRef to use the ModalButton component's methods
     this.modalButtonRef = {
@@ -104,21 +104,21 @@ export default {
 
     hideButton() {
       this.modalButtonRef?.hide();
+      this.closeOverlay();
     },
 
     openModal() {
       document.getElementById('custom-modal')?.classList.remove('hidden');
       document.getElementById('conversion-modal')?.classList.add('hidden');
       document.addEventListener('keydown', this.onEscPress);
-      document.addEventListener('mousedown', this.onClickOutside);
       this.hideButton();
+      this.openOverlay();
     },
 
     closeModal() {
       document.getElementById('custom-modal')?.classList.add('hidden');
       document.removeEventListener('keydown', this.onEscPress);
-      document.removeEventListener('mousedown', this.onClickOutside);
-
+      this.closeOverlay();
       // Add a small delay before showing the button to ensure DOM is updated
       // This is especially important after page navigation
       setTimeout(() => {
@@ -130,13 +130,6 @@ export default {
       if(event.key === "Escape" || event.key === "Esc") {
         this.closeModal()
         this.closeConversionModal();
-      }
-    },
-
-    onClickOutside(event) {
-      const modal = document.getElementById('custom-modal');
-      if((modal) && !modal.querySelector('div.border')?.contains(event.target)) {
-        this.closeModal();
       }
     },
 
@@ -169,7 +162,7 @@ export default {
     closeConversionModal() {
       document.getElementById('conversion-modal')?.classList.add('hidden');
       document.removeEventListener('keydown', this.onEscPress);
-      document.removeEventListener('mousedown', this.onClickOutside);
+      this.closeOverlay();
 
       // Add a small delay before showing the button to ensure DOM is updated
       // This is especially important after page navigation
@@ -187,16 +180,30 @@ export default {
     sendConversionRequest(payload) {
       console.log('Submitting conversion for ', payload.id, ': ', payload);
       Nova.request().post(`/nova-vendor/pending-order-info/convert-offer/${payload.id}`, payload).then(response => {
-        this.closeConversionModal();
 
-        // Add an additional check to ensure the button is shown after conversion
+
         setTimeout(() => {
           this.showButton();
         }, 200);
       }).catch(error => {
+
         console.error('Conversion failed:', error)
         alert('❌ Conversion failed. Please try again.')
       })
+    },
+
+    handleBackFromConversion() {
+      document.getElementById('conversion-modal')?.classList.add('hidden');
+      document.getElementById('custom-modal')?.classList.remove('hidden');
+      this.openOverlay();
+    },
+
+    closeOverlay() {
+      document.querySelectorAll('.overlay').forEach(el => el.classList.add('hidden'));
+    },
+
+    openOverlay() {
+      document.querySelectorAll('.overlay').forEach(el => el.classList.remove('hidden'));
     },
 
 

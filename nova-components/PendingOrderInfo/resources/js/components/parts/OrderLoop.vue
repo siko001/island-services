@@ -1,15 +1,15 @@
 <template>
   <tr class="order-parent" v-for="(order, index) in orders" :key="order.id || index" @click="handleSelect(order)">
-    <td class="border px-2 py-1 cursor-pointer text-blue-600 underline element" :class="{ 'selected-row': isSelected(order) }">
+    <td class="border border-color px-2 py-1 cursor-pointer !text-blue-600 underline element row-bg order-number" :class="{ 'selected-row': isSelected(order) }">
       {{ getOrderNumber(order) }}
     </td>
-    <td :class="{ 'selected-row': isSelected(order) }" class="border px-2 py-1 element">
+    <td :class="{ 'selected-row': isSelected(order) }" class="border border-color px-2 py-1 element row-bg text-color">
       {{ formatDate(getOrderDate(order)) }}
     </td>
-    <td :class="{ 'selected-row': isSelected(order) }" class="border px-2 py-1 element">
+    <td :class="{ 'selected-row': isSelected(order) }" class="border border-color px-2 py-1 element row-bg text-color">
       {{ getAreaName(order) }}
     </td>
-    <td :class="{ 'selected-row': isSelected(order) }" class="border px-2 py-1 element">
+    <td :class="{ 'selected-row': isSelected(order) }" class="border border-color px-2 py-1 element row-bg text-color">
       {{ getLocationName(order) }}
     </td>
   </tr>

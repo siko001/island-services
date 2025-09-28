@@ -1,7 +1,7 @@
 <template>
-  <thead class="bg-gray-100">
+  <thead class=" table-row-header">
   <tr>
-    <th v-for="(title, index) in headers" :key="index" class="border px-2 py-1 text-left">
+    <th v-for="(title, index) in headers" :key="index" class="border border-color px-2 py-1 text-left whitespace-nowrap">
       {{ title }}
     </th>
   </tr>
