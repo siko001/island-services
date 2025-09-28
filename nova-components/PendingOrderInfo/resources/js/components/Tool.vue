@@ -1,7 +1,50 @@
 <template>
-  <div v-if="panel">
-    <h3>{{ panel.name }}</h3>
+  <div class="hidden" id="conversion-modal">
+    <div class="border px-8 py-6 shadow-black shadow-2xl rounded-md overflow-scroll">
+
+      <!-- Start Header -->
+      <div class="flex gap-6 justify-between items-start mb-2">
+        <div class="mb-2">
+          <h2 class="text-xl text-black">Client : <span class="font-bold">{{ clientDetails?.client ?? "" }}</span></h2>
+          <h2 class="text-xl text-black">Converting : <span class="font-bold">{{ selectedPrepaidOfferNumber ?? "" }}</span></h2>
+        </div>
+        <CloseButton width="1.8" height="1.8" @close="closeConversionModal"/>
+      </div>
+      <!-- End Header -->
+
+      <form @submit.prevent="submitConversion" class="product-conversion-table-container overflow-x-scroll text-black">
+
+        <table style="width:100%" class="min-w-full border">
+          <TableHeader :headers="['Product', 'Price Type', 'Remaining', 'Taken', 'Price', 'To Convert']"/>
+          <tbody>
+          <tr v-for="(product, index) in prepaidOfferProducts" :key="product.id || index">
+            <td class="border product-row">{{ product.product_name }}</td>
+            <td class="border product-row">{{ product.price_type_name }}</td>
+            <td class="border product-row">{{ product.total_remaining }}</td>
+            <td class="border product-row">{{ product.total_taken }}</td>
+            <td class="border product-row">{{ product.price }}</td>
+            <td class="border product-row-input">
+              <input min="0" :max="product.total_remaining" placeholder="0" type="number" v-model.number="product.to_convert"/>
+            </td>
+          </tr>
+          <BlankRows :rows="prepaidOfferProducts" :quantity="6" :columnCount="6"/>
+          </tbody>
+        </table>
+
+        <div class="flex items-center gap-4 mt-6 mb-6 flex-wrap text-black">
+          <!-- Convert Button -->
+          <button type="submit" class="px-2 py-1 cursor-pointer covert-button rounded-md">
+            Convert Offer {{ selectedPrepaidOfferNumber }}
+          </button>
+
+          <!-- Close Button -->
+          <div class="px-2 py-1 cursor-pointer close-button rounded-md" @click="closeConversionModal">Cancel</div>
+        </div>
+      </form>
+
+    </div>
   </div>
+
   <div v-if="(deliveryNotes && deliveryNotes.length) || (prepaidOffers && prepaidOffers.length)" id="custom-modal">
     <div class="border px-8 py-6 shadow-black shadow-2xl rounded-md overflow-scroll">
 
@@ -156,7 +199,6 @@ export default {
   },
 
   mounted() {
-    console.log('Tool mounted with props:', this.$props.panel)
     this.fetchData();
     document.addEventListener('keydown', this.onEscPress);
     document.addEventListener('mousedown', this.onClickOutside);
@@ -166,7 +208,6 @@ export default {
     const deliveryNoteDetail = document.querySelector('[dusk="delivery-notes-detail-component"]')?.children[0]?.children[0];
     const directSaleDetail = document.querySelector('[dusk="direct-sales-detail-component"]')?.children[0]?.children[0];
     const element = deliveryNoteDetail || directSaleDetail;
-
     if(element) {
       // Resource Header
       element.classList.add('flex', 'justify-between', 'items-center', 'gap-6')
@@ -182,21 +223,7 @@ export default {
       openContainer.addEventListener('click', this.openModal)
       openContainer.innerText = "Open Order info"
 
-      // // Edit Button
-      // const editButton = document.createElement('a');
-      // editButton.classList.add('border', 'px-2', 'py-1', 'cursor-pointer', 'whitespace-nowrap', 'rounded-sm', 'hover-button');
-      // editButton.href = `/admin/resources/${this.resourceName}/${this.resourceId}/edit`;
-      // editButton.innerText = "Edit"
-      //
-      // // Action Buttons
-      // const actionButton = document.createElement('div');
-      // actionButton.addEventListener('click', this.actionRequest);
-      // actionButton.classList.add('border', 'px-2', 'py-1', 'cursor-pointer', 'whitespace-nowrap', 'rounded-sm', 'hover-button');
-      // actionButton.innerText = "Actions"
-
       wrapper.appendChild(openContainer)
-      // wrapper.appendChild(actionButton)
-      // wrapper.appendChild(editButton)
       element.appendChild(wrapper);
     }
   },
@@ -253,6 +280,7 @@ export default {
 
     openModal() {
       document.getElementById('custom-modal')?.classList.remove('hidden');
+      document.getElementById('conversion-modal')?.classList.add('hidden');
       document.addEventListener('keydown', this.onEscPress);
       document.addEventListener('mousedown', this.onClickOutside);
       this.hideButton();
@@ -267,13 +295,14 @@ export default {
 
     onEscPress(event) {
       if(event.key === "Escape" || event.key === "Esc") {
-        this.closeModal();
+        this.closeModal()
+        this.closeConversionModal();
       }
     },
 
     onClickOutside(event) {
       const modal = document.getElementById('custom-modal');
-      if(modal && !modal.querySelector('div.border')?.contains(event.target)) {
+      if((modal) && !modal.querySelector('div.border')?.contains(event.target)) {
         this.closeModal();
       }
     },
@@ -304,28 +333,67 @@ export default {
     },
 
 
-    // Convert Prepaid Offer
-    convertOffer() {
-      if(this.selectedOrderType === 'prepaid_offer' && this.selectedPrepaidOfferNumber) {
-        window.location.href = `/admin/resources/prepaid-offers/${this.orderId}/edit?convert=true`;
-      }
+    //  Prepaid Offer conversion methods -------------------------------------------------------
+    checkConvertEligibility() {
+      return !!(this.selectedOrderType === 'prepaid_offer' && this.selectedPrepaidOfferNumber);
     },
 
-    actionRequest() {
-      Nova.request().post(`/nova-vendor/pending-order-info/action-request`, {
-        id: this.resourceId,
-        type: this.resourceName,
-      }).then(response => {
-        if(response.data.success) {
-          alert('Action request sent successfully.');
-        } else {
-          alert('Failed to send action request.');
+    convertOffer() {
+      this.checkConvertEligibility() && this.openConversionModal();
+    },
+
+
+    closeConversionModal() {
+      document.getElementById('conversion-modal')?.classList.add('hidden');
+      document.removeEventListener('keydown', this.onEscPress);
+      document.removeEventListener('mousedown', this.onClickOutside);
+      this.showButton();
+    },
+
+    openConversionModal() {
+
+      document.getElementById('conversion-modal')?.classList.remove('hidden');
+      document.getElementById('custom-modal')?.classList.add('hidden');
+    },
+
+
+    submitConversion() {
+      let errors = []
+      const productsToSubmit = this.prepaidOfferProducts.filter(p => (p.to_convert ?? 0));
+
+      if(productsToSubmit.length === 0) {
+        alert('Please enter at least one product to convert.')
+        return
+      }
+
+      productsToSubmit.forEach(product => {
+        const value = product.to_convert ?? 0
+        const min = 0
+        const max = product.total_remaining
+
+        if(value < min || value > max) {
+          errors.push(`❌${product.product_name}: Allowed range is ${min}–${max}`)
         }
+      })
+
+      if(errors.length > 0) {
+        alert(errors.join('\n'))
+        return
+      }
+
+      this.sendConversionRequest(this.orderId, {'id': this.orderId, 'order_number': this.selectedPrepaidOfferNumber, "products": productsToSubmit,});
+    },
+
+    sendConversionRequest(id, payload) {
+      console.log('Submitting conversion for ', id, ': ', payload,);
+      Nova.request().post(`/nova-vendor/pending-order-info/convert-offer/${id}`, payload).then(response => {
+        this.closeConversionModal()
       }).catch(error => {
-        console.error('Error sending action request:', error);
-        alert('An error occurred while sending the action request.');
-      });
-    }
+        console.error('Conversion failed:', error)
+        alert('❌ Conversion failed. Please try again.')
+      })
+    },
+
 
   }
 }

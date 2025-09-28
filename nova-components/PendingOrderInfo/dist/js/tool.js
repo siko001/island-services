@@ -40,7 +40,25 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
-  name: 'CloseButton'
+  name: 'CloseButton',
+  props: {
+    width: {
+      type: [String, Number],
+      "default": '1.5'
+    },
+    height: {
+      type: [String, Number],
+      "default": '1.5'
+    }
+  },
+  computed: {
+    computedWidth: function computedWidth() {
+      return isNaN(this.width) ? this.width : "".concat(this.width, "rem");
+    },
+    computedHeight: function computedHeight() {
+      return isNaN(this.height) ? this.height : "".concat(this.height, "rem");
+    }
+  }
 });
 
 /***/ }),
@@ -177,7 +195,6 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
   },
   mounted: function mounted() {
     var _document$querySelect, _document$querySelect2;
-    console.log('Tool mounted with props:', this.$props.panel);
     this.fetchData();
     document.addEventListener('keydown', this.onEscPress);
     document.addEventListener('mousedown', this.onClickOutside);
@@ -200,22 +217,7 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
       openContainer.id = 'open-order-info-button';
       openContainer.addEventListener('click', this.openModal);
       openContainer.innerText = "Open Order info";
-
-      // // Edit Button
-      // const editButton = document.createElement('a');
-      // editButton.classList.add('border', 'px-2', 'py-1', 'cursor-pointer', 'whitespace-nowrap', 'rounded-sm', 'hover-button');
-      // editButton.href = `/admin/resources/${this.resourceName}/${this.resourceId}/edit`;
-      // editButton.innerText = "Edit"
-      //
-      // // Action Buttons
-      // const actionButton = document.createElement('div');
-      // actionButton.addEventListener('click', this.actionRequest);
-      // actionButton.classList.add('border', 'px-2', 'py-1', 'cursor-pointer', 'whitespace-nowrap', 'rounded-sm', 'hover-button');
-      // actionButton.innerText = "Actions"
-
       wrapper.appendChild(openContainer);
-      // wrapper.appendChild(actionButton)
-      // wrapper.appendChild(editButton)
       element.appendChild(wrapper);
     }
   },
@@ -279,15 +281,16 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
       (_document$getElementB2 = document.getElementById('open-order-info-button')) === null || _document$getElementB2 === void 0 || _document$getElementB2.classList.add('hidden');
     },
     openModal: function openModal() {
-      var _document$getElementB3;
+      var _document$getElementB3, _document$getElementB4;
       (_document$getElementB3 = document.getElementById('custom-modal')) === null || _document$getElementB3 === void 0 || _document$getElementB3.classList.remove('hidden');
+      (_document$getElementB4 = document.getElementById('conversion-modal')) === null || _document$getElementB4 === void 0 || _document$getElementB4.classList.add('hidden');
       document.addEventListener('keydown', this.onEscPress);
       document.addEventListener('mousedown', this.onClickOutside);
       this.hideButton();
     },
     closeModal: function closeModal() {
-      var _document$getElementB4;
-      (_document$getElementB4 = document.getElementById('custom-modal')) === null || _document$getElementB4 === void 0 || _document$getElementB4.classList.add('hidden');
+      var _document$getElementB5;
+      (_document$getElementB5 = document.getElementById('custom-modal')) === null || _document$getElementB5 === void 0 || _document$getElementB5.classList.add('hidden');
       document.removeEventListener('keydown', this.onEscPress);
       document.removeEventListener('mousedown', this.onClickOutside);
       this.showButton();
@@ -295,6 +298,7 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
     onEscPress: function onEscPress(event) {
       if (event.key === "Escape" || event.key === "Esc") {
         this.closeModal();
+        this.closeConversionModal();
       }
     },
     onClickOutside: function onClickOutside(event) {
@@ -327,25 +331,62 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
         this.getProductDetails(orderNumber);
       }
     },
-    // Convert Prepaid Offer
-    convertOffer: function convertOffer() {
-      if (this.selectedOrderType === 'prepaid_offer' && this.selectedPrepaidOfferNumber) {
-        window.location.href = "/admin/resources/prepaid-offers/".concat(this.orderId, "/edit?convert=true");
-      }
+    //  Prepaid Offer conversion methods -------------------------------------------------------
+    checkConvertEligibility: function checkConvertEligibility() {
+      return !!(this.selectedOrderType === 'prepaid_offer' && this.selectedPrepaidOfferNumber);
     },
-    actionRequest: function actionRequest() {
-      Nova.request().post("/nova-vendor/pending-order-info/action-request", {
-        id: this.resourceId,
-        type: this.resourceName
-      }).then(function (response) {
-        if (response.data.success) {
-          alert('Action request sent successfully.');
-        } else {
-          alert('Failed to send action request.');
+    convertOffer: function convertOffer() {
+      this.checkConvertEligibility() && this.openConversionModal();
+    },
+    closeConversionModal: function closeConversionModal() {
+      var _document$getElementB6;
+      (_document$getElementB6 = document.getElementById('conversion-modal')) === null || _document$getElementB6 === void 0 || _document$getElementB6.classList.add('hidden');
+      document.removeEventListener('keydown', this.onEscPress);
+      document.removeEventListener('mousedown', this.onClickOutside);
+      this.showButton();
+    },
+    openConversionModal: function openConversionModal() {
+      var _document$getElementB7, _document$getElementB8;
+      (_document$getElementB7 = document.getElementById('conversion-modal')) === null || _document$getElementB7 === void 0 || _document$getElementB7.classList.remove('hidden');
+      (_document$getElementB8 = document.getElementById('custom-modal')) === null || _document$getElementB8 === void 0 || _document$getElementB8.classList.add('hidden');
+    },
+    submitConversion: function submitConversion() {
+      var errors = [];
+      var productsToSubmit = this.prepaidOfferProducts.filter(function (p) {
+        var _p$to_convert;
+        return (_p$to_convert = p.to_convert) !== null && _p$to_convert !== void 0 ? _p$to_convert : 0;
+      });
+      if (productsToSubmit.length === 0) {
+        alert('Please enter at least one product to convert.');
+        return;
+      }
+      productsToSubmit.forEach(function (product) {
+        var _product$to_convert;
+        var value = (_product$to_convert = product.to_convert) !== null && _product$to_convert !== void 0 ? _product$to_convert : 0;
+        var min = 0;
+        var max = product.total_remaining;
+        if (value < min || value > max) {
+          errors.push("\u274C".concat(product.product_name, ": Allowed range is ").concat(min, "\u2013").concat(max));
         }
+      });
+      if (errors.length > 0) {
+        alert(errors.join('\n'));
+        return;
+      }
+      this.sendConversionRequest(this.orderId, {
+        'id': this.orderId,
+        'order_number': this.selectedPrepaidOfferNumber,
+        "products": productsToSubmit
+      });
+    },
+    sendConversionRequest: function sendConversionRequest(id, payload) {
+      var _this3 = this;
+      console.log('Submitting conversion for ', id, ': ', payload);
+      Nova.request().post("/nova-vendor/pending-order-info/convert-offer/".concat(id), payload).then(function (response) {
+        _this3.closeConversionModal();
       })["catch"](function (error) {
-        console.error('Error sending action request:', error);
-        alert('An error occurred while sending the action request.');
+        console.error('Conversion failed:', error);
+        alert('❌ Conversion failed. Please try again.');
       });
     }
   }
@@ -400,24 +441,26 @@ function _iterableToArray(r) { if ("undefined" != typeof Symbol && null != r[Sym
 function _arrayWithoutHoles(r) { if (Array.isArray(r)) return _arrayLikeToArray(r); }
 function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length); for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e]; return n; }
 
+var _hoisted_1 = ["height", "width"];
 function render(_ctx, _cache, $props, $setup, $data, $options) {
   return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", {
     onClick: _cache[0] || (_cache[0] = function ($event) {
       return _ctx.$emit('close');
     }),
     "class": "text-red-500 cursor-pointer"
-  }, _toConsumableArray(_cache[1] || (_cache[1] = [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("svg", {
+  }, [((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("svg", {
     xmlns: "http://www.w3.org/2000/svg",
     fill: "none",
     viewBox: "0 0 24 24",
     "stroke-width": "1.5",
     stroke: "currentColor",
-    "class": "size-6"
-  }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("path", {
+    height: $options.computedHeight,
+    width: $options.computedWidth
+  }, _toConsumableArray(_cache[1] || (_cache[1] = [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("path", {
     "stroke-linecap": "round",
     "stroke-linejoin": "round",
     d: "m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-  })], -1 /* CACHED */)])));
+  }, null, -1 /* CACHED */)])), 8 /* PROPS */, _hoisted_1))]);
 }
 
 /***/ }),
@@ -507,17 +550,17 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(vue__WEBPACK_IMPORTED_MODULE_0__);
 
 var _hoisted_1 = {
-  key: 0
+  "class": "hidden",
+  id: "conversion-modal"
 };
 var _hoisted_2 = {
-  key: 1,
-  id: "custom-modal"
-};
-var _hoisted_3 = {
   "class": "border px-8 py-6 shadow-black shadow-2xl rounded-md overflow-scroll"
 };
+var _hoisted_3 = {
+  "class": "flex gap-6 justify-between items-start mb-2"
+};
 var _hoisted_4 = {
-  "class": "flex gap-6 justify-between items-center mb-2"
+  "class": "mb-2"
 };
 var _hoisted_5 = {
   "class": "text-xl text-black"
@@ -526,86 +569,71 @@ var _hoisted_6 = {
   "class": "font-bold"
 };
 var _hoisted_7 = {
-  "class": "grid md:grid-cols-2 md:gap-2"
+  "class": "text-xl text-black"
 };
 var _hoisted_8 = {
+  "class": "font-bold"
+};
+var _hoisted_9 = {
+  style: {
+    "width": "100%"
+  },
+  "class": "min-w-full border"
+};
+var _hoisted_10 = {
+  "class": "border product-row"
+};
+var _hoisted_11 = {
+  "class": "border product-row"
+};
+var _hoisted_12 = {
+  "class": "border product-row"
+};
+var _hoisted_13 = {
+  "class": "border product-row"
+};
+var _hoisted_14 = {
+  "class": "border product-row"
+};
+var _hoisted_15 = {
+  "class": "border product-row-input"
+};
+var _hoisted_16 = ["max", "onUpdate:modelValue"];
+var _hoisted_17 = {
+  "class": "flex items-center gap-4 mt-6 mb-6 flex-wrap text-black"
+};
+var _hoisted_18 = {
+  type: "submit",
+  "class": "px-2 py-1 cursor-pointer covert-button rounded-md"
+};
+var _hoisted_19 = {
+  key: 0,
+  id: "custom-modal"
+};
+var _hoisted_20 = {
+  "class": "border px-8 py-6 shadow-black shadow-2xl rounded-md overflow-scroll"
+};
+var _hoisted_21 = {
+  "class": "flex gap-6 justify-between items-center mb-2"
+};
+var _hoisted_22 = {
+  "class": "text-xl text-black"
+};
+var _hoisted_23 = {
+  "class": "font-bold"
+};
+var _hoisted_24 = {
+  "class": "grid md:grid-cols-2 md:gap-2"
+};
+var _hoisted_25 = {
   id: "delivery-note-container",
   "class": "grid-container text-black"
 };
-var _hoisted_9 = {
-  "class": "table-container",
-  style: {
-    "overflow-x": "scroll"
-  }
-};
-var _hoisted_10 = {
-  style: {
-    "width": "100%"
-  },
-  "class": "min-w-full border"
-};
-var _hoisted_11 = {
-  id: "prepaid-offer-container",
-  "class": "grid-container text-black"
-};
-var _hoisted_12 = {
-  "class": "table-container",
-  style: {
-    "overflow-x": "scroll"
-  }
-};
-var _hoisted_13 = {
-  style: {
-    "width": "100%"
-  },
-  "class": "min-w-full border"
-};
-var _hoisted_14 = {
-  style: {
-    "overflow": "scroll"
-  },
-  "class": "grid md:grid-cols-2 md:gap-2"
-};
-var _hoisted_15 = {
-  "class": "grid-container text-black",
-  id: "delivery-note-products"
-};
-var _hoisted_16 = {
-  "class": "font-semibold order-heading mb-2"
-};
-var _hoisted_17 = {
-  "class": "product-table-container overflow-x-scroll"
-};
-var _hoisted_18 = {
-  style: {
-    "width": "100%"
-  },
-  "class": "min-w-full border"
-};
-var _hoisted_19 = {
-  "class": "border product-row"
-};
-var _hoisted_20 = {
-  "class": "border product-row"
-};
-var _hoisted_21 = {
-  "class": "border product-row"
-};
-var _hoisted_22 = {
-  "class": "border product-row"
-};
-var _hoisted_23 = {
-  "class": "border product-row"
-};
-var _hoisted_24 = {
-  "class": "grid-container text-black",
-  id: "prepaid-offer-products"
-};
-var _hoisted_25 = {
-  "class": "font-semibold order-heading mb-2"
-};
 var _hoisted_26 = {
-  "class": "product-table-container overflow-x-scroll"
+  "class": "table-container",
+  style: {
+    "overflow-x": "scroll"
+  }
 };
 var _hoisted_27 = {
   style: {
@@ -614,34 +642,138 @@ var _hoisted_27 = {
   "class": "min-w-full border"
 };
 var _hoisted_28 = {
-  "class": "border product-row"
+  id: "prepaid-offer-container",
+  "class": "grid-container text-black"
 };
 var _hoisted_29 = {
-  "class": "border product-row"
+  "class": "table-container",
+  style: {
+    "overflow-x": "scroll"
+  }
 };
 var _hoisted_30 = {
-  "class": "border product-row"
+  style: {
+    "width": "100%"
+  },
+  "class": "min-w-full border"
 };
 var _hoisted_31 = {
-  "class": "border product-row"
+  style: {
+    "overflow": "scroll"
+  },
+  "class": "grid md:grid-cols-2 md:gap-2"
 };
 var _hoisted_32 = {
-  "class": "border product-row"
+  "class": "grid-container text-black",
+  id: "delivery-note-products"
 };
 var _hoisted_33 = {
+  "class": "font-semibold order-heading mb-2"
+};
+var _hoisted_34 = {
+  "class": "product-table-container overflow-x-scroll"
+};
+var _hoisted_35 = {
+  style: {
+    "width": "100%"
+  },
+  "class": "min-w-full border"
+};
+var _hoisted_36 = {
+  "class": "border product-row"
+};
+var _hoisted_37 = {
+  "class": "border product-row"
+};
+var _hoisted_38 = {
+  "class": "border product-row"
+};
+var _hoisted_39 = {
+  "class": "border product-row"
+};
+var _hoisted_40 = {
+  "class": "border product-row"
+};
+var _hoisted_41 = {
+  "class": "grid-container text-black",
+  id: "prepaid-offer-products"
+};
+var _hoisted_42 = {
+  "class": "font-semibold order-heading mb-2"
+};
+var _hoisted_43 = {
+  "class": "product-table-container overflow-x-scroll"
+};
+var _hoisted_44 = {
+  style: {
+    "width": "100%"
+  },
+  "class": "min-w-full border"
+};
+var _hoisted_45 = {
+  "class": "border product-row"
+};
+var _hoisted_46 = {
+  "class": "border product-row"
+};
+var _hoisted_47 = {
+  "class": "border product-row"
+};
+var _hoisted_48 = {
+  "class": "border product-row"
+};
+var _hoisted_49 = {
+  "class": "border product-row"
+};
+var _hoisted_50 = {
   "class": "flex items-center gap-4 mt-4 flex-wrap text-black ml-2"
 };
-var _hoisted_34 = ["href"];
+var _hoisted_51 = ["href"];
 function render(_ctx, _cache, $props, $setup, $data, $options) {
+  var _$data$clientDetails$, _$data$clientDetails, _$data$selectedPrepai;
   var _component_CloseButton = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("CloseButton");
   var _component_TableHeader = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("TableHeader");
-  var _component_OrderLoop = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("OrderLoop");
   var _component_BlankRows = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("BlankRows");
-  return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, [$props.panel ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_1, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h3", null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($props.panel.name), 1 /* TEXT */)])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), $data.deliveryNotes && $data.deliveryNotes.length || $data.prepaidOffers && $data.prepaidOffers.length ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_2, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_3, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" Start Header "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_4, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h2", _hoisted_5, [_cache[2] || (_cache[2] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)("Order info for client : ", -1 /* CACHED */)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", _hoisted_6, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($data.clientDetails.client), 1 /* TEXT */)]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_CloseButton, {
+  var _component_OrderLoop = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("OrderLoop");
+  return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_1, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_2, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" Start Header "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_3, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_4, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h2", _hoisted_5, [_cache[4] || (_cache[4] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)("Client : ", -1 /* CACHED */)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", _hoisted_6, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)((_$data$clientDetails$ = (_$data$clientDetails = $data.clientDetails) === null || _$data$clientDetails === void 0 ? void 0 : _$data$clientDetails.client) !== null && _$data$clientDetails$ !== void 0 ? _$data$clientDetails$ : ""), 1 /* TEXT */)]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h2", _hoisted_7, [_cache[5] || (_cache[5] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)("Converting : ", -1 /* CACHED */)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", _hoisted_8, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)((_$data$selectedPrepai = $data.selectedPrepaidOfferNumber) !== null && _$data$selectedPrepai !== void 0 ? _$data$selectedPrepai : ""), 1 /* TEXT */)])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_CloseButton, {
+    width: "1.8",
+    height: "1.8",
+    onClose: $options.closeConversionModal
+  }, null, 8 /* PROPS */, ["onClose"])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" End Header "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("form", {
+    onSubmit: _cache[1] || (_cache[1] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.withModifiers)(function () {
+      return $options.submitConversion && $options.submitConversion.apply($options, arguments);
+    }, ["prevent"])),
+    "class": "product-conversion-table-container overflow-x-scroll text-black"
+  }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("table", _hoisted_9, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_TableHeader, {
+    headers: ['Product', 'Price Type', 'Remaining', 'Taken', 'Price', 'To Convert']
+  }), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("tbody", null, [((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($data.prepaidOfferProducts, function (product, index) {
+    return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("tr", {
+      key: product.id || index
+    }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("td", _hoisted_10, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(product.product_name), 1 /* TEXT */), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("td", _hoisted_11, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(product.price_type_name), 1 /* TEXT */), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("td", _hoisted_12, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(product.total_remaining), 1 /* TEXT */), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("td", _hoisted_13, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(product.total_taken), 1 /* TEXT */), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("td", _hoisted_14, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(product.price), 1 /* TEXT */), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("td", _hoisted_15, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
+      min: "0",
+      max: product.total_remaining,
+      placeholder: "0",
+      type: "number",
+      "onUpdate:modelValue": function onUpdateModelValue($event) {
+        return product.to_convert = $event;
+      }
+    }, null, 8 /* PROPS */, _hoisted_16), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelText, product.to_convert, void 0, {
+      number: true
+    }]])])]);
+  }), 128 /* KEYED_FRAGMENT */)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_BlankRows, {
+    rows: $data.prepaidOfferProducts,
+    quantity: 6,
+    columnCount: 6
+  }, null, 8 /* PROPS */, ["rows"])])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_17, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" Convert Button "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", _hoisted_18, " Convert Offer " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($data.selectedPrepaidOfferNumber), 1 /* TEXT */), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" Close Button "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
+    "class": "px-2 py-1 cursor-pointer close-button rounded-md",
+    onClick: _cache[0] || (_cache[0] = function () {
+      return $options.closeConversionModal && $options.closeConversionModal.apply($options, arguments);
+    })
+  }, "Cancel")])], 32 /* NEED_HYDRATION */)])]), $data.deliveryNotes && $data.deliveryNotes.length || $data.prepaidOffers && $data.prepaidOffers.length ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_19, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_20, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" Start Header "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_21, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h2", _hoisted_22, [_cache[6] || (_cache[6] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)("Order info for client : ", -1 /* CACHED */)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", _hoisted_23, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($data.clientDetails.client), 1 /* TEXT */)]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_CloseButton, {
     onClose: $options.closeModal
-  }, null, 8 /* PROPS */, ["onClose"])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" End Header "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("Start Order Grid"), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_7, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("Start Delivery Notes "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_8, [_cache[3] || (_cache[3] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h2", {
+  }, null, 8 /* PROPS */, ["onClose"])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" End Header "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("Start Order Grid"), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_24, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("Start Delivery Notes "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_25, [_cache[7] || (_cache[7] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h2", {
     "class": "font-semibold order-heading mb-2"
-  }, " Pending Delivery Notes ", -1 /* CACHED */)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_9, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("table", _hoisted_10, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_TableHeader, {
+  }, " Pending Delivery Notes ", -1 /* CACHED */)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_26, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("table", _hoisted_27, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_TableHeader, {
     headers: ['Delivery Note no.', 'Delivery Date', 'Area', 'Location']
   }), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("tbody", null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_OrderLoop, {
     orders: $data.deliveryNotes,
@@ -666,9 +798,9 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     rows: $data.deliveryNotes,
     quantity: 3,
     columnCount: 4
-  }, null, 8 /* PROPS */, ["rows"])])])])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("End Delivery Notes "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("Start Prepaid Offers"), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_11, [_cache[4] || (_cache[4] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h2", {
+  }, null, 8 /* PROPS */, ["rows"])])])])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("End Delivery Notes "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("Start Prepaid Offers"), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_28, [_cache[8] || (_cache[8] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h2", {
     "class": "font-semibold order-heading mb-2"
-  }, "Client Prepaid Offer", -1 /* CACHED */)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_12, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("table", _hoisted_13, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_TableHeader, {
+  }, "Client Prepaid Offer", -1 /* CACHED */)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_29, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("table", _hoisted_30, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_TableHeader, {
     headers: ['Prepaid Offer no.', 'Order Date', 'Area', 'Location']
   }), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("tbody", null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_OrderLoop, {
     orders: $data.prepaidOffers,
@@ -693,40 +825,40 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     rows: $data.prepaidOffers,
     quantity: 3,
     columnCount: 4
-  }, null, 8 /* PROPS */, ["rows"])])])])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("End Prepaid Offers")]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("End Order Grid"), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("Start Product Grid"), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_14, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" Start Delivery Note Products "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_15, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h2", _hoisted_16, " Delivery Note Products " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($data.selectedDeliveryNoteNumber ? $data.selectedDeliveryNoteNumber : ''), 1 /* TEXT */), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_17, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("table", _hoisted_18, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_TableHeader, {
+  }, null, 8 /* PROPS */, ["rows"])])])])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("End Prepaid Offers")]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("End Order Grid"), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("Start Product Grid"), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_31, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" Start Delivery Note Products "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_32, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h2", _hoisted_33, " Delivery Note Products " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($data.selectedDeliveryNoteNumber ? $data.selectedDeliveryNoteNumber : ''), 1 /* TEXT */), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_34, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("table", _hoisted_35, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_TableHeader, {
     headers: ['Product', 'Price Type', 'Quantity', 'Price', 'Deposit']
   }), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("tbody", null, [((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($data.deliveryNoteProducts, function (product, index) {
     return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("tr", {
       key: product.id || index
-    }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("td", _hoisted_19, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(product.product_name), 1 /* TEXT */), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("td", _hoisted_20, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(product.price_type_name), 1 /* TEXT */), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("td", _hoisted_21, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(product.quantity), 1 /* TEXT */), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("td", _hoisted_22, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(product.unit_price), 1 /* TEXT */), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("td", _hoisted_23, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(product.deposit_price), 1 /* TEXT */)]);
+    }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("td", _hoisted_36, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(product.product_name), 1 /* TEXT */), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("td", _hoisted_37, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(product.price_type_name), 1 /* TEXT */), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("td", _hoisted_38, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(product.quantity), 1 /* TEXT */), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("td", _hoisted_39, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(product.unit_price), 1 /* TEXT */), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("td", _hoisted_40, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(product.deposit_price), 1 /* TEXT */)]);
   }), 128 /* KEYED_FRAGMENT */)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_BlankRows, {
     rows: $data.deliveryNoteProducts,
     quantity: 5,
     columnCount: 5
-  }, null, 8 /* PROPS */, ["rows"])])])])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" End Delivery Note Products "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("  Start Prepaid Offer Products   "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_24, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h2", _hoisted_25, " Prepaid Offer Products " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($data.selectedPrepaidOfferNumber ? $data.selectedPrepaidOfferNumber : ''), 1 /* TEXT */), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_26, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("table", _hoisted_27, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_TableHeader, {
+  }, null, 8 /* PROPS */, ["rows"])])])])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" End Delivery Note Products "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("  Start Prepaid Offer Products   "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_41, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h2", _hoisted_42, " Prepaid Offer Products " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($data.selectedPrepaidOfferNumber ? $data.selectedPrepaidOfferNumber : ''), 1 /* TEXT */), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_43, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("table", _hoisted_44, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_TableHeader, {
     headers: ['Product', 'Price Type', 'Remaining', 'Taken', 'Price']
   }), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("tbody", null, [((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($data.prepaidOfferProducts, function (product, index) {
     return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("tr", {
       "class": "overflow-scroll",
       key: product.id || index
-    }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("td", _hoisted_28, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(product.product_name), 1 /* TEXT */), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("td", _hoisted_29, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(product.price_type_name), 1 /* TEXT */), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("td", _hoisted_30, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(product.total_remaining), 1 /* TEXT */), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("td", _hoisted_31, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(product.total_taken), 1 /* TEXT */), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("td", _hoisted_32, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(product.price), 1 /* TEXT */)]);
+    }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("td", _hoisted_45, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(product.product_name), 1 /* TEXT */), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("td", _hoisted_46, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(product.price_type_name), 1 /* TEXT */), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("td", _hoisted_47, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(product.total_remaining), 1 /* TEXT */), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("td", _hoisted_48, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(product.total_taken), 1 /* TEXT */), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("td", _hoisted_49, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(product.price), 1 /* TEXT */)]);
   }), 128 /* KEYED_FRAGMENT */)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_BlankRows, {
     rows: $data.prepaidOfferProducts,
     quantity: 5,
     columnCount: 5
-  }, null, 8 /* PROPS */, ["rows"])])])])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" End Prepaid Offer Products   ")]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("End Product Grid"), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("   Start button container   "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_33, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("Amend Button"), _ctx.selectedOrderType === 'delivery_note' ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("a", {
+  }, null, 8 /* PROPS */, ["rows"])])])])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" End Prepaid Offer Products   ")]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("End Product Grid"), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("   Start button container   "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_50, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("Amend Button"), _ctx.selectedOrderType === 'delivery_note' ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("a", {
     key: 0,
     href: "/admin/resources/delivery-notes/".concat($data.orderId, "/edit"),
     "class": "px-2 py-1 cursor-pointer amend-button rounded-md"
-  }, " Amend Delivery Note " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($data.selectedDeliveryNoteNumber), 9 /* TEXT, PROPS */, _hoisted_34)) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" Convert Button "), _ctx.selectedOrderType === 'prepaid_offer' ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("button", {
+  }, " Amend Delivery Note " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($data.selectedDeliveryNoteNumber), 9 /* TEXT, PROPS */, _hoisted_51)) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" Convert Button "), _ctx.selectedOrderType === 'prepaid_offer' ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("button", {
     key: 1,
-    onClick: _cache[0] || (_cache[0] = function () {
+    onClick: _cache[2] || (_cache[2] = function () {
       return $options.convertOffer && $options.convertOffer.apply($options, arguments);
     }),
     "class": "px-2 py-1 cursor-pointer covert-button rounded-md"
   }, "Convert Offer " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($data.selectedPrepaidOfferNumber), 1 /* TEXT */)) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" Close Button "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
     "class": "px-2 py-1 cursor-pointer close-button rounded-md",
-    onClick: _cache[1] || (_cache[1] = function () {
+    onClick: _cache[3] || (_cache[3] = function () {
       return $options.closeModal && $options.closeModal.apply($options, arguments);
     })
   }, "Cancel")]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("   End button container   ")])])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true)], 64 /* STABLE_FRAGMENT */);
