@@ -23,6 +23,13 @@ export default {
   mounted() {
     this.mountButton();
   },
+
+  updated() {
+    // Check if button exists, if not remount it
+    if (!document.getElementById('open-order-info-button')) {
+      this.mountButton();
+    }
+  },
   methods: {
     mountButton() {
       //Find the element to mount the button to
@@ -60,10 +67,22 @@ export default {
       this.$emit('open');
     },
     show() {
-      document.getElementById('open-order-info-button')?.classList.remove('hidden');
+      const button = document.getElementById('open-order-info-button') || this.buttonRef;
+      if (button) {
+        button.classList.remove('hidden');
+      } else {
+        // If button doesn't exist, try to remount it and then show it
+        this.$nextTick(() => {
+          this.mountButton();
+          this.buttonRef?.classList.remove('hidden');
+        });
+      }
     },
     hide() {
-      document.getElementById('open-order-info-button')?.classList.add('hidden');
+      const button = document.getElementById('open-order-info-button') || this.buttonRef;
+      if (button) {
+        button.classList.add('hidden');
+      }
     }
   }
 }

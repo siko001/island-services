@@ -48,6 +48,12 @@ export default {
       show: () => this.$refs.modalButton?.show(),
       hide: () => this.$refs.modalButton?.hide()
     };
+
+    // Check if we're returning from a redirect (e.g., after amending a delivery note)
+    // and show the button if needed
+    this.$nextTick(() => {
+      this.showButton();
+    });
   },
 
 
@@ -112,7 +118,12 @@ export default {
       document.getElementById('custom-modal')?.classList.add('hidden');
       document.removeEventListener('keydown', this.onEscPress);
       document.removeEventListener('mousedown', this.onClickOutside);
-      this.showButton();
+
+      // Add a small delay before showing the button to ensure DOM is updated
+      // This is especially important after page navigation
+      setTimeout(() => {
+        this.showButton();
+      }, 100);
     },
 
     onEscPress(event) {
@@ -159,7 +170,12 @@ export default {
       document.getElementById('conversion-modal')?.classList.add('hidden');
       document.removeEventListener('keydown', this.onEscPress);
       document.removeEventListener('mousedown', this.onClickOutside);
-      this.showButton();
+
+      // Add a small delay before showing the button to ensure DOM is updated
+      // This is especially important after page navigation
+      setTimeout(() => {
+        this.showButton();
+      }, 100);
     },
 
     openConversionModal() {
@@ -171,7 +187,12 @@ export default {
     sendConversionRequest(payload) {
       console.log('Submitting conversion for ', payload.id, ': ', payload);
       Nova.request().post(`/nova-vendor/pending-order-info/convert-offer/${payload.id}`, payload).then(response => {
-        this.closeConversionModal()
+        this.closeConversionModal();
+
+        // Add an additional check to ensure the button is shown after conversion
+        setTimeout(() => {
+          this.showButton();
+        }, 200);
       }).catch(error => {
         console.error('Conversion failed:', error)
         alert('❌ Conversion failed. Please try again.')

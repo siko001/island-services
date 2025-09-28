@@ -247,6 +247,12 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
         return (_this$$refs$modalButt2 = _this.$refs.modalButton) === null || _this$$refs$modalButt2 === void 0 ? void 0 : _this$$refs$modalButt2.hide();
       }
     };
+
+    // Check if we're returning from a redirect (e.g., after amending a delivery note)
+    // and show the button if needed
+    this.$nextTick(function () {
+      _this.showButton();
+    });
   },
   methods: {
     // Api call to fetch data DNs, POs, Client Info
@@ -316,11 +322,17 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
       this.hideButton();
     },
     closeModal: function closeModal() {
-      var _document$getElementB3;
+      var _document$getElementB3,
+        _this4 = this;
       (_document$getElementB3 = document.getElementById('custom-modal')) === null || _document$getElementB3 === void 0 || _document$getElementB3.classList.add('hidden');
       document.removeEventListener('keydown', this.onEscPress);
       document.removeEventListener('mousedown', this.onClickOutside);
-      this.showButton();
+
+      // Add a small delay before showing the button to ensure DOM is updated
+      // This is especially important after page navigation
+      setTimeout(function () {
+        _this4.showButton();
+      }, 100);
     },
     onEscPress: function onEscPress(event) {
       if (event.key === "Escape" || event.key === "Esc") {
@@ -357,11 +369,17 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
       this.checkConvertEligibility() && this.openConversionModal();
     },
     closeConversionModal: function closeConversionModal() {
-      var _document$getElementB4;
+      var _document$getElementB4,
+        _this5 = this;
       (_document$getElementB4 = document.getElementById('conversion-modal')) === null || _document$getElementB4 === void 0 || _document$getElementB4.classList.add('hidden');
       document.removeEventListener('keydown', this.onEscPress);
       document.removeEventListener('mousedown', this.onClickOutside);
-      this.showButton();
+
+      // Add a small delay before showing the button to ensure DOM is updated
+      // This is especially important after page navigation
+      setTimeout(function () {
+        _this5.showButton();
+      }, 100);
     },
     openConversionModal: function openConversionModal() {
       var _document$getElementB5, _document$getElementB6;
@@ -369,10 +387,15 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
       (_document$getElementB6 = document.getElementById('custom-modal')) === null || _document$getElementB6 === void 0 || _document$getElementB6.classList.add('hidden');
     },
     sendConversionRequest: function sendConversionRequest(payload) {
-      var _this4 = this;
+      var _this6 = this;
       console.log('Submitting conversion for ', payload.id, ': ', payload);
       Nova.request().post("/nova-vendor/pending-order-info/convert-offer/".concat(payload.id), payload).then(function (response) {
-        _this4.closeConversionModal();
+        _this6.closeConversionModal();
+
+        // Add an additional check to ensure the button is shown after conversion
+        setTimeout(function () {
+          _this6.showButton();
+        }, 200);
       })["catch"](function (error) {
         console.error('Conversion failed:', error);
         alert('❌ Conversion failed. Please try again.');
@@ -474,6 +497,12 @@ __webpack_require__.r(__webpack_exports__);
   mounted: function mounted() {
     this.mountButton();
   },
+  updated: function updated() {
+    // Check if button exists, if not remount it
+    if (!document.getElementById('open-order-info-button')) {
+      this.mountButton();
+    }
+  },
   methods: {
     mountButton: function mountButton() {
       var _document$querySelect, _document$querySelect2;
@@ -511,12 +540,24 @@ __webpack_require__.r(__webpack_exports__);
       this.$emit('open');
     },
     show: function show() {
-      var _document$getElementB;
-      (_document$getElementB = document.getElementById('open-order-info-button')) === null || _document$getElementB === void 0 || _document$getElementB.classList.remove('hidden');
+      var _this = this;
+      var button = document.getElementById('open-order-info-button') || this.buttonRef;
+      if (button) {
+        button.classList.remove('hidden');
+      } else {
+        // If button doesn't exist, try to remount it and then show it
+        this.$nextTick(function () {
+          var _this$buttonRef;
+          _this.mountButton();
+          (_this$buttonRef = _this.buttonRef) === null || _this$buttonRef === void 0 || _this$buttonRef.classList.remove('hidden');
+        });
+      }
     },
     hide: function hide() {
-      var _document$getElementB2;
-      (_document$getElementB2 = document.getElementById('open-order-info-button')) === null || _document$getElementB2 === void 0 || _document$getElementB2.classList.add('hidden');
+      var button = document.getElementById('open-order-info-button') || this.buttonRef;
+      if (button) {
+        button.classList.add('hidden');
+      }
     }
   }
 });
