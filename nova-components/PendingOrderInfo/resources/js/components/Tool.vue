@@ -1,182 +1,22 @@
 <template>
-  <div class="hidden" id="conversion-modal">
-    <div class="border px-8 py-6 shadow-black shadow-2xl rounded-md overflow-scroll">
+  <ConversionModal :client-details="clientDetails" :selected-prepaid-offer-number="selectedPrepaidOfferNumber" :prepaid-offer-products="prepaidOfferProducts" :order-id="orderId" @close="closeConversionModal" @submit="sendConversionRequest"/>
 
-      <!-- Start Header -->
-      <div class="flex gap-6 justify-between items-start mb-2">
-        <div class="mb-2">
-          <h2 class="text-xl text-black">Client : <span class="font-bold">{{ clientDetails?.client ?? "" }}</span></h2>
-          <h2 class="text-xl text-black">Converting : <span class="font-bold">{{ selectedPrepaidOfferNumber ?? "" }}</span></h2>
-        </div>
-        <CloseButton width="1.8" height="1.8" @close="closeConversionModal"/>
-      </div>
-      <!-- End Header -->
+  <OrderInfoModal :client-details="clientDetails" :delivery-notes="deliveryNotes" :prepaid-offers="prepaidOffers" :selected-delivery-note-number="selectedDeliveryNoteNumber" :selected-prepaid-offer-number="selectedPrepaidOfferNumber" :selected-order-type="selectedOrderType" :delivery-note-products="deliveryNoteProducts" :prepaid-offer-products="prepaidOfferProducts" :order-id="orderId" @close="closeModal" @select-order="selectOrder" @convert-offer="convertOffer"/>
 
-      <form @submit.prevent="submitConversion" class="product-conversion-table-container overflow-x-scroll text-black">
-
-        <table style="width:100%" class="min-w-full border">
-          <TableHeader :headers="['Product', 'Price Type', 'Remaining', 'Taken', 'Price', 'To Convert']"/>
-          <tbody>
-          <tr v-for="(product, index) in prepaidOfferProducts" :key="product.id || index">
-            <td class="border product-row">{{ product.product_name }}</td>
-            <td class="border product-row">{{ product.price_type_name }}</td>
-            <td class="border product-row">{{ product.total_remaining }}</td>
-            <td class="border product-row">{{ product.total_taken }}</td>
-            <td class="border product-row">{{ product.price }}</td>
-            <td class="border product-row-input">
-              <input min="0" :max="product.total_remaining" placeholder="0" type="number" v-model.number="product.to_convert"/>
-            </td>
-          </tr>
-          <BlankRows :rows="prepaidOfferProducts" :quantity="6" :columnCount="6"/>
-          </tbody>
-        </table>
-
-        <div class="flex items-center gap-4 mt-6 mb-6 flex-wrap text-black">
-          <!-- Convert Button -->
-          <button type="submit" class="px-2 py-1 cursor-pointer covert-button rounded-md">
-            Convert Offer {{ selectedPrepaidOfferNumber }}
-          </button>
-
-          <!-- Close Button -->
-          <div class="px-2 py-1 cursor-pointer close-button rounded-md" @click="closeConversionModal">Cancel</div>
-        </div>
-      </form>
-
-    </div>
-  </div>
-
-  <div v-if="(deliveryNotes && deliveryNotes.length) || (prepaidOffers && prepaidOffers.length)" id="custom-modal">
-    <div class="border px-8 py-6 shadow-black shadow-2xl rounded-md overflow-scroll">
-
-      <!-- Start Header -->
-      <div class="flex gap-6 justify-between items-center mb-2">
-        <h2 class="text-xl text-black">Order info for client : <span class="font-bold">{{ clientDetails.client }}</span></h2>
-        <CloseButton @close="closeModal"/>
-      </div>
-      <!-- End Header -->
-
-      <!--Start Order Grid-->
-      <div class="grid md:grid-cols-2 md:gap-2 ">
-
-        <!--Start Delivery Notes -->
-        <div id="delivery-note-container" class="grid-container text-black ">
-          <h2 class="font-semibold order-heading mb-2"> Pending Delivery Notes </h2>
-          <div class="table-container" style="overflow-x:scroll;">
-            <table style="width:100%;" class="min-w-full border">
-              <TableHeader :headers="['Delivery Note no.', 'Delivery Date', 'Area', 'Location']"/>
-              <tbody>
-              <OrderLoop :orders="deliveryNotes" :selectedOrderNumber="selectedDeliveryNoteNumber" :selectedOrderType="'delivery_note'" orderType="delivery_note" :getOrderNumber="order => order.delivery_note_number" :getOrderDate="order => order.delivery_date" :formatDate="covertDate" :getAreaName="order => order.area ? order.area.name : 'Unknown Area'" :getLocationName="order => order.location ? order.location.name : 'Unknown Location'" @select="selectOrder"/>
-              <BlankRows :rows="deliveryNotes" :quantity="3" :columnCount="4"/>
-              </tbody>
-            </table>
-          </div>
-        </div>
-        <!--End Delivery Notes -->
-
-        <!--Start Prepaid Offers-->
-        <div id="prepaid-offer-container" class="grid-container text-black ">
-          <h2 class="font-semibold order-heading  mb-2">Client Prepaid Offer</h2>
-          <div class="table-container" style="overflow-x:scroll">
-            <table style="width:100%;" class="min-w-full border">
-              <TableHeader :headers="['Prepaid Offer no.', 'Order Date', 'Area', 'Location']"/>
-              <tbody>
-              <OrderLoop :orders="prepaidOffers" :selectedOrderNumber="selectedPrepaidOfferNumber" :selectedOrderType="'prepaid_offer'" orderType="prepaid_offer" :getOrderNumber="order => order.prepaid_offer_number" :getOrderDate="order => order.order_date" :formatDate="covertDate" :getAreaName="order => order.area ? order.area.name : 'Unknown Area'" :getLocationName="order => order.location ? order.location.name : 'Unknown Location'" @select="selectOrder"/>
-              <BlankRows :rows="prepaidOffers" :quantity="3" :columnCount="4"/>
-              </tbody>
-            </table>
-          </div>
-        </div>
-        <!--End Prepaid Offers-->
-
-      </div>
-      <!--End Order Grid-->
-
-      <!--Start Product Grid-->
-      <div style="overflow:scroll" class="grid md:grid-cols-2 md:gap-2 ">
-
-        <!-- Start Delivery Note Products -->
-        <div class="grid-container text-black" id="delivery-note-products">
-          <h2 class="font-semibold order-heading mb-2">
-            Delivery Note Products {{ selectedDeliveryNoteNumber ? selectedDeliveryNoteNumber : '' }} </h2>
-          <div class="product-table-container overflow-x-scroll">
-            <table style="width:100%;" class="min-w-full border">
-              <TableHeader :headers="['Product', 'Price Type', 'Quantity', 'Price', 'Deposit']"/>
-              <tbody>
-              <tr v-for="(product, index) in deliveryNoteProducts" :key="product.id || index">
-                <td class="border product-row">{{ product.product_name }}</td>
-                <td class="border product-row">{{ product.price_type_name }}</td>
-                <td class="border product-row">{{ product.quantity }}</td>
-                <td class="border product-row">{{ product.unit_price }}</td>
-                <td class="border product-row">{{ product.deposit_price }}</td>
-              </tr>
-              <BlankRows :rows="deliveryNoteProducts" :quantity="5" :columnCount="5"/>
-              </tbody>
-            </table>
-          </div>
-        </div>
-        <!-- End Delivery Note Products -->
-
-        <!--  Start Prepaid Offer Products   -->
-        <div class="grid-container text-black" id="prepaid-offer-products">
-          <h2 class="font-semibold order-heading mb-2">
-            Prepaid Offer Products {{ selectedPrepaidOfferNumber ? selectedPrepaidOfferNumber : '' }} </h2>
-          <div class="product-table-container overflow-x-scroll">
-            <table style="width:100%" class="min-w-full border">
-              <TableHeader :headers="['Product', 'Price Type', 'Remaining', 'Taken', 'Price']"/>
-              <tbody>
-              <tr class="overflow-scroll" v-for="(product, index) in prepaidOfferProducts" :key="product.id || index">
-                <td class="border product-row">{{ product.product_name }}</td>
-                <td class="border product-row">{{ product.price_type_name }}</td>
-                <td class="border product-row">{{ product.total_remaining }}</td>
-                <td class="border product-row">{{ product.total_taken }}</td>
-                <td class="border product-row">{{ product.price }}</td>
-              </tr>
-              <BlankRows :rows="prepaidOfferProducts" :quantity="5" :columnCount="5"/>
-              </tbody>
-            </table>
-          </div>
-        </div>
-        <!-- End Prepaid Offer Products   -->
-
-      </div>
-      <!--End Product Grid-->
-
-      <!--   Start button container   -->
-      <div class="flex items-center gap-4 mt-4 flex-wrap text-black ml-2">
-
-        <!--Amend Button-->
-        <a :href="`/admin/resources/delivery-notes/${orderId}/edit`" class="px-2 py-1 cursor-pointer amend-button rounded-md" v-if="selectedOrderType ===
-        'delivery_note'"> Amend Delivery Note {{ selectedDeliveryNoteNumber }} </a>
-
-        <!-- Convert Button -->
-        <button @click="convertOffer" class="px-2 py-1 cursor-pointer covert-button rounded-md" v-if="selectedOrderType === 'prepaid_offer'">Convert Offer {{
-            selectedPrepaidOfferNumber
-          }}
-        </button>
-
-        <!-- Close Button -->
-        <div class="px-2 py-1 cursor-pointer close-button rounded-md" @click="closeModal">Cancel</div>
-      </div>
-      <!--   End button container   -->
-
-    </div>
-
-  </div>
+  <ModalButton :resource-name="resourceName" :resource-id="resourceId" ref="modalButton" @open="openModal"/>
 </template>
 
 <script>
 
-import CloseButton from "./CloseButton.vue";
-import TableHeader from './TableHeader.vue'
-import BlankRows from './BlankRows.vue'
-import OrderLoop from "./OrderLoop.vue";
+import ConversionModal from "./ConversionModal.vue";
+import OrderInfoModal from "./OrderInfoModal.vue";
+import ModalButton from "./parts/ModalButton.vue";
 
 export default {
   components: {
-    OrderLoop,
-    CloseButton,
-    TableHeader,
-    BlankRows,
+    ConversionModal,
+    OrderInfoModal,
+    ModalButton,
   },
 
   props: ['resourceName', 'resourceId', 'panel'],
@@ -193,8 +33,8 @@ export default {
       selectedDeliveryNoteNumber: null,
       selectedPrepaidOfferNumber: null,
       orderId: null,
-
-
+      selectedOrderType: null,
+      modalButtonRef: null,
     };
   },
 
@@ -203,29 +43,11 @@ export default {
     document.addEventListener('keydown', this.onEscPress);
     document.addEventListener('mousedown', this.onClickOutside);
 
-
-    //Create the Button to show the modal on close
-    const deliveryNoteDetail = document.querySelector('[dusk="delivery-notes-detail-component"]')?.children[0]?.children[0];
-    const directSaleDetail = document.querySelector('[dusk="direct-sales-detail-component"]')?.children[0]?.children[0];
-    const element = deliveryNoteDetail || directSaleDetail;
-    if(element) {
-      // Resource Header
-      element.classList.add('flex', 'justify-between', 'items-center', 'gap-6')
-
-      // Containing Wrapper
-      const wrapper = document.createElement('div');
-      wrapper.classList.add('flex', 'items-center', 'gap-3');
-
-      // Open Modal Button
-      const openContainer = document.createElement('div');
-      openContainer.classList.add('border', 'px-2', 'py-1', 'cursor-pointer', 'hidden', 'whitespace-nowrap', 'rounded-sm', 'hover-button');
-      openContainer.id = 'open-order-info-button';
-      openContainer.addEventListener('click', this.openModal)
-      openContainer.innerText = "Open Order info"
-
-      wrapper.appendChild(openContainer)
-      element.appendChild(wrapper);
-    }
+    // Set modalButtonRef to use the ModalButton component's methods
+    this.modalButtonRef = {
+      show: () => this.$refs.modalButton?.show(),
+      hide: () => this.$refs.modalButton?.hide()
+    };
   },
 
 
@@ -271,11 +93,11 @@ export default {
 
     // Modal and Button Handlers
     showButton() {
-      document.getElementById('open-order-info-button')?.classList.remove('hidden');
+      this.modalButtonRef?.show();
     },
 
     hideButton() {
-      document.getElementById('open-order-info-button')?.classList.add('hidden');
+      this.modalButtonRef?.hide();
     },
 
     openModal() {
@@ -305,16 +127,6 @@ export default {
       if((modal) && !modal.querySelector('div.border')?.contains(event.target)) {
         this.closeModal();
       }
-    },
-
-    // Date formatting
-    covertDate(dateString) {
-      if(!dateString) return '';
-      const date = new Date(dateString);
-      const day = String(date.getDate()).padStart(2, '0');
-      const month = String(date.getMonth() + 1).padStart(2, '0');
-      const year = String(date.getFullYear()).slice(-2);
-      return `${day}/${month}/${year}`;
     },
 
 
@@ -351,42 +163,14 @@ export default {
     },
 
     openConversionModal() {
-
       document.getElementById('conversion-modal')?.classList.remove('hidden');
       document.getElementById('custom-modal')?.classList.add('hidden');
     },
 
 
-    submitConversion() {
-      let errors = []
-      const productsToSubmit = this.prepaidOfferProducts.filter(p => (p.to_convert ?? 0));
-
-      if(productsToSubmit.length === 0) {
-        alert('Please enter at least one product to convert.')
-        return
-      }
-
-      productsToSubmit.forEach(product => {
-        const value = product.to_convert ?? 0
-        const min = 0
-        const max = product.total_remaining
-
-        if(value < min || value > max) {
-          errors.push(`❌${product.product_name}: Allowed range is ${min}–${max}`)
-        }
-      })
-
-      if(errors.length > 0) {
-        alert(errors.join('\n'))
-        return
-      }
-
-      this.sendConversionRequest(this.orderId, {'id': this.orderId, 'order_number': this.selectedPrepaidOfferNumber, "products": productsToSubmit,});
-    },
-
-    sendConversionRequest(id, payload) {
-      console.log('Submitting conversion for ', id, ': ', payload,);
-      Nova.request().post(`/nova-vendor/pending-order-info/convert-offer/${id}`, payload).then(response => {
+    sendConversionRequest(payload) {
+      console.log('Submitting conversion for ', payload.id, ': ', payload);
+      Nova.request().post(`/nova-vendor/pending-order-info/convert-offer/${payload.id}`, payload).then(response => {
         this.closeConversionModal()
       }).catch(error => {
         console.error('Conversion failed:', error)
