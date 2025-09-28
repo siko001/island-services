@@ -19,7 +19,7 @@
 
     <!-- Optional "To Convert" input field -->
     <td v-if="showConvertInput" class="border border-color row-bg text-color product-row-input">
-      <input min="0" :max="product.total_remaining" placeholder="0" type="number" v-model.number="product.to_convert"/>
+      <input :disabled="!product.total_remaining" min="0" :max="product.total_remaining" placeholder="0" type="number" v-model.number="product.to_convert"/>
     </td>
   </tr>
 </template>

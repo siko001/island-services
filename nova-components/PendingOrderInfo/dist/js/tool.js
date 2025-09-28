@@ -1029,13 +1029,15 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vue */ "vue");
 /* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(vue__WEBPACK_IMPORTED_MODULE_0__);
 
+var _hoisted_1 = {
+  key: 0,
+  "class": "overlay"
+};
 function render(_ctx, _cache, $props, $setup, $data, $options) {
   var _component_ConversionModal = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("ConversionModal");
   var _component_OrderInfoModal = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("OrderInfoModal");
   var _component_ModalButton = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("ModalButton");
-  return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, [_cache[0] || (_cache[0] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
-    "class": "overlay"
-  }, null, -1 /* CACHED */)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_ConversionModal, {
+  return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, [$data.deliveryNotes && $data.deliveryNotes.length || $data.prepaidOffers && $data.prepaidOffers.length ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_1)) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_ConversionModal, {
     "client-details": $data.clientDetails,
     currentOrderId: this.resourceIdd,
     "selected-prepaid-offer-number": $data.selectedPrepaidOfferNumber,
@@ -1057,12 +1059,13 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     onClose: $options.closeModal,
     onSelectOrder: $options.selectOrder,
     onConvertOffer: $options.convertOffer
-  }, null, 8 /* PROPS */, ["client-details", "delivery-notes", "prepaid-offers", "selected-delivery-note-number", "selected-prepaid-offer-number", "selected-order-type", "delivery-note-products", "prepaid-offer-products", "order-id", "onClose", "onSelectOrder", "onConvertOffer"]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_ModalButton, {
+  }, null, 8 /* PROPS */, ["client-details", "delivery-notes", "prepaid-offers", "selected-delivery-note-number", "selected-prepaid-offer-number", "selected-order-type", "delivery-note-products", "prepaid-offer-products", "order-id", "onClose", "onSelectOrder", "onConvertOffer"]), $data.deliveryNotes && $data.deliveryNotes.length || $data.prepaidOffers && $data.prepaidOffers.length ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)(_component_ModalButton, {
+    key: 1,
     "resource-name": $props.resourceName,
     "resource-id": $props.resourceId,
     ref: "modalButton",
     onOpen: $options.openModal
-  }, null, 8 /* PROPS */, ["resource-name", "resource-id", "onOpen"])], 64 /* STABLE_FRAGMENT */);
+  }, null, 8 /* PROPS */, ["resource-name", "resource-id", "onOpen"])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true)], 64 /* STABLE_FRAGMENT */);
 }
 
 /***/ }),
@@ -1243,7 +1246,7 @@ var _hoisted_9 = {
   key: 2,
   "class": "border border-color row-bg text-color product-row-input"
 };
-var _hoisted_10 = ["max", "onUpdate:modelValue"];
+var _hoisted_10 = ["disabled", "max", "onUpdate:modelValue"];
 function render(_ctx, _cache, $props, $setup, $data, $options) {
   return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($props.products, function (product, index) {
     return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("tr", {
@@ -1253,6 +1256,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("td", _hoisted_3, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(product.total_remaining), 1 /* TEXT */), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("td", _hoisted_4, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(product.total_taken), 1 /* TEXT */), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("td", _hoisted_5, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(product.price), 1 /* TEXT */)], 64 /* STABLE_FRAGMENT */)) : $props.productType === 'delivery' ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, {
       key: 1
     }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("td", _hoisted_6, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(product.quantity), 1 /* TEXT */), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("td", _hoisted_7, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(product.unit_price), 1 /* TEXT */), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("td", _hoisted_8, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(product.deposit_price), 1 /* TEXT */)], 64 /* STABLE_FRAGMENT */)) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" Optional \"To Convert\" input field "), $props.showConvertInput ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("td", _hoisted_9, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
+      disabled: !product.total_remaining,
       min: "0",
       max: product.total_remaining,
       placeholder: "0",

@@ -1,10 +1,10 @@
 <template>
-  <div class="overlay"></div>
+  <div v-if="(deliveryNotes && deliveryNotes.length) || (prepaidOffers && prepaidOffers.length)" class="overlay"></div>
   <ConversionModal :client-details="clientDetails" :currentOrderId="this.resourceIdd" :selected-prepaid-offer-number="selectedPrepaidOfferNumber" :prepaid-offer-products="prepaidOfferProducts" :order-id="orderId" @close="closeConversionModal" @submit="sendConversionRequest" @back="handleBackFromConversion"/>
 
   <OrderInfoModal :client-details="clientDetails" :delivery-notes="deliveryNotes" :prepaid-offers="prepaidOffers" :selected-delivery-note-number="selectedDeliveryNoteNumber" :selected-prepaid-offer-number="selectedPrepaidOfferNumber" :selected-order-type="selectedOrderType" :delivery-note-products="deliveryNoteProducts" :prepaid-offer-products="prepaidOfferProducts" :order-id="orderId" @close="closeModal" @select-order="selectOrder" @convert-offer="convertOffer"/>
 
-  <ModalButton :resource-name="resourceName" :resource-id="resourceId" ref="modalButton" @open="openModal"/>
+  <ModalButton v-if="(deliveryNotes && deliveryNotes.length) || (prepaidOffers && prepaidOffers.length)" :resource-name="resourceName" :resource-id="resourceId" ref="modalButton" @open="openModal"/>
 </template>
 
 <script>
