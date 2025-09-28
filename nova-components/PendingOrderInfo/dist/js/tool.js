@@ -52,6 +52,10 @@ __webpack_require__.r(__webpack_exports__);
     currentOrderId: {
       type: [String, Number],
       "default": null
+    },
+    orderType: {
+      type: String,
+      "default": null
     }
   },
   methods: {
@@ -88,7 +92,8 @@ __webpack_require__.r(__webpack_exports__);
         prepaidOfferId: this.orderId,
         order_number: this.selectedPrepaidOfferNumber,
         orderId: this.currentOrderId,
-        products: productsToSubmit
+        products: productsToSubmit,
+        orderType: this.orderType
       });
     }
   }
@@ -229,6 +234,7 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
       deliveryNotes: null,
       prepaidOffers: null,
       clientDetails: null,
+      currentOrderType: null,
       prepaidOfferProducts: [],
       deliveryNoteProducts: [],
       selectedDeliveryNoteNumber: null,
@@ -277,6 +283,7 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
         _this2.prepaidOffers = response === null || response === void 0 ? void 0 : response.data.prepaid_offers;
         _this2.clientDetails = response === null || response === void 0 ? void 0 : response.data.client_info;
         _this2.resourceIdd = _this2.resourceId;
+        _this2.currentOrderType = _this2.resourceName;
       })["catch"](function (error) {
         console.error('Failed to load initial data', error);
       });
@@ -400,9 +407,10 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
             preserveScroll: true,
             preserveState: false
           });
+          _this6.fetchData();
+          _this6.prepaidOfferProducts = [];
           Nova.$emit('refresh-resource-fields');
           Nova.$emit('refresh-resources');
-          _this6.fetchData();
           _this6.closeEverything();
           Nova.success('✅ Conversion successful!');
         } else {
@@ -1038,6 +1046,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
   var _component_OrderInfoModal = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("OrderInfoModal");
   var _component_ModalButton = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("ModalButton");
   return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, [$data.deliveryNotes && $data.deliveryNotes.length || $data.prepaidOffers && $data.prepaidOffers.length ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_1)) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_ConversionModal, {
+    orderType: this.currentOrderType,
     "client-details": $data.clientDetails,
     currentOrderId: this.resourceIdd,
     "selected-prepaid-offer-number": $data.selectedPrepaidOfferNumber,
@@ -1046,7 +1055,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     onClose: $options.closeConversionModal,
     onSubmit: $options.sendConversionRequest,
     onBack: $options.handleBackFromConversion
-  }, null, 8 /* PROPS */, ["client-details", "currentOrderId", "selected-prepaid-offer-number", "prepaid-offer-products", "order-id", "onClose", "onSubmit", "onBack"]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_OrderInfoModal, {
+  }, null, 8 /* PROPS */, ["orderType", "client-details", "currentOrderId", "selected-prepaid-offer-number", "prepaid-offer-products", "order-id", "onClose", "onSubmit", "onBack"]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_OrderInfoModal, {
     "client-details": $data.clientDetails,
     "delivery-notes": $data.deliveryNotes,
     "prepaid-offers": $data.prepaidOffers,

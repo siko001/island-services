@@ -59,4 +59,40 @@ class PrepaidOfferProduct extends Model
     {
         return $this->belongsTo(PrepaidOffer::class);
     }
+
+    public static function boot()
+    {
+        parent::boot();
+
+        static::updated(function($model) {
+
+            //Check to see if total_remaining has changed to 0, if so check if all are 0 and if so mark the offer as terminated
+            if($model->isDirty('total_remaining') && $model->total_remaining == 0) {
+                $prepaidOffer = $model->prepaidOffer;
+                if($prepaidOffer) {
+                    $allZero = $prepaidOffer->prepaidOfferProducts()->where('total_remaining', '>', 0)->count() == 0;
+                    if($allZero) {
+                        $prepaidOffer->terminated = true;
+                        $prepaidOffer->save();
+                    }
+                }
+            }
+
+            //Handle the case where total_remaining is increased (a refund scenario)
+            if($model->isDirty('total_remaining') && $model->getOriginal('total_remaining') < $model->total_remaining) {
+                $prepaidOffer = $model->prepaidOffer;
+                if($prepaidOffer && $prepaidOffer->terminated) {
+                    $prepaidOffer->terminated = false;
+                    $prepaidOffer->save();
+                }
+            }
+
+        });
+
+        //      Refactor to cleanup
+        //      Make Sure that api can be used for Direct Sales as well
+        //      Add an addition column to the offer-products table for order_number tracking
+        //      In the Boot delete method of PrepaidOfferProduct and DirectSaleProduct, to restore the quantity to the PrepaidOffer if has the above column and the parent offer
+
+    }
 }

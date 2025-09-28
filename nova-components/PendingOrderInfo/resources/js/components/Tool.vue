@@ -1,6 +1,6 @@
 <template>
   <div v-if="(deliveryNotes && deliveryNotes.length) || (prepaidOffers && prepaidOffers.length)" class="overlay"></div>
-  <ConversionModal :client-details="clientDetails" :currentOrderId="this.resourceIdd" :selected-prepaid-offer-number="selectedPrepaidOfferNumber" :prepaid-offer-products="prepaidOfferProducts" :order-id="orderId" @close="closeConversionModal" @submit="sendConversionRequest" @back="handleBackFromConversion"/>
+  <ConversionModal :orderType="this.currentOrderType" :client-details="clientDetails" :currentOrderId="this.resourceIdd" :selected-prepaid-offer-number="selectedPrepaidOfferNumber" :prepaid-offer-products="prepaidOfferProducts" :order-id="orderId" @close="closeConversionModal" @submit="sendConversionRequest" @back="handleBackFromConversion"/>
 
   <OrderInfoModal :client-details="clientDetails" :delivery-notes="deliveryNotes" :prepaid-offers="prepaidOffers" :selected-delivery-note-number="selectedDeliveryNoteNumber" :selected-prepaid-offer-number="selectedPrepaidOfferNumber" :selected-order-type="selectedOrderType" :delivery-note-products="deliveryNoteProducts" :prepaid-offer-products="prepaidOfferProducts" :order-id="orderId" @close="closeModal" @select-order="selectOrder" @convert-offer="convertOffer"/>
 
@@ -28,6 +28,7 @@ export default {
       deliveryNotes: null,
       prepaidOffers: null,
       clientDetails: null,
+      currentOrderType: null,
 
       prepaidOfferProducts: [],
       deliveryNoteProducts: [],
@@ -73,6 +74,7 @@ export default {
         this.prepaidOffers = response?.data.prepaid_offers;
         this.clientDetails = response?.data.client_info;
         this.resourceIdd = this.resourceId;
+        this.currentOrderType = this.resourceName;
       }).catch(error => {
         console.error('Failed to load initial data', error);
       });
@@ -192,9 +194,11 @@ export default {
             preserveScroll: true,
             preserveState: false,
           })
+          this.fetchData();
+          this.prepaidOfferProducts = [];
           Nova.$emit('refresh-resource-fields')
           Nova.$emit('refresh-resources')
-          this.fetchData();
+
           this.closeEverything();
 
           Nova.success('✅ Conversion successful!')

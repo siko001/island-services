@@ -98,7 +98,6 @@ class PendingOrderHelper
     public static function deductPrepaidOfferProducts($prepaidId, $products)
     {
         $offer = PrepaidOffer::where('id', $prepaidId)->first();
-
         foreach($products as $product) {
             $offerProduct = $offer->prepaidOfferProducts()->where('product_id', $product['product_id'])
                 ->where('price_type_id', $product['price_type_id'])
@@ -109,5 +108,21 @@ class PendingOrderHelper
             }
         }
         return $offer->load('prepaidOfferProducts');
+    }
+
+    public static function checkProductsExist($prepaidOffer, $incomingProducts): true|JsonResponse
+    {
+        $productIds = collect($incomingProducts)->pluck('id')->toArray();
+        $products = $prepaidOffer->prepaidOfferProducts()->whereIn('id', $productIds)->get()->keyBy('id');
+        foreach($incomingProducts as $prod) {
+            if(!isset($products[$prod['id']])) {
+                return response()->json(['error' => 'Product ID ' . $prod['id'] . ' does not belong to this Prepaid Offer'], 400);
+            }
+            if($prod['to_convert'] > $products[$prod['id']]->total_remaining) {
+                return response()->json(['error' => 'Product ID ' . $prod['id'] . ' has insufficient remaining quantity'], 400);
+            }
+        }
+
+        return true;
     }
 }

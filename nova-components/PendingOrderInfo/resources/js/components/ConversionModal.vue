@@ -76,6 +76,11 @@ export default {
       type: [String, Number],
       default: null
     },
+
+    orderType: {
+      type: String,
+      default: null
+    },
   },
   methods: {
 
@@ -113,7 +118,8 @@ export default {
         prepaidOfferId: this.orderId,
         order_number: this.selectedPrepaidOfferNumber,
         orderId: this.currentOrderId,
-        products: productsToSubmit
+        products: productsToSubmit,
+        orderType: this.orderType,
       });
 
 

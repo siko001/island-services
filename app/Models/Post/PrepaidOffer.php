@@ -126,14 +126,16 @@ class PrepaidOffer extends Model
             }
         });
 
-        //        static::updating(function($model) {
-        //            if($model->isDirty('terminated') && $model->terminated == 1) {
-        //                foreach($model->prepaidOfferProducts as $lineItem) {
-        //                    $lineItem->total_taken = $lineItem->quantity;
-        //                    $lineItem->save();
+        static::updating(function($model) {
+            if($model->isDirty('terminated') && $model->terminated == 1) {
+                foreach($model->prepaidOfferProducts as $lineItem) {
+                    $lineItem->total_taken = $lineItem->quantity;
+                    $lineItem->save();
+
+                }
+            }
+        });
+
         //
-        //                }
-        //            }
-        //        });
     }
 }
