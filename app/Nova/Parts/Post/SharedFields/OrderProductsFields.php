@@ -7,6 +7,7 @@ use App\Nova\DeliveryNote;
 use App\Nova\DirectSale;
 use App\Nova\Product;
 use Laravel\Nova\Fields\BelongsTo;
+use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\Heading;
 use Laravel\Nova\Fields\Number;
 use Laravel\Nova\Fields\Select;
@@ -311,6 +312,18 @@ class OrderProductsFields
             ->dependsOn(['product'], function($field, $request, $formData) {
                 HelperFunctions::fillFromDependentField($field, $formData, \App\Models\Product\Product::class, 'product', 'serial_number');
             });
+
+        $fields[] = Heading::make('<p style="color:blue; font-weight:bold; font-size:18px;">Conversion Info</p>')->asHtml()->hide()
+            ->dependsOn(['product',], function($field, $request, $formData) {
+                $productId = $formData['product'] ?? null;
+                if($productId) {
+                    $field->show();
+                }
+            });
+
+        $fields[] = Boolean::make('Converted')->hideWhenCreating()->hideWhenUpdating();
+        $fields[] = BelongsTo::make('Prepaid Offer', "prepaidOffer")->hideWhenCreating()->hideWhenUpdating();
+        $fields[] = Text::make('Prepaid Offer Number', 'prepaid_offer_number')->hideWhenCreating()->hideWhenUpdating();
 
         return $fields;
     }

@@ -58,4 +58,9 @@ class DeliveryNoteProduct extends Model
     {
         return $this->belongsTo(VatCode::class);
     }
+
+    public function prepaidOffer(): BelongsTo
+    {
+        return $this->belongsTo(PrepaidOffer::class);
+    }
 }
