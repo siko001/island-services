@@ -17,17 +17,22 @@ class DeliveryNoteProduct extends Model
         "price_type_id",
         "quantity",
         'unit_price',
+        'total_price',
         'deposit_price',
+        'total_deposit_price',
         'timestamps',
         'vat_code_id',
-        'total_price',
-        'bcrs_price'
+        'bcrs_deposit',
+        'total_bcrs_deposit',
     ];
     protected $casts = [
         'timestamps' => 'date',
-        'deposit_price' => 'decimal:2',
+        'unit_price' => 'decimal:2',
         'total_price' => 'decimal:2',
-        'bcrs_price' => 'decimal:2',
+        'deposit_price' => 'decimal:2',
+        'total_deposit_price' => 'decimal:2',
+        'bcrs_deposit' => 'decimal:2',
+        'total_bcrs_deposit' => 'decimal:2',
     ];
 
     public function deliveryNote(): BelongsTo
