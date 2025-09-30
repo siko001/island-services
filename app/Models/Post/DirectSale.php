@@ -8,11 +8,10 @@ use App\Models\General\Area;
 use App\Models\General\Location;
 use App\Models\General\OrderType;
 use App\Models\User;
-use Carbon\Carbon;
+use App\Observers\DirectSaleObserver;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Support\Facades\Log;
 
 class DirectSale extends Model
 {
@@ -94,22 +93,7 @@ class DirectSale extends Model
     public static function boot(): void
     {
         parent::boot();
-        static::updating(function($directSale) {
-            if($directSale->isDirty('status') && $directSale->status == 1 && !$directSale->processed_at) {
-                $directSale->processed_at = Carbon::now();
-
-                foreach($directSale->directSaleProducts as $lineItem) {
-                    Log::info('running: ' . $lineItem);
-                    $product = $lineItem->product;
-                    if($product) {
-                        $product->stock -= $lineItem->quantity;
-                        $product->save();
-                    }
-                }
-
-            }
-        });
-
+        DirectSale::observe(DirectSaleObserver::class);
     }
 
     public function replicate(array $except = null): DirectSale

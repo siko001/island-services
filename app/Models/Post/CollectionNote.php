@@ -8,7 +8,7 @@ use App\Models\General\Area;
 use App\Models\General\Location;
 use App\Models\General\OrderType;
 use App\Models\User;
-use Carbon\Carbon;
+use App\Observers\CollectionNoteObserver;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -89,20 +89,13 @@ class CollectionNote extends Model
         return $this->hasMany(CollectionNoteProduct::class);
     }
 
-    public static function boot()
+    public static function boot(): void
     {
         parent::boot();
-        static::updating(function($collectionNote) {
-            if($collectionNote->isDirty('status') && $collectionNote->status == 1 && !$collectionNote->processed_at) {
-                $collectionNote->processed_at = Carbon::now();
-                foreach($collectionNote->collectionNoteProducts as $lineItem) {
-                    $product = $lineItem->product;
-                }
-            }
-        });
-
+        CollectionNote::observe(CollectionNoteObserver::class);
     }
 
+    //    Override replicate to generate new collection note number
     public function replicate(array $except = null): CollectionNote
     {
         $new = parent::replicate($except);
