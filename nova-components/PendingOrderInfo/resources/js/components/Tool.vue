@@ -86,7 +86,7 @@ export default {
         const response = await Nova.request().get(`/nova-vendor/pending-order-info/get-custom-prods/${orderNumber}`);
         const {type, products, orderId} = response.data;
 
-
+        console.log(products)
         if(type === 'prepaid_offer') {
           this.prepaidOfferProducts = products || [];
           this.orderId = orderId || null;
@@ -198,7 +198,6 @@ export default {
           this.prepaidOfferProducts = [];
           Nova.$emit('refresh-resource-fields')
           Nova.$emit('refresh-resources')
-
           this.closeEverything();
 
           Nova.success('✅ Conversion successful!')

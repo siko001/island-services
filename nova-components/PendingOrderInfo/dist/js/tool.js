@@ -302,6 +302,7 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
             case 1:
               response = _context.v;
               _response$data = response.data, type = _response$data.type, products = _response$data.products, orderId = _response$data.orderId;
+              console.log(products);
               if (type === 'prepaid_offer') {
                 _this3.prepaidOfferProducts = products || [];
                 _this3.orderId = orderId || null;

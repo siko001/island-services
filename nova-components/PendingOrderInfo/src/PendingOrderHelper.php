@@ -6,6 +6,7 @@ use App\Models\Post\DeliveryNote;
 use App\Models\Post\PrepaidOffer;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Log;
 
 class PendingOrderHelper
 {
@@ -66,10 +67,18 @@ class PendingOrderHelper
                     'price_type_id' => $item->price_type_id,
                     'price_type_name' => $item->priceType->name ?? '',
                     'vat_code_id' => $item->vat_code_id,
+                    'bcrs_deposit' => $item->bcrs_deposit ?? null,
+
+                    'make' => $item->make ?? null,
+                    'model' => $item->model ?? null,
+                    'serial_number' => $item->serial_number ?? null,
+
                     //Only Prepaid
                     'total_remaining' => $item->total_remaining ?? null,
                     'total_taken' => $item->total_taken ?? null,
                     'price' => $item->price ?? null,
+                    'deposit' => $item->deposit ?? null,
+
                     //Only Delivery
                     'deposit_price' => $item->deposit_price ?? null,
                     'quantity' => $item->quantity ?? null,
@@ -84,13 +93,27 @@ class PendingOrderHelper
         $offer = $model::where('id', $offerId)->first();
         $relationship = $model == DeliveryNote::class ? 'deliveryNoteProducts' : 'directSaleProducts';
         foreach($products as $product) {
-            $offer->$relationship()->create([
+            Log::info('Converting Prepaid Offer Product', $product);
+            $newprod = $offer->$relationship()->create([
                 'product_id' => $product['product_id'],
                 'price_type_id' => $product['price_type_id'],
                 'vat_code_id' => $product['vat_code_id'],
                 'quantity' => $product['to_convert'],
+
                 'unit_price' => $product['price'],
+                'total_price' => $product['to_convert'] * $product['price'],
+
+                'deposit_price' => $product['deposit'] ?? 0.00,
+                "total_deposit_price" => ($product['deposit'] ?? 0.00) * $product['to_convert'],
+
+                'bcrs_deposit' => $product['bcrs_deposit'],
+                'total_bcrs_deposit' => ($product['bcrs_deposit']) * $product['to_convert'],
+
+                'make' => $product['make'] ?? null,
+                'model' => $product['model'] ?? null,
+                'serial_number' => $product['serial_number'] ?? null,
             ]);
+            Log::info('Converted Prepaid Offer Product', (array)json_encode($newprod));
         }
         return $offer->load($relationship);
     }
