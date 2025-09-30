@@ -4,6 +4,7 @@ namespace App\Helpers;
 
 use App\Models\Admin\Role;
 use App\Models\Customer\Customer;
+use App\Models\Post\PrepaidOffer;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -210,5 +211,36 @@ class HelperFunctions
         $paddedNumber = str_pad($nextNumber, max(strlen((string)$nextNumber), 4), '0', STR_PAD_LEFT);
         $year = Carbon::now()->format('Y');
         return $initials . '-' . $year . '-' . $paddedNumber;
+    }
+
+    public static function revertPrepaidOfferProductsIfNeeded($model): void
+    {
+        if($model->converted && $model->prepaid_offer_id) {
+            $prepaidOffer = PrepaidOffer::find($model->prepaid_offer_id);
+            if($prepaidOffer && $prepaidOffer->status == 1) {
+                $prepaidOfferProduct = $prepaidOffer->prepaidOfferProducts()->where('product_id', $model->product_id)->first();
+                if($prepaidOfferProduct) {
+                    $prepaidOfferProduct->total_remaining += $model->quantity;
+                    $prepaidOfferProduct->total_taken -= $model->quantity;
+                    $prepaidOfferProduct->save();
+
+                    // Notify Admins
+                    Notifications::notifyUser(
+                        $prepaidOfferProduct,
+                        [
+                            'order_note' => $model->delivery_note_id ? 'Delivery Note' : ($model->direct_sale_id ? 'Direct Sale' : 'Record'),
+                            'product' => $prepaidOfferProduct->product->name,
+                            'order_note_number' => $model->deliveryNote->delivery_note_number ?? ($model->directSale->direct_sale_number ?? 'N/A'),
+                            'prepaid_offer_number' => $prepaidOffer->prepaid_offer_number,
+                            'quantity' => $model->quantity
+                        ],
+                        'created',
+                        "Product {product} quantities ({quantity}) reverted in Prepaid Offer {prepaid_offer_number} due to removal of associated record from {order_note}: {order_note_number} .",
+                        'check'
+                    );
+
+                }
+            }
+        }
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Models\Post;
 
+use App\Helpers\HelperFunctions;
 use App\Models\General\VatCode;
 use App\Models\Product\PriceType;
 use App\Models\Product\Product;
@@ -61,5 +62,14 @@ class DirectSaleProduct extends Model
     public function prepaidOffer(): BelongsTo
     {
         return $this->belongsTo(PrepaidOffer::class);
+    }
+
+    public static function boot()
+    {
+        parent::boot();
+
+        static::deleting(function($model) {
+            HelperFunctions::revertPrepaidOfferProductsIfNeeded($model);
+        });
     }
 }
