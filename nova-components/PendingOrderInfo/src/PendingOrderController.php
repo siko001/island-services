@@ -59,7 +59,7 @@ class PendingOrderController extends Controller
         }
 
         //Convert the products and deduct from the Prepaid Offer
-        $result = PendingOrderHelper::convertPrepaidOfferToDeliveryNote($model, $orderId, $request->input('products'));
+        $result = PendingOrderHelper::convertPrepaidOfferToDeliveryNote($model, $orderId, $request->input('products'), $prepaidOrderId);
         $deductions = $result && PendingOrderHelper::deductPrepaidOfferProducts($prepaidOrderId, $request->input('products'));
 
         $response = $result && $deductions ? 'success' : 'failed';

@@ -6,7 +6,6 @@ use App\Models\Post\DeliveryNote;
 use App\Models\Post\PrepaidOffer;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Log;
 
 class PendingOrderHelper
 {
@@ -88,13 +87,20 @@ class PendingOrderHelper
         }
     }
 
-    public static function convertPrepaidOfferToDeliveryNote($model, $offerId, $products)
+    public static function convertPrepaidOfferToDeliveryNote($model, $offerId, $products, $prepaidOfferId)
     {
         $offer = $model::where('id', $offerId)->first();
+        if(!$offer) {
+            return response()->json(['error' => 'Not found.'], 404);
+        }
+        $prepaidOffer = PrepaidOffer::where('id', $prepaidOfferId)->first();
+        if(!$prepaidOffer) {
+            return response()->json(['error' => 'Prepaid Offer not found.'], 404);
+        }
+
         $relationship = $model == DeliveryNote::class ? 'deliveryNoteProducts' : 'directSaleProducts';
         foreach($products as $product) {
-            Log::info('Converting Prepaid Offer Product', $product);
-            $newprod = $offer->$relationship()->create([
+            $offer->$relationship()->create([
                 'product_id' => $product['product_id'],
                 'price_type_id' => $product['price_type_id'],
                 'vat_code_id' => $product['vat_code_id'],
@@ -112,8 +118,10 @@ class PendingOrderHelper
                 'make' => $product['make'] ?? null,
                 'model' => $product['model'] ?? null,
                 'serial_number' => $product['serial_number'] ?? null,
+
+                'converted' => true,
+                'prepaid_offer_id' => $prepaidOffer->id,
             ]);
-            Log::info('Converted Prepaid Offer Product', (array)json_encode($newprod));
         }
         return $offer->load($relationship);
     }
