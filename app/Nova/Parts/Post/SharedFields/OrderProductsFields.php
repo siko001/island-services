@@ -323,7 +323,6 @@ class OrderProductsFields
 
         $fields[] = Boolean::make('Converted')->hideWhenCreating()->hideWhenUpdating();
         $fields[] = BelongsTo::make('Prepaid Offer', "prepaidOffer")->hideWhenCreating()->hideWhenUpdating();
-        $fields[] = Text::make('Prepaid Offer Number', 'prepaid_offer_number')->hideWhenCreating()->hideWhenUpdating();
 
         return $fields;
     }
