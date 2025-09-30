@@ -24,6 +24,9 @@ class DirectSaleProduct extends Model
         'vat_code_id',
         'bcrs_deposit',
         'total_bcrs_deposit',
+        'converted',
+        'prepaid_offer_id',
+        'prepaid_offer_number'
     ];
     protected $casts = [
         'timestamps' => 'date',
@@ -33,6 +36,7 @@ class DirectSaleProduct extends Model
         'total_bcrs_deposit' => 'decimal:2',
         'unit_price' => 'decimal:2',
         'total_price' => 'decimal:2',
+        'converted' => 'boolean',
     ];
 
     public function directSale(): BelongsTo
