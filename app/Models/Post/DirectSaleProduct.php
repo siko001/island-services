@@ -26,7 +26,6 @@ class DirectSaleProduct extends Model
         'total_bcrs_deposit',
         'converted',
         'prepaid_offer_id',
-        'prepaid_offer_number'
     ];
     protected $casts = [
         'timestamps' => 'date',

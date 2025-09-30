@@ -74,7 +74,6 @@ return new class extends Migration {
 
             $table->boolean('converted')->default(false);
             $table->foreignId('prepaid_offer_id')->nullable()->constrained('prepaid_offers')->onDelete('cascade');
-            $table->string('prepaid_offer_number')->nullable();
 
             $table->timestamps();
 
