@@ -37,7 +37,9 @@ class DirectSaleProductPolicy
      */
     public function update(User $user, DirectSaleProduct $directSaleProduct): bool
     {
-        return !DirectSale::where('id', $directSaleProduct->direct_sale_id)->pluck('status')->first();
+        $directSaleProcessed = !DirectSale::where('id', $directSaleProduct->direct_sale_id)->pluck('status')->first();
+        $prepaidOfferLinked = $directSaleProduct->prepaid_offer_id !== null;
+        return !$directSaleProcessed && !$prepaidOfferLinked;
     }
 
     /**

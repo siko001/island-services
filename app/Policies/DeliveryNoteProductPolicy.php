@@ -37,8 +37,9 @@ class DeliveryNoteProductPolicy
      */
     public function update(User $user, DeliveryNoteProduct $deliveryNoteProduct): bool
     {
-        return !DeliveryNote::where('id', $deliveryNoteProduct->delivery_note_id)->pluck('status')->first();
-
+        $deliveryNoteProcessed = DeliveryNote::where('id', $deliveryNoteProduct->delivery_note_id)->pluck('status')->first();
+        $prepaidOfferLinked = $deliveryNoteProduct->prepaid_offer_id !== null;
+        return !$deliveryNoteProcessed && !$prepaidOfferLinked;
     }
 
     /**
