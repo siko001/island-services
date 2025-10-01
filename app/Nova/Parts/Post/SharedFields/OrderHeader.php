@@ -53,6 +53,13 @@ class OrderHeader
                 HelperFunctions::fillFromDependentField($field, $formData, \App\Models\Customer\Customer::class, 'customer', 'delivery_details_email_one');
             });
 
+        $fields[] = Boolean::make('Create Products from Customer Defaults', 'create_from_default_products')
+            ->dependsOn('customer', function($field, $request, FormData $formData) {
+                $customerId = $formData['customer'];
+                $customerId && \App\Models\Customer\Customer::find($customerId)->has_default_products && $field->show() && $field->default(true);
+            })
+            ->hide();
+
         return $fields;
     }
 }

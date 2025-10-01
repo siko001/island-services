@@ -2,8 +2,8 @@
 
 namespace App\Observers;
 
+use App\Helpers\OrderHelper;
 use App\Models\Post\DeliveryNote;
-use Carbon\Carbon;
 
 class DeliveryNoteObserver
 {
@@ -12,7 +12,14 @@ class DeliveryNoteObserver
      */
     public function created(DeliveryNote $deliveryNote): void
     {
-        //
+        if($deliveryNote->create_from_default_products) {
+            OrderHelper::createFromDefaults($deliveryNote);
+        }
+    }
+
+    public static function creating(DeliveryNote $deliveryNote): void
+    {
+
     }
 
     /**
@@ -25,17 +32,7 @@ class DeliveryNoteObserver
 
     public static function updating(DeliveryNote $deliveryNote): void
     {
-        if($deliveryNote->isDirty('status') && $deliveryNote->status == 1 && !$deliveryNote->processed_at) {
-            $deliveryNote->processed_at = Carbon::now();
-            foreach($deliveryNote->deliveryNoteProducts as $lineItem) {
-                $product = $lineItem->product;
-                if($product) {
-                    $product->stock -= $lineItem->quantity;
-                    $product->save();
-                }
-            }
-
-        }
+        OrderHelper::processOrder($deliveryNote);
     }
 
     /**

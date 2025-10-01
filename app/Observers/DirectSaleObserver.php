@@ -2,8 +2,8 @@
 
 namespace App\Observers;
 
+use App\Helpers\OrderHelper;
 use App\Models\Post\DirectSale;
-use Carbon\Carbon;
 
 class DirectSaleObserver
 {
@@ -12,7 +12,9 @@ class DirectSaleObserver
      */
     public function created(DirectSale $directSale): void
     {
-        //
+        if($directSale->create_from_default_products) {
+            OrderHelper::createFromDefaults($directSale);
+        }
     }
 
     /**
@@ -25,16 +27,7 @@ class DirectSaleObserver
 
     public static function updating(DirectSale $directSale): void
     {
-        if($directSale->isDirty('status') && $directSale->status == 1 && !$directSale->processed_at) {
-            $directSale->processed_at = Carbon::now();
-            foreach($directSale->directSaleProducts as $lineItem) {
-                $product = $lineItem->product;
-                if($product) {
-                    $product->stock -= $lineItem->quantity;
-                    $product->save();
-                }
-            }
-        }
+        OrderHelper::processOrder($directSale);
     }
 
     /**
