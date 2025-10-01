@@ -2,10 +2,15 @@
 
 namespace App\Nova;
 
+use Laravel\Nova\Actions\Action;
+use Laravel\Nova\Card;
 use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\Field;
+use Laravel\Nova\Fields\Number;
 use Laravel\Nova\Fields\Select;
+use Laravel\Nova\Filters\Filter;
 use Laravel\Nova\Http\Requests\NovaRequest;
+use Laravel\Nova\Lenses\Lens;
 
 class CustomerDefaultProducts extends Resource
 {
@@ -15,10 +20,6 @@ class CustomerDefaultProducts extends Resource
      */
     public static $model = \App\Models\Customer\CustomerDefaultProducts::class;
 
-    /**
-     * The single value that should be used to represent the resource when being displayed.
-     * @var string
-     */
     public function title()
     {
         return $this->product->name ?? 'Product #' . $this->id;
@@ -64,14 +65,22 @@ class CustomerDefaultProducts extends Resource
                         ->displayUsingLabels()
                         ->required()
                         ->show();
-                })
+                }),
+
+            Number::make('Quantity')
+                ->hide()
+                ->default(1)
+                ->rules('required', 'integer', 'min:1', "max:9999")
+                ->dependsOn('product', function($field, $request, $formData) {
+                    $formData['product'] && $field->show();
+                }),
 
         ];
     }
 
     /**
      * Get the cards available for the resource.
-     * @return array<int, \Laravel\Nova\Card>
+     * @return array<int, Card>
      */
     public function cards(NovaRequest $request): array
     {
@@ -80,7 +89,7 @@ class CustomerDefaultProducts extends Resource
 
     /**
      * Get the filters available for the resource.
-     * @return array<int, \Laravel\Nova\Filters\Filter>
+     * @return array<int, Filter>
      */
     public function filters(NovaRequest $request): array
     {
@@ -89,7 +98,7 @@ class CustomerDefaultProducts extends Resource
 
     /**
      * Get the lenses available for the resource.
-     * @return array<int, \Laravel\Nova\Lenses\Lens>
+     * @return array<int, Lens>
      */
     public function lenses(NovaRequest $request): array
     {
@@ -98,7 +107,7 @@ class CustomerDefaultProducts extends Resource
 
     /**
      * Get the actions available for the resource.
-     * @return array<int, \Laravel\Nova\Actions\Action>
+     * @return array<int, Action>
      */
     public function actions(NovaRequest $request): array
     {

@@ -11,7 +11,7 @@ class CustomerDefaultProducts extends Model
 {
     //
     protected $table = 'customer_default_products';
-    protected $fillable = ['product_id', 'price_type_id', 'customer_id'];
+    protected $fillable = ['product_id', 'price_type_id', 'customer_id', 'quantity'];
 
     public function product(): BelongsTo
     {
