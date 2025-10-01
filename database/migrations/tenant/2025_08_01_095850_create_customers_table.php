@@ -22,6 +22,7 @@ return new class extends Migration {
             $table->boolean('barter_client')->default(false);
             $table->boolean('stop_statement')->default(false);
             $table->boolean('pet_client')->default(false);
+            $table->boolean('has_default_products')->default(false);
 
             //Delivery details
             $table->string('delivery_details_name')->nullable();

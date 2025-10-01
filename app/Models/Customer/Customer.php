@@ -4,11 +4,14 @@ namespace App\Models\Customer;
 
 use App\Models\General\Area;
 use App\Models\General\Location;
+use App\Models\Post\DeliveryNote;
+use App\Models\Post\DirectSale;
 use App\Models\User;
 use App\Observers\CustomerObserver;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Customer extends Model
 {
@@ -92,6 +95,7 @@ class Customer extends Model
         'remarks',
         'created_at',
         'updated_at',
+        'has_default_products'
     ];
     protected $casts = [
         'summer_address_area_id' => 'integer',
@@ -113,16 +117,12 @@ class Customer extends Model
         'barter_client' => "boolean",
         'stop_statement' => "boolean",
         'pet_client' => "boolean",
+        'has_default_products' => "boolean",
         'delivery_details_area_id' => 'integer',
         'delivery_details_locality_id' => 'integer',
         'billing_details_area_id' => 'integer',
         'billing_details_locality_id' => 'integer',
     ];
-
-    /**
-     * Get the delivery address as a formatted string.
-     * @return string
-     */
 
     public function deliveryArea(): BelongsTo
     {
@@ -179,32 +179,24 @@ class Customer extends Model
         return $this->belongsTo(ClientType::class, 'client_types_id');
     }
 
+    public function defaultStock(): HasMany
+    {
+        return $this->hasMany(CustomerDefaultProducts::class, 'customer_id');
+    }
+
+    public function deliveryNotes(): HasMany
+    {
+        return $this->hasMany(DeliveryNote::class, 'customer_id');
+    }
+
+    public function directSales(): HasMany
+    {
+        return $this->hasMany(DirectSale::class, 'customer_id');
+    }
+
     protected static function boot(): void
     {
         parent::boot();
         Customer::observe(CustomerObserver::class);
-
-        static::saving(function($customer) {
-            //Pipeline calls Global
-            if(!$customer->different_billing_details) {
-                $customer->copyDeliveryToBilling();
-            }
-        });
-
-    }
-
-    protected function copyDeliveryToBilling(): void
-    {
-        $fields = [
-            'name', 'surname', 'company_name', 'department', 'address',
-            'post_code', 'country', 'telephone_home', 'telephone_office',
-            'fax_one', 'fax_two', 'email_one', 'email_two', 'mobile', 'url',
-            'id_number', 'vat_number', 'registration_number',
-            'financial_name', 'financial_surname', 'area_id', 'locality_id',
-        ];
-
-        foreach($fields as $field) {
-            $this->{'billing_details_' . $field} = $this->{'delivery_details_' . $field};
-        }
     }
 }

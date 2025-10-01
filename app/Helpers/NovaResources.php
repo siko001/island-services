@@ -9,6 +9,7 @@ use App\Nova\ClientType;
 use App\Nova\CollectionNote;
 use App\Nova\Complaint;
 use App\Nova\Customer;
+use App\Nova\CustomerDefaultStock;
 use App\Nova\CustomerGroup;
 use App\Nova\DeliveryNote;
 use App\Nova\DirectSale;

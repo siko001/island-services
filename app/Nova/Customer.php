@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Nova;
-//  Select::make('Locality', 'tag_id')->searchable()->options(\App\Models\General\Location::all()->pluck('name', 'id'))->displayUsingLabels(),
+
 use App\Helpers\HelperFunctions;
 use App\Nova\Parts\Customer\AccountDetails;
 use App\Nova\Parts\Customer\CommunicationDetails;
@@ -10,11 +10,17 @@ use App\Nova\Parts\Customer\FinancialDetails;
 use App\Nova\Parts\Customer\OtherDetails;
 use App\Nova\Parts\Customer\SummerAddress;
 use App\Traits\ResourcePolicies;
+use Laravel\Nova\Actions\Action;
 use Laravel\Nova\Actions\ExportAsCsv;
+use Laravel\Nova\Card;
 use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\DateTime;
+use Laravel\Nova\Fields\Field;
+use Laravel\Nova\Fields\HasMany;
 use Laravel\Nova\Fields\Text;
+use Laravel\Nova\Filters\Filter;
 use Laravel\Nova\Http\Requests\NovaRequest;
+use Laravel\Nova\Lenses\Lens;
 use Laravel\Nova\Panel;
 use Laravel\Nova\Tabs\Tab;
 
@@ -23,9 +29,6 @@ class Customer extends Resource
     use ResourcePolicies;
 
     public static string $policyKey = 'customer';
-    //    public static $showPollingToggle = true;
-    //    public static $polling = true;
-    //    public static $pollingInterval = 1;
     /**
      * The model the resource corresponds to.
      * @var class-string<\App\Models\Customer\Customer>
@@ -41,12 +44,13 @@ class Customer extends Resource
      * @var array
      */
     public static $search = [
-        'client', 'account_number'
+        'client',
+        'account_number'
     ];
 
     /**
      * Get the fields displayed by the resource.
-     * @return array<int, \Laravel\Nova\Fields\Field>
+     * @return array<int, Field>
      */
     public function fields(NovaRequest $request): array
     {
@@ -109,14 +113,22 @@ class Customer extends Resource
 
             ]),
 
-            Panel::make('Summer Residence Information', new SummerAddress)
+            Panel::make('Summer Residence Information', new SummerAddress),
+
+            Tab::group('Stock Info', [
+                Tab::make('Default Stock', [
+                    HasMany::make('Default Stock', 'defaultStock', CustomerDefaultProducts::class),
+                ]),
+
+            ]),
+
         ];
 
     }
 
     /**
      * Get the cards available for the resource.
-     * @return array<int, \Laravel\Nova\Card>
+     * @return array<int, Card>
      */
     public function cards(NovaRequest $request): array
     {
@@ -125,7 +137,7 @@ class Customer extends Resource
 
     /**
      * Get the filters available for the resource.
-     * @return array<int, \Laravel\Nova\Filters\Filter>
+     * @return array<int, Filter>
      */
     public function filters(NovaRequest $request): array
     {
@@ -134,7 +146,7 @@ class Customer extends Resource
 
     /**
      * Get the lenses available for the resource.
-     * @return array<int, \Laravel\Nova\Lenses\Lens>
+     * @return array<int, Lens>
      */
     public function lenses(NovaRequest $request): array
     {
@@ -143,7 +155,7 @@ class Customer extends Resource
 
     /**
      * Get the actions available for the resource.
-     * @return array<int, \Laravel\Nova\Actions\Action>
+     * @return array<int, Action>
      */
     public function actions(NovaRequest $request): array
     {
