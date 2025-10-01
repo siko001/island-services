@@ -6,6 +6,7 @@ use App\Models\General\Offer;
 use App\Models\General\VatCode;
 use App\Models\Product\PriceType;
 use App\Models\Product\Product;
+use App\Observers\PrepaidOfferProductObserver;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -58,5 +59,12 @@ class PrepaidOfferProduct extends Model
     public function prepaidOffer(): BelongsTo
     {
         return $this->belongsTo(PrepaidOffer::class);
+    }
+
+    public static function boot(): void
+    {
+        parent::boot();
+        PrepaidOfferProduct::observe(PrepaidOfferProductObserver::class);
+
     }
 }

@@ -11,6 +11,7 @@ use App\Nova\Parts\Post\SharedFields\FinancialDetails;
 use App\Nova\Parts\Post\SharedFields\OrderHeader;
 use App\Traits\ResourcePolicies;
 use Illuminate\Http\Request;
+use IslandServices\PendingOrderInfo\PendingOrderInfo;
 use Laravel\Nova\Actions\Action;
 use Laravel\Nova\Card;
 use Laravel\Nova\Fields\Field;
@@ -61,18 +62,19 @@ class DeliveryNote extends Resource
     public function fields(NovaRequest $request): array
     {
         return [
+
             ... (new OrderHeader())('delivery_note', \App\Models\Post\DeliveryNote::class),
 
             Tab::group('Information', [
                 Tab::make("Delivery Details", (new DeliveryDetails)("delivery_note")),
                 Tab::make("Financial Details", new FinancialDetails()),
                 Tab::make("Additional Details", (new AdditionalDetails)("delivery_note"))
+
             ]),
 
             HasMany::make('Products', 'deliveryNoteProducts', DeliveryNoteProduct::class),
 
         ];
-        //        Still to do load-sheet number (when in a load sheet) Products has many rel
     }
 
     /**
@@ -85,7 +87,7 @@ class DeliveryNote extends Resource
             Metrics\DeliveryNote\TotalDeliveryNotes::make()->defaultRange('TODAY')->refreshWhenActionsRun(),
             Metrics\DeliveryNote\NewDeliveryNotes::make()->defaultRange('TODAY')->refreshWhenActionsRun(),
             Metrics\DeliveryNote\ProcessedDeliveryNotes::make()->defaultRange('TODAY')->refreshWhenActionsRun(),
-
+            PendingOrderInfo::make(),
         ];
     }
 

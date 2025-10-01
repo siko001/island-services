@@ -8,11 +8,10 @@ use App\Models\General\Area;
 use App\Models\General\Location;
 use App\Models\General\OrderType;
 use App\Models\User;
-use Carbon\Carbon;
+use App\Observers\DeliveryNoteObserver;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Support\Facades\Log;
 
 class DeliveryNote extends Model
 {
@@ -93,21 +92,7 @@ class DeliveryNote extends Model
     public static function boot(): void
     {
         parent::boot();
-        static::updating(function($deliveryNote) {
-            if($deliveryNote->isDirty('status') && $deliveryNote->status == 1 && !$deliveryNote->processed_at) {
-                $deliveryNote->processed_at = Carbon::now();
-                foreach($deliveryNote->deliveryNoteProducts as $lineItem) {
-                    Log::info('running: ' . $lineItem);
-                    $product = $lineItem->product;
-                    if($product) {
-                        $product->stock -= $lineItem->quantity;
-                        $product->save();
-                    }
-                }
-
-            }
-        });
-
+        DeliveryNote::observe(DeliveryNoteObserver::class);
     }
 
     public function replicate(array $except = null): DeliveryNote

@@ -11,6 +11,7 @@ use App\Nova\Parts\Post\SharedFields\FinancialDetails;
 use App\Nova\Parts\Post\SharedFields\OrderHeader;
 use App\Traits\ResourcePolicies;
 use Illuminate\Http\Request;
+use IslandServices\PendingOrderInfo\PendingOrderInfo;
 use Laravel\Nova\Actions\Action;
 use Laravel\Nova\Card;
 use Laravel\Nova\Fields\Field;
@@ -53,6 +54,7 @@ class DirectSale extends Resource
     public function fields(NovaRequest $request): array
     {
         return [
+
             ... (new OrderHeader())('direct_sale', \App\Models\Post\DirectSale::class),
 
             Tab::group('Information', [
@@ -72,7 +74,9 @@ class DirectSale extends Resource
      */
     public function cards(NovaRequest $request): array
     {
-        return [];
+        return [
+            PendingOrderInfo::make(),
+        ];
     }
 
     /**

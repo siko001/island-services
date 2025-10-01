@@ -2,6 +2,7 @@
 
 namespace App\Models\Post;
 
+use App\Helpers\HelperFunctions;
 use App\Models\General\VatCode;
 use App\Models\Product\PriceType;
 use App\Models\Product\Product;
@@ -17,17 +18,25 @@ class DirectSaleProduct extends Model
         "price_type_id",
         "quantity",
         'unit_price',
+        'total_price',
         'deposit_price',
+        'total_deposit_price',
         'timestamps',
         'vat_code_id',
-        'total_price',
-        'bcrs_price'
+        'bcrs_deposit',
+        'total_bcrs_deposit',
+        'converted',
+        'prepaid_offer_id',
     ];
     protected $casts = [
         'timestamps' => 'date',
         'deposit_price' => 'decimal:2',
+        'total_deposit_price' => 'decimal:2',
+        'bcrs_deposit' => 'decimal:2',
+        'total_bcrs_deposit' => 'decimal:2',
+        'unit_price' => 'decimal:2',
         'total_price' => 'decimal:2',
-        'bcrs_price' => 'decimal:2',
+        'converted' => 'boolean',
     ];
 
     public function directSale(): BelongsTo
@@ -48,5 +57,19 @@ class DirectSaleProduct extends Model
     public function vatCode(): BelongsTo
     {
         return $this->belongsTo(VatCode::class);
+    }
+
+    public function prepaidOffer(): BelongsTo
+    {
+        return $this->belongsTo(PrepaidOffer::class);
+    }
+
+    public static function boot()
+    {
+        parent::boot();
+
+        static::deleting(function($model) {
+            HelperFunctions::revertPrepaidOfferProductsIfNeeded($model);
+        });
     }
 }

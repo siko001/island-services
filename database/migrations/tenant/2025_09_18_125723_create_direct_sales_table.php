@@ -72,6 +72,9 @@ return new class extends Migration {
             $table->string('model')->nullable();
             $table->string('serial_number')->nullable();
 
+            $table->boolean('converted')->default(false);
+            $table->foreignId('prepaid_offer_id')->nullable()->constrained('prepaid_offers')->onDelete('cascade');
+
             $table->timestamps();
 
         });

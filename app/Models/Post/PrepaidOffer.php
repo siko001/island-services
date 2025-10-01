@@ -6,9 +6,9 @@ use App\Models\Customer\Customer;
 use App\Models\General\Area;
 use App\Models\General\Location;
 use App\Models\General\Offer;
-use App\Models\General\OfferProduct;
 use App\Models\General\OrderType;
 use App\Models\User;
+use App\Observers\PrepaidOfferObserver;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -105,35 +105,9 @@ class PrepaidOffer extends Model
         return $this->hasMany(PrepaidOfferProduct::class);
     }
 
-    public static function boot()
+    public static function boot(): void
     {
         parent::boot();
-        static::created(function($model) {
-            $offerProducts = OfferProduct::where('offer_id', $model->offer_id)->get();
-
-            foreach($offerProducts as $offerProduct) {
-                $model->prepaidOfferProducts()->create([
-                    'product_id' => $offerProduct->product_id,
-                    'offer_id' => $offerProduct->offer_id,
-                    'price_type_id' => $offerProduct->price_type_id,
-                    'vat_code_id' => $offerProduct->vat_code_id,
-                    'quantity' => $offerProduct->quantity,
-                    'price' => $offerProduct->price,
-                    'deposit' => $offerProduct->deposit ?? 0,
-                    'bcrs_deposit' => $offerProduct->bcrs_deposit,
-                    'total_price' => $offerProduct->total_price,
-                ]);
-            }
-        });
-
-        //        static::updating(function($model) {
-        //            if($model->isDirty('terminated') && $model->terminated == 1) {
-        //                foreach($model->prepaidOfferProducts as $lineItem) {
-        //                    $lineItem->total_taken = $lineItem->quantity;
-        //                    $lineItem->save();
-        //
-        //                }
-        //            }
-        //        });
+        PrepaidOffer::observe(PrepaidOfferObserver::class);
     }
 }
