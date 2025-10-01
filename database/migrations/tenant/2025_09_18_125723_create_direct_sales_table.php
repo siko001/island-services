@@ -47,6 +47,7 @@ return new class extends Migration {
             $table->date('last_delivery_date')->nullable();
 
             $table->date('processed_at')->nullable();
+            $table->boolean('create_from_default_products')->default(false);
             $table->timestamps();
         });
 

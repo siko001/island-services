@@ -80,7 +80,7 @@ class ProcessDeliveryNote extends Action
 
         if($editViewResourceId) {
             $deliveryNote = DeliveryNote::find($editViewResourceId);
-            return $deliveryNote && !$deliveryNote->status == 1;
+            return $deliveryNote && !$deliveryNote->status == 1 && count($deliveryNote->deliveryNoteProducts);
         }
 
         return $resources->contains(fn($r) => !$r->status);

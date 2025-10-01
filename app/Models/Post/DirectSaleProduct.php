@@ -64,7 +64,7 @@ class DirectSaleProduct extends Model
         return $this->belongsTo(PrepaidOffer::class);
     }
 
-    public static function boot()
+    public static function boot(): void
     {
         parent::boot();
 

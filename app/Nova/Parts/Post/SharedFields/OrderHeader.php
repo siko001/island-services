@@ -9,6 +9,7 @@ use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\Date;
 use Laravel\Nova\Fields\FormData;
+use Laravel\Nova\Fields\Heading;
 use Laravel\Nova\Fields\Text;
 
 class OrderHeader
@@ -41,6 +42,29 @@ class OrderHeader
             ->rules('date');
 
         $fields[] = BelongsTo::make('Customer', 'customer', Customer::class)->sortable();
+
+        switch($orderType) {
+            case 'delivery_note':
+            case "direct_sale":
+                $fields[] = Heading::make("<span class='text-red-500'>This customer does<span class='font-black'> NOT</span> have default products set. These will be created from this order once processed</span>")->asHtml()
+                    ->hide()
+                    ->dependsOn('customer', function($field, $request, FormData $formData) {
+                        $customerId = $formData['customer'];
+                        $customerId && \App\Models\Customer\Customer::find($customerId)->has_default_products == 0 && $field->show();
+                    });
+
+                $fields[] = Boolean::make('Create Products from Customer Defaults', 'create_from_default_products')
+                    ->dependsOn('customer', function($field, $request, FormData $formData) {
+                        $customerId = $formData['customer'];
+                        $customerId && \App\Models\Customer\Customer::find($customerId)->has_default_products && $field->show() && $field->default(true);
+                    })
+                    ->showOnCreating()
+                    ->hideFromIndex()
+                    ->hide();
+                break;
+            default:
+                break;
+        }
 
         $fields[] = Text::make('Account Number', 'customer_account_number')
             ->hideFromIndex()

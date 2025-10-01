@@ -40,7 +40,8 @@ class DirectSale extends Model
         'balance_on_deposit',
         'credit_on_deposit',
         'credit_limit',
-        'last_delivery_date'
+        'last_delivery_date',
+        'create_from_default_products',
     ];
     protected $casts = [
         'order_date' => 'date',
@@ -52,7 +53,8 @@ class DirectSale extends Model
         'credit_on_delivery' => 'decimal:2',
         'balance_on_deposit' => 'decimal:2',
         'credit_on_deposit' => 'decimal:2',
-        'credit_limit' => 'integer'
+        'credit_limit' => 'integer',
+        'create_from_default_products' => "boolean",
     ];
 
     public function salesman(): BelongsTo

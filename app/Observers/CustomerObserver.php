@@ -8,52 +8,45 @@ use App\Models\Customer\Customer;
 
 class CustomerObserver
 {
-    /**
-     * Handle the Customer "created" event.
-     */
     public function created(Customer $customer): void
     {
-        if(app()->runningInConsole()) {
-            return;
-        }
-
-        // Dispatch a queue job to create the customer in Sage
-        CreateSageCustomerJob::dispatch($customer);
+        !app()->runningInConsole() && CreateSageCustomerJob::dispatch($customer);
     }
 
-    /**
-     * Handle the Customer "updated" event.
-     */
     public function updated(Customer $customer): void
     {
-        if(app()->runningInConsole()) {
-            return;
-        }
-        // Dispatch a queue job to update the customer in Sage
-        UpdateSageCustomerJob::dispatch($customer);
+        !app()->runningInConsole() && UpdateSageCustomerJob::dispatch($customer);
     }
 
-    /**
-     * Handle the Customer "deleted" event.
-     */
     public function deleted(Customer $customer): void
     {
-        //
+
     }
 
-    /**
-     * Handle the Customer "restored" event.
-     */
     public function restored(Customer $customer): void
     {
-        //
+
     }
 
-    /**
-     * Handle the Customer "force deleted" event.
-     */
     public function forceDeleted(Customer $customer): void
     {
-        //
+
+    }
+
+    public static function saving(Customer $customer): void
+    {
+        if(!$customer->different_billing_details) {
+            $fields = [
+                'name', 'surname', 'company_name', 'department', 'address',
+                'post_code', 'country', 'telephone_home', 'telephone_office',
+                'fax_one', 'fax_two', 'email_one', 'email_two', 'mobile', 'url',
+                'id_number', 'vat_number', 'registration_number',
+                'financial_name', 'financial_surname', 'area_id', 'locality_id',
+            ];
+
+            foreach($fields as $field) {
+                $customer->{'billing_details_' . $field} = $customer->{'delivery_details_' . $field};
+            }
+        }
     }
 }
