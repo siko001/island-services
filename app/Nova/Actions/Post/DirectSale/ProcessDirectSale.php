@@ -78,7 +78,7 @@ class ProcessDirectSale extends Action
 
         if($editViewResourceId) {
             $directSale = DirectSale::find($editViewResourceId);
-            return $directSale && !$directSale->status == 1;
+            return $directSale && !$directSale->status == 1 && count($directSale->directSaleProducts);
         }
 
         return $resources->contains(fn($r) => !$r->status);

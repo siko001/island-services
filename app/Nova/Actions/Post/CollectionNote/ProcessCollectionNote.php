@@ -78,7 +78,7 @@ class ProcessCollectionNote extends Action
 
         if($editViewResourceId) {
             $collectionNote = CollectionNote::find($editViewResourceId);
-            return $collectionNote && !$collectionNote->status == 1;
+            return $collectionNote && !$collectionNote->status == 1 && count($collectionNote->collectionNoteProducts);
         }
 
         return $resources->contains(fn($r) => !$r->status);
