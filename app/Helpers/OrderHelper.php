@@ -2,6 +2,7 @@
 
 namespace App\Helpers;
 
+use App\Models\Customer\CustomerDefaultProducts;
 use App\Models\Post\DeliveryNote;
 use App\Models\Post\DeliveryNoteProduct;
 use App\Models\Post\DirectSale;
@@ -13,9 +14,19 @@ use Illuminate\Support\Facades\Log;
 
 class OrderHelper
 {
+    protected static array $relatedProductClassMap = [
+        DeliveryNote::class => DeliveryNoteProduct::class,
+        DirectSale::class => DirectSaleProduct::class,
+    ];
+
+    protected static function getRelationMethod($orderInstance): string
+    {
+        return $orderInstance instanceof DirectSale ? "directSaleProducts" : "deliveryNoteProducts";
+    }
+
     public static function processOrder($orderInstance): void
     {
-        $relationship = $orderInstance instanceof DirectSale ? "directSaleProducts" : "deliveryNoteProducts";
+        $relationship = self::getRelationMethod($orderInstance);
         $processed = self::updateProcessTime($orderInstance);
         $processed && self::deductStock($orderInstance, $relationship);
     }
@@ -24,7 +35,6 @@ class OrderHelper
     {
         if($model->isDirty('status') && $model->status == 1 && !$model->processed_at) {
             $model->processed_at = Carbon::now();
-            $model->save();
         }
         return true;
     }
@@ -57,19 +67,8 @@ class OrderHelper
 
     protected static function createProductsFromDefaults($customerDefaults, $model): void
     {
-        // Map the model class to the pivot or related product model class
-        $relatedProductClassMap = [
-            DeliveryNote::class => DeliveryNoteProduct::class,
-            DirectSale::class => DirectSaleProduct::class,
-        ];
 
-        $relatedProductClass = $relatedProductClassMap[get_class($model)] ?? null;
-
-        if(!$relatedProductClass) {
-            Log::error("No related product class mapped for model " . get_class($model));
-            return;
-        }
-
+        $relatedProductClass = self::$relatedProductClassMap[get_class($model)] ?? null;
         foreach($customerDefaults as $default) {
             try {
                 $product = Product::with('priceType')->find($default->product_id);
@@ -119,6 +118,19 @@ class OrderHelper
                     'parent_model' => $model->toArray(),
                 ]);
             }
+        }
+    }
+
+    public static function createCustomerDefaults($model): void
+    {
+        $relationship = self::getRelationMethod($model);
+        foreach($model->$relationship as $product) {
+            CustomerDefaultProducts::create([
+                'customer_id' => $model->customer_id,
+                'product_id' => $product->product_id,
+                'price_type_id' => $product->price_type_id,
+                'quantity' => $product->quantity,
+            ]);
         }
     }
 }

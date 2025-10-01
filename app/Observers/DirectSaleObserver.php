@@ -7,9 +7,6 @@ use App\Models\Post\DirectSale;
 
 class DirectSaleObserver
 {
-    /**
-     * Handle the DirectSale "created" event.
-     */
     public function created(DirectSale $directSale): void
     {
         if($directSale->create_from_default_products) {
@@ -17,12 +14,11 @@ class DirectSaleObserver
         }
     }
 
-    /**
-     * Handle the DirectSale "updated" event.
-     */
     public function updated(DirectSale $directSale): void
     {
-        //
+        if($directSale->customer->has_default_products !== 1 && $directSale->status == 1) {
+            OrderHelper::createCustomerDefaults($directSale);
+        }
     }
 
     public static function updating(DirectSale $directSale): void
@@ -30,27 +26,18 @@ class DirectSaleObserver
         OrderHelper::processOrder($directSale);
     }
 
-    /**
-     * Handle the DirectSale "deleted" event.
-     */
     public function deleted(DirectSale $directSale): void
     {
-        //
+
     }
 
-    /**
-     * Handle the DirectSale "restored" event.
-     */
     public function restored(DirectSale $directSale): void
     {
-        //
+
     }
 
-    /**
-     * Handle the DirectSale "force deleted" event.
-     */
     public function forceDeleted(DirectSale $directSale): void
     {
-        //
+
     }
 }

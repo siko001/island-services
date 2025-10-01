@@ -15,7 +15,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class DeliveryNote extends Model
 {
-    public mixed $create_from_default_products = false;
     protected $fillable = [
         'delivery_note_number',
         'order_date',
