@@ -53,3 +53,18 @@
 td:not(.phpdebugbar td) {
     background: #f9fafb;
 }
+
+div[dusk="image_path"] img {
+    max-width: 500px !important;
+    border-radius: 1rem;
+    width: 100% !important;
+    height: auto !important;
+}
+
+td div.items-center span img {
+    max-width: none !important;
+    object-fit: cover;
+    border-radius: 20rem;
+    width: 70px !important;
+    height: 35px !important;
+}
