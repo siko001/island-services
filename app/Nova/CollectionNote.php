@@ -26,23 +26,8 @@ class CollectionNote extends Resource
     use ResourcePolicies;
 
     public static string $policyKey = 'collection_note';
-    /**
-     * The model the resource corresponds to.
-     * @var class-string<\App\Models\Post\CollectionNote>
-     */
     public static $model = \App\Models\Post\CollectionNote::class;
-    /**
-     * The single value that should be used to represent the resource when being displayed.
-     * @var string
-     */
     public static $title = 'collection_note_number';
-    /**
-     * The columns that should be searched.
-     * @var array
-     */
-    public static $search = [
-        'collection_note_number',
-    ];
 
     public static function searchableColumns(): array
     {
@@ -50,6 +35,9 @@ class CollectionNote extends Resource
             'collection_note_number',
             new SearchableRelation('customer', 'client'),
             new SearchableRelation('customer', 'account_number'),
+            new SearchableRelation('salesman', 'name'),
+            new SearchableRelation('area', 'name'),
+            new SearchableRelation('location', 'name'),
         ];
     }
 

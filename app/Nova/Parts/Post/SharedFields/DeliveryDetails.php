@@ -41,7 +41,8 @@ class DeliveryDetails
                         }
                     })
                     ->rules('required', 'date', 'after_or_equal:order_date')
-                    ->sortable();
+                    ->sortable()
+                    ->filterable();
                 break;
             case 'direct_sale':
                 $fields[] = Date::make('Delivery Date', 'delivery_date')
@@ -51,16 +52,14 @@ class DeliveryDetails
             default:
                 break;
         }
-        $fields[] = BelongsTo::make('Area', 'area', Area::class)->onlyOnDetail();
-        $fields[] = BelongsTo::make('Area', 'area', Area::class)->onlyOnIndex();
-
-        $fields[] = BelongsTo::make('Location', 'location', Location::class)->onlyOnDetail();
-        $fields[] = BelongsTo::make('Location', 'location', Location::class)->onlyOnIndex();
+        $fields[] = BelongsTo::make('Area', 'area', Area::class)->hideWhenUpdating()->hideWhenCreating()->sortable()->filterable();
+        $fields[] = BelongsTo::make('Location', 'location', Location::class)->hideWhenUpdating()->hideWhenCreating()->sortable()->filterable();
 
         $areasOptions = \App\Models\General\Area::all()->pluck('name', 'id')->toArray();
         switch($orderType) {
             case 'direct_sale':
                 $fields[] = Select::make('Area', 'customer_area')
+                    ->searchable()
                     ->options($areasOptions)
                     ->default(\App\Models\General\Area::where('is_direct_sale', 1)->value('id'))
                     ->sortable()
@@ -68,6 +67,7 @@ class DeliveryDetails
                     ->onlyOnForms();
 
                 $fields[] = Select::make('Location', 'customer_location')
+                    ->searchable()
                     ->options(\App\Models\General\Location::all()->pluck('name', 'id')->toArray())
                     ->default(\App\Models\General\Location::where('is_direct_sale', 1)->value('id'))
                     ->sortable()
@@ -80,6 +80,7 @@ class DeliveryDetails
                 $fields[] = Select::make('Area', 'customer_area')
                     ->options($areasOptions)
                     ->sortable()
+                    ->searchable()
                     ->rules('required')
                     ->onlyOnForms()
                     ->dependsOn('customer', function($field, $request, FormData $formData) {
@@ -97,6 +98,7 @@ class DeliveryDetails
                 $fields[] = Select::make('Location', 'customer_location')
                     ->options(\App\Models\General\Location::all()->pluck('name', 'id')->toArray())
                     ->sortable()
+                    ->searchable()
                     ->onlyOnForms()
                     ->rules('required')
                     ->dependsOn('customer', function($field, $request, FormData $formData) {

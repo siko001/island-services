@@ -958,7 +958,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     onSelect: $options.selectOrder
   }, null, 8 /* PROPS */, ["orders", "selectedOrderNumber", "getOrderNumber", "getOrderDate", "formatDate", "getAreaName", "getLocationName", "onSelect"]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_BlankRows, {
     rows: $props.deliveryNotes,
-    quantity: 3,
+    quantity: 5,
     columnCount: 4
   }, null, 8 /* PROPS */, ["rows"])])])])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("End Delivery Notes "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("Start Prepaid Offers"), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_10, [_cache[4] || (_cache[4] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h2", {
     "class": "font-semibold order-heading mb-2"
@@ -985,7 +985,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     onSelect: $options.selectOrder
   }, null, 8 /* PROPS */, ["orders", "selectedOrderNumber", "getOrderNumber", "getOrderDate", "formatDate", "getAreaName", "getLocationName", "onSelect"]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_BlankRows, {
     rows: $props.prepaidOffers,
-    quantity: 3,
+    quantity: 5,
     columnCount: 4
   }, null, 8 /* PROPS */, ["rows"])])])])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("End Prepaid Offers")]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("End Order Grid"), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("Start Product Grid"), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_13, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" Start Delivery Note Products "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_14, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h2", _hoisted_15, " Delivery Note Products " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($props.selectedDeliveryNoteNumber ? $props.selectedDeliveryNoteNumber : ''), 1 /* TEXT */), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_16, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("table", _hoisted_17, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_TableHeader, {
     headers: ['Product', 'Price Type', 'Quantity', 'Price', 'Deposit']

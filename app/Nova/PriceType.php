@@ -5,7 +5,6 @@ namespace App\Nova;
 use App\Helpers\HelperFunctions;
 use App\Traits\ResourcePolicies;
 use Laravel\Nova\Fields\Boolean;
-use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Http\Requests\NovaRequest;
 
@@ -14,23 +13,13 @@ class PriceType extends Resource
     use ResourcePolicies;
 
     public static string $policyKey = 'price_type';
-    /**
-     * The model the resource corresponds to.
-     * @var class-string<\App\Models\Product\PriceType>
-     */
     public static $model = \App\Models\Product\PriceType::class;
-    /**
-     * The single value that should be used to represent the resource when being displayed.
-     * @var string
-     */
     public static $title = 'name';
-    /**
-     * The columns that should be searched.
-     * @var array
-     */
-    public static $search = [
-        'name',
-    ];
+    public static $search =
+        [
+            'name',
+            'abbreviation'
+        ];
 
     /**
      * Get the fields displayed by the resource.
@@ -39,7 +28,6 @@ class PriceType extends Resource
     public function fields(NovaRequest $request): array
     {
         return [
-            ID::make()->sortable(),
             Text::make('Name')->sortable()->rules('required', 'max:255'),
             Text::make('Abbreviation')->sortable()->rules('required', 'max:10')->maxlength(16)
                 ->hideFromIndex(function(NovaRequest $request) {
@@ -48,12 +36,14 @@ class PriceType extends Resource
 
             Boolean::make('Rental Price Type', 'is_rental')
                 ->sortable()
+                ->filterable()
                 ->hideFromIndex(function(NovaRequest $request) {
                     return $request->viaRelationship();
                 }),
 
             Boolean::make("Default", 'is_default')
                 ->sortable()
+                ->filterable()
                 ->hideWhenUpdating(function() {
                     return HelperFunctions::otherDefaultExists($this::$model, $this->resource->id);
                 })

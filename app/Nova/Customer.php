@@ -29,20 +29,8 @@ class Customer extends Resource
     use ResourcePolicies;
 
     public static string $policyKey = 'customer';
-    /**
-     * The model the resource corresponds to.
-     * @var class-string<\App\Models\Customer\Customer>
-     */
     public static $model = \App\Models\Customer\Customer::class;
-    /**
-     * The single value that should be used to represent the resource when being displayed.
-     * @var string
-     */
     public static $title = 'client';
-    /**
-     * The columns that should be searched.
-     * @var array
-     */
     public static $search = [
         'client',
         'account_number'
@@ -59,7 +47,6 @@ class Customer extends Resource
             Tab::group('Client Details', [
                 Tab::make('Client Information', [
                     Text::make('Client', 'client')
-                        ->sortable()
                         ->rules('required', 'max:255'),
 
                     Text::make('Account Number')
@@ -83,21 +70,20 @@ class Customer extends Resource
                         ->onlyOnDetail(),
                 ]),
                 Tab::make('Additional Actions', [
-                    Boolean::make('Different Billing Details')->sortable(),
-                    Boolean::make('Use Summer Address')->sortable(),
-                    Boolean::make('Issue Invoices')->sortable(),
+                    Boolean::make('Different Billing Details')->sortable()->filterable(),
+                    Boolean::make('Use Summer Address')->sortable()->filterable(),
+                    Boolean::make('Issue Invoices')->sortable()->filterable(),
                     Boolean::make('Barter Client')->hideFromIndex(),
                     Boolean::make('Pet Client')->hideFromIndex(),
                     Boolean::make('Stop Statement')->hideFromIndex(),
-                    Boolean::make('Stop Deliveries')->sortable(),
-                    Boolean::make('Account Closed')->sortable(),
+                    Boolean::make('Stop Deliveries')->sortable()->filterable(),
+                    Boolean::make('Account Closed')->sortable()->filterable(),
                 ]),
 
                 Tab::make('Other Details', new OtherDetails),
             ]),
 
             Tab::group('Delivery Details', [
-
                 Tab::make('Account Details', (new AccountDetails)("delivery")),
                 Tab::make('Communication Details', (new CommunicationDetails)("delivery")),
                 Tab::make('Financial Details', (new FinancialDetails)("delivery")),

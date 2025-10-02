@@ -58,6 +58,7 @@ class AdditionalDetails
                     ->displayUsingLabels()
                     ->sortable()
                     ->rules('required')
+                    ->searchable()
                     ->dependsOn('customer', function($field, $request, FormData $formData) {
                         $customerId = $formData->customer ?? null;
                         if($customerId) {
@@ -68,6 +69,7 @@ class AdditionalDetails
                     });
 
                 $fields[] = BelongsTo::make('Order Type', 'orderType', OrderType::class)
+                    ->searchable()
                     ->hideFromIndex()
                     ->default(fn() => \App\Models\General\OrderType::where('is_default', true)->value('id'))
                     ->sortable()
@@ -81,6 +83,8 @@ class AdditionalDetails
 
         if($orderType == 'prepaid_offer') {
             $fields[] = BelongsTo::make('Offer', 'offer', Offer::class)
+                ->onlyOnForms()
+                ->showOnDetail()
                 ->sortable()
                 ->rules('required');
         }

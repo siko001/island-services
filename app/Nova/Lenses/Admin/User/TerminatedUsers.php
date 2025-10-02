@@ -20,10 +20,6 @@ class TerminatedUsers extends Lens
     use LensPolicy;
 
     public static string $policyKey = "terminated user";
-    /**
-     * The columns that should be searched.
-     * @var array
-     */
     public static $search = [];
 
     /**
@@ -31,7 +27,10 @@ class TerminatedUsers extends Lens
      */
     public static function query(LensRequest $request, Builder $query): Builder|Paginator
     {
-        return $query->where('is_terminated', 1);
+        return $request->withOrdering(
+            $request->withFilters($query->where('is_terminated', 1)),
+            fn($query) => $query->latest()
+        );
     }
 
     /**

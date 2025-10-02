@@ -152,7 +152,7 @@ class HelperFunctions
             self::$seedingCounter++;
             $number = str_pad(self::$seedingCounter + 1, 4, '0', STR_PAD_LEFT);
         } else {
-            $number = str_pad(Customer::orderBy('id', 'desc')->first()->id + 1, 4, '0', STR_PAD_LEFT);
+            $number = str_pad(Customer::orderBy('id', 'desc')->first()->id, 4, '0', STR_PAD_LEFT);
         }
 
         return strtoupper($initials) . '-' . $number;
@@ -242,5 +242,14 @@ class HelperFunctions
                 }
             }
         }
+    }
+
+    public static function getTenantUrl($path): string
+    {
+        $tenant = strtolower(tenancy()->tenant?->id);
+        $url = config('app.url');
+        $urlWithoutProtocol = preg_replace("(^https?://)", "", $url);
+        $protocol = request()->getScheme();
+        return $protocol . '://' . $tenant . '.' . $urlWithoutProtocol . '/' . ltrim($path, '/');
     }
 }

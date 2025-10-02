@@ -5,6 +5,7 @@ namespace App\Nova;
 use App\Nova\Parts\Post\SharedFields\OrderProductsFields;
 use Illuminate\Http\Request;
 use Laravel\Nova\Http\Requests\NovaRequest;
+use Laravel\Nova\Query\Search\SearchableRelation;
 
 class DeliveryNoteProduct extends Resource
 {
@@ -13,6 +14,7 @@ class DeliveryNoteProduct extends Resource
      * @var class-string<\App\Models\Post\DeliveryNoteProduct>
      */
     public static $model = \App\Models\Post\DeliveryNoteProduct::class;
+    public static $globallySearchable = false;
     public static $perPageViaRelationship = 15;
 
     public function title()
@@ -20,13 +22,14 @@ class DeliveryNoteProduct extends Resource
         return $this->product->name ?? 'Product #' . $this->id;
     }
 
-    /**
-     * The columns that should be searched.
-     * @var array
-     */
-    public static $search = [
-        'id',
-    ];
+    public static function searchableColumns(): array
+    {
+        return [
+            new SearchableRelation('product', 'name'),
+            new SearchableRelation('priceType', 'name'),
+            new SearchableRelation('vatCode', 'name'),
+        ];
+    }
 
     public function fields(NovaRequest $request): array
     {

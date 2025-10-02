@@ -15,30 +15,14 @@ use Laravel\Nova\Lenses\Lens;
 
 class CollectionNoteProduct extends Resource
 {
-    /**
-     * The model the resource corresponds to.
-     * @var class-string<\App\Models\Post\CollectionNoteProduct>
-     */
     public static string $model = \App\Models\Post\CollectionNoteProduct::class;
-    /**
-     * The single value that should be used to represent the resource when being displayed.
-     * @var string
-     */
-
+    public static $globallySearchable = false;
     public static $perPageViaRelationship = 15;
 
     public function title()
     {
         return $this->product->name ?? 'Product #' . $this->id;
     }
-
-    /**
-     * The columns that should be searched.
-     * @var array
-     */
-    public static $search = [
-        'name',
-    ];
 
     /**
      * Get the fields displayed by the resource.

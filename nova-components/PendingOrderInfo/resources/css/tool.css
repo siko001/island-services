@@ -49,7 +49,7 @@ html.dark {
     position: fixed;
     z-index: 999;
     left: 50%;
-    top: 15%;
+    top: 10%;
     transform: translateX(-50%);
     min-width: 1280px;
     background-color: var(--modal-bg);

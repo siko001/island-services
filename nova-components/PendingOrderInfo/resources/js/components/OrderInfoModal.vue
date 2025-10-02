@@ -20,7 +20,7 @@
               <TableHeader :headers="['Delivery Note no.', 'Delivery Date', 'Area', 'Location']"/>
               <tbody>
               <OrderLoop :orders="deliveryNotes" :selectedOrderNumber="selectedDeliveryNoteNumber" :selectedOrderType="'delivery_note'" orderType="delivery_note" :getOrderNumber="order => order.delivery_note_number" :getOrderDate="order => order.delivery_date" :formatDate="covertDate" :getAreaName="order => order.area ? order.area.name : 'Unknown Area'" :getLocationName="order => order.location ? order.location.name : 'Unknown Location'" @select="selectOrder"/>
-              <BlankRows :rows="deliveryNotes" :quantity="3" :columnCount="4"/>
+              <BlankRows :rows="deliveryNotes" :quantity="5" :columnCount="4"/>
               </tbody>
             </table>
           </div>
@@ -35,7 +35,7 @@
               <TableHeader :headers="['Prepaid Offer no.', 'Order Date', 'Area', 'Location']"/>
               <tbody>
               <OrderLoop :orders="prepaidOffers" :selectedOrderNumber="selectedPrepaidOfferNumber" :selectedOrderType="'prepaid_offer'" orderType="prepaid_offer" :getOrderNumber="order => order.prepaid_offer_number" :getOrderDate="order => order.order_date" :formatDate="covertDate" :getAreaName="order => order.area ? order.area.name : 'Unknown Area'" :getLocationName="order => order.location ? order.location.name : 'Unknown Location'" @select="selectOrder"/>
-              <BlankRows :rows="prepaidOffers" :quantity="3" :columnCount="4"/>
+              <BlankRows :rows="prepaidOffers" :quantity="5" :columnCount="4"/>
               </tbody>
             </table>
           </div>

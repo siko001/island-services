@@ -14,20 +14,9 @@ class VatCode extends Resource
     use ResourcePolicies;
 
     public static string $policyKey = 'vat_code';
-    /**
-     * The model the resource corresponds to.
-     * @var class-string<\App\Models\General\VatCode>
-     */
     public static $model = \App\Models\General\VatCode::class;
-    /**
-     * The single value that should be used to represent the resource when being displayed.
-     * @var string
-     */
     public static $title = 'name';
-    /**
-     * The columns that should be searched.
-     * @var array
-     */
+    public static $globallySearchable = false;
     public static $search = [
         'name',
     ];

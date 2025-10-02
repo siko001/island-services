@@ -27,6 +27,9 @@ class UnprocessedDirectSales extends Lens
             'direct_sale_number',
             new SearchableRelation('customer', 'client'),
             new SearchableRelation('customer', 'account_number'),
+            new SearchableRelation('salesman', 'name'),
+            new SearchableRelation('area', 'name'),
+            new SearchableRelation('location', 'name'),
         ];
     }
 

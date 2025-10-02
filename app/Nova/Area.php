@@ -10,7 +10,6 @@ use Laravel\Nova\Card;
 use Laravel\Nova\Fields\BelongsToMany;
 use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\Email;
-use Laravel\Nova\Fields\Field;
 use Laravel\Nova\Fields\Number;
 use Laravel\Nova\Fields\Select;
 use Laravel\Nova\Fields\Text;
@@ -25,28 +24,12 @@ class Area extends Resource
     use ResourcePolicies;
 
     public static string $policyKey = 'area';
-    /**
-     * The model the resource corresponds to.
-     * @var class-string<\App\Models\General\Area>
-     */
     public static $model = \App\Models\General\Area::class;
-    /**
-     * The single value that should be used to represent the resource when being displayed.
-     * @var string
-     */
     public static $title = 'name';
-    /**
-     * The columns that should be searched.
-     * @var array
-     */
     public static $search = [
         'name',
     ];
 
-    /**
-     * Get the fields displayed by the resource.
-     * @return array<int, Field>
-     */
     public function fields(NovaRequest $request): array
     {
         return [

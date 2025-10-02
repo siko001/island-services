@@ -6,7 +6,6 @@ use Illuminate\Http\Request;
 use Laravel\Nova\Actions\Action;
 use Laravel\Nova\Card;
 use Laravel\Nova\Fields\BelongsToMany;
-use Laravel\Nova\Fields\Field;
 use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Filters\Filter;
 use Laravel\Nova\Http\Requests\NovaRequest;
@@ -19,23 +18,11 @@ class Permission extends Resource
      * @var class-string<\App\Models\Admin\Permission>
      */
     public static $model = \App\Models\Admin\Permission::class;
-    /**
-     * The single value that should be used to represent the resource when being displayed.
-     * @var string
-     */
     public static $title = 'id';
-    /**
-     * The columns that should be searched.
-     * @var array
-     */
     public static $search = [
         'name',
     ];
 
-    /**
-     * Get the fields displayed by the resource.
-     * @return array<int, Field>
-     */
     public function fields(NovaRequest $request): array
     {
 
