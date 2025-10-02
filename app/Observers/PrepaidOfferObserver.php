@@ -36,6 +36,14 @@ class PrepaidOfferObserver
                 $lineItem->save();
             }
         }
+
+        if($prepaidOffer->isDirty('status') && $prepaidOffer->status == 1 && $prepaidOffer->terminated !== 1) {
+            foreach($prepaidOffer->prepaidOfferProducts as $lineItem) {
+                $lineItem->total_taken = 0;
+                $lineItem->total_remaining = $lineItem->quantity;
+                $lineItem->save();
+            }
+        }
     }
 
     /**
