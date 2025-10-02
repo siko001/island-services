@@ -27,15 +27,7 @@ class DirectSale extends Resource
     use ResourcePolicies;
 
     public static string $policyKey = 'direct_sale';
-    /**
-     * The model the resource corresponds to.
-     * @var class-string<\App\Models\Post\DeliveryNote>
-     */
     public static $model = \App\Models\Post\DirectSale::class;
-    /**
-     * The single value that should be used to represent the resource when being displayed.
-     * @var string
-     */
     public static $title = 'direct_sale_number';
 
     public static function searchableColumns(): array
@@ -44,6 +36,9 @@ class DirectSale extends Resource
             'direct_sale_number',
             new SearchableRelation('customer', 'client'),
             new SearchableRelation('customer', 'account_number'),
+            new SearchableRelation('salesman', 'name'),
+            new SearchableRelation('area', 'name'),
+            new SearchableRelation('location', 'name'),
         ];
     }
 

@@ -11,27 +11,27 @@ use Laravel\Nova\Fields\Select;
 use Laravel\Nova\Filters\Filter;
 use Laravel\Nova\Http\Requests\NovaRequest;
 use Laravel\Nova\Lenses\Lens;
+use Laravel\Nova\Query\Search\SearchableRelation;
 
 class CustomerDefaultProducts extends Resource
 {
-    /**
-     * The model the resource corresponds to.
-     * @var class-string<\App\Models\Customer\CustomerDefaultProducts>
-     */
     public static $model = \App\Models\Customer\CustomerDefaultProducts::class;
+    public static $globallySearchable = false;
+    public static $perPageViaRelationship = 15;
 
     public function title()
     {
         return $this->product->name ?? 'Product #' . $this->id;
     }
 
-    /**
-     * The columns that should be searched.
-     * @var array
-     */
-    public static $search = [
-        'id',
-    ];
+    public static function searchableColumns(): array
+    {
+        return [
+            new SearchableRelation('customer', 'client'),
+            new SearchableRelation('product', 'name'),
+            new SearchableRelation('priceType', 'name'),
+        ];
+    }
 
     /**
      * Get the fields displayed by the resource.

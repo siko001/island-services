@@ -8,7 +8,6 @@ use Laravel\Nova\Actions\Action;
 use Laravel\Nova\Card;
 use Laravel\Nova\Fields\BelongsToMany;
 use Laravel\Nova\Fields\Boolean;
-use Laravel\Nova\Fields\Field;
 use Laravel\Nova\Fields\FormData;
 use Laravel\Nova\Fields\Select;
 use Laravel\Nova\Fields\Text;
@@ -22,28 +21,12 @@ class Location extends Resource
     use ResourcePolicies;
 
     public static string $policyKey = 'location';
-    /**
-     * The model the resource corresponds to.
-     * @var class-string<\App\Models\General\Location>
-     */
     public static $model = \App\Models\General\Location::class;
-    /**
-     * The single value that should be used to represent the resource when being displayed.
-     * @var string
-     */
     public static $title = 'name';
-    /**
-     * The columns that should be searched.
-     * @var array
-     */
     public static $search = [
         'name',
     ];
 
-    /**
-     * Get the fields displayed by the resource.
-     * @return array<int, Field>
-     */
     public function fields(NovaRequest $request): array
     {
         return [

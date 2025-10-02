@@ -11,8 +11,8 @@ use Laravel\Nova\Actions\Action;
 use Laravel\Nova\Auth\PasswordValidationRules;
 use Laravel\Nova\Card;
 use Laravel\Nova\Fields\Boolean;
+use Laravel\Nova\Fields\Email;
 use Laravel\Nova\Fields\Field;
-use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Password;
 use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Filters\Filter;
@@ -28,24 +28,12 @@ class User extends Resource
     use PasswordValidationRules, ResourcePolicies;
 
     public static string $policyKey = 'user';
-    /**
-     * The model the resource corresponds to.
-     * @var class-string<\App\Models\User>
-     */
     public static $model = \App\Models\User::class;
-    /**
-     * The single value that should be used to represent the resource when being displayed.
-     * @var string
-     */
     public static $title = 'name';
-    /**
-     * The columns that should be searched.
-     * @var array
-     */
     public static $search = [
         'id', 'name', 'email',
     ];
-    public static $perPageOptions = [10, 15, 25];
+    public static $perPageOptions = [8, 15, 25];
 
     /**
      * Get the fields displayed by the resource.
@@ -55,7 +43,7 @@ class User extends Resource
     {
         return [
             Panel::make('Admin Details', [
-                ID::make()->sortable(),
+
                 Text::make('Name')
                     ->sortable()
                     ->rules('required', 'max:255'),
@@ -65,7 +53,7 @@ class User extends Resource
                     ->rules('required', 'max:16')
                     ->hideFromIndex(),
 
-                Text::make('Email')
+                Email::make('Email')
                     ->sortable()
                     ->rules('required', 'email', 'max:254')
                     ->creationRules('unique:users,email')
@@ -78,7 +66,6 @@ class User extends Resource
             ]),
 
             Tab::group('User Information', [
-
                 //Admin information
                 Tab::make('Contact Information', [
                     Text::make('Mobile')->rules('required', 'max:255'),
@@ -114,6 +101,7 @@ class User extends Resource
                         ->hideFromIndex(),
 
                     Boolean::make('Default Salesman', 'is_default_salesman')
+                        ->filterable()->sortable()
                         ->dependsOn(['roles'], function($field, $request, $formData) {
                             $selectedRoles = $formData['roles'] ?? [];
                             $normalizedRoles = [];
@@ -164,7 +152,7 @@ class User extends Resource
                         })
                         ->hideFromIndex(),
 
-                    Boolean::make('Is Terminated')
+                    Boolean::make('Is Terminated')->filterable()->sortable(),
                 ]),
 
                 Tab::make('Permissions', [

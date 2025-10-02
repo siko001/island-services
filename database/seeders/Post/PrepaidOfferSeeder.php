@@ -129,8 +129,8 @@ class PrepaidOfferSeeder extends Seeder
                     'delivery_directions' => "Directions for {$customer->client}",
                     'remarks' => Area::where('id', $customerArea)->first()->delivery_note_remark,
                     'offer_id' => $offer->id,
-                    'processed_at' => $processed ? $randomDate : null,
-                    'status' => $processed,
+                    'processed_at' => null,
+                    'status' => false,
                     'terminated' => false,
                     'customer_id' => $customer->id,
                     'customer_account_number' => $customerAccountNumber,
@@ -148,11 +148,18 @@ class PrepaidOfferSeeder extends Seeder
                     'last_delivery_date' => null,
                 ]);
 
-                if($terminated) {
+                if(!$terminated && $processed) {
+                    $prepaidOffer->status = true;
+                    $prepaidOffer->processed_at = Carbon::now();
+                    $prepaidOffer->save();
+                }
+
+                if($terminated && $processed) {
                     $prepaidOffer->terminated = true;
                     $prepaidOffer->terminated_at = Carbon::now();
+                    $prepaidOffer->status = true;
+                    $prepaidOffer->processed_at = Carbon::now();
                     $prepaidOffer->save();
-
                 }
 
                 $this->command->info("Created Prepaid Offer #" . ($i + 1) . ": " . $prepaidOffer->perpaid_offer_number . " for " . $customer->client);

@@ -20,6 +20,8 @@ class AdditionalDetails
                 ->hideFromIndex(),
 
             Boolean::make('Requires Sanitization', 'requires_sanitization')
+                ->sortable()
+                ->filterable()
                 ->default(false),
 
             Number::make('Sanitization Period', 'sanitization_period')

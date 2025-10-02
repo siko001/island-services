@@ -9,7 +9,6 @@ use Laravel\Nova\Card;
 use Laravel\Nova\Fields\BelongsToMany;
 use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\Field;
-use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Filters\Filter;
 use Laravel\Nova\Http\Requests\NovaRequest;
@@ -20,20 +19,8 @@ class Role extends Resource
     use ResourcePolicies;
 
     public static string $policyKey = 'role';
-    /**
-     * The model the resource corresponds to.
-     * @var class-string<\App\Models\Admin\Role>
-     */
     public static $model = \App\Models\Admin\Role::class;
-    /**
-     * The single value that should be used to represent the resource when being displayed.
-     * @var string
-     */
     public static $title = 'name';
-    /**
-     * The columns that should be searched.
-     * @var array
-     */
     public static $search = [
         'name',
     ];
@@ -45,7 +32,6 @@ class Role extends Resource
     public function fields(NovaRequest $request): array
     {
         return [
-            ID::make()->sortable(),
             Text::make('Name')
                 ->sortable()
                 ->rules('required', 'max:255'),

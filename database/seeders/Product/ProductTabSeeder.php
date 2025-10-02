@@ -2,6 +2,7 @@
 
 namespace Database\Seeders\Product;
 
+use Database\Seeders\Customer\CustomerDefaultProductsSeeder;
 use Database\Seeders\General\OfferProductSeeder;
 use Illuminate\Database\Seeder;
 
@@ -17,6 +18,7 @@ class ProductTabSeeder extends Seeder
             ProductSeeder::class, // Call this first to ensure products exist before attaching price types
             ProductPriceTypeSeeder::class, //Call this after ProductSeeder to ensure products exist and attach price types with product
             OfferProductSeeder::class, //Call this after Products Seeder to ensure products exist and attach products with Offers
+            CustomerDefaultProductsSeeder::class, //Call the seeder to bind product defaults to customers
         ];
 
         // Loop through each seeder and call it

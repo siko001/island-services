@@ -10,6 +10,7 @@ use Laravel\Nova\Fields\Field;
 use Laravel\Nova\Filters\Filter;
 use Laravel\Nova\Http\Requests\NovaRequest;
 use Laravel\Nova\Lenses\Lens;
+use Laravel\Nova\Query\Search\SearchableRelation;
 
 class DirectSaleProduct extends Resource
 {
@@ -18,6 +19,7 @@ class DirectSaleProduct extends Resource
      * @var class-string<\App\Models\Post\DirectSaleProduct>
      */
     public static $model = \App\Models\Post\DirectSaleProduct::class;
+    public static $globallySearchable = false;
     public static $perPageViaRelationship = 15;
 
     public function title()
@@ -25,13 +27,14 @@ class DirectSaleProduct extends Resource
         return $this->product->name ?? 'Product #' . $this->id;
     }
 
-    /**
-     * The columns that should be searched.
-     * @var array
-     */
-    public static $search = [
-        'id',
-    ];
+    public static function searchableColumns(): array
+    {
+        return [
+            new SearchableRelation('product', 'name'),
+            new SearchableRelation('priceType', 'name'),
+            new SearchableRelation('vatCode', 'name'),
+        ];
+    }
 
     /**
      * Get the fields displayed by the resource.

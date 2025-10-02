@@ -39,8 +39,8 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
      */
     public function boot(): void
     {
-
         parent::boot();
+        Nova::withBreadcrumbs();
         //CSS
         Nova::style('navbar-header', resource_path('css/navbar-header.css'));
 

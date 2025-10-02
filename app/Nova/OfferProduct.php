@@ -3,96 +3,81 @@
 namespace App\Nova;
 
 use App\Traits\ResourcePolicies;
+use Laravel\Nova\Actions\Action;
+use Laravel\Nova\Card;
 use Laravel\Nova\Fields\BelongsTo;
+use Laravel\Nova\Fields\Field;
 use Laravel\Nova\Fields\Number;
 use Laravel\Nova\Fields\Select;
+use Laravel\Nova\Filters\Filter;
 use Laravel\Nova\Http\Requests\NovaRequest;
+use Laravel\Nova\Lenses\Lens;
+use Laravel\Nova\Query\Search\SearchableRelation;
 
 class OfferProduct extends Resource
 {
     use ResourcePolicies;
 
     public static string $policyKey = 'offer';
-    /**
-     * The model the resource corresponds to.
-     * @var class-string<\App\Models\General\OfferProduct>
-     */
     public static $model = \App\Models\General\OfferProduct::class;
-    /**
-     * The single value that should be used to represent the resource when being displayed.
-     * @var string
-     */
-    public static $title = 'id';
+    public static $globallySearchable = false;
+    public static $perPageViaRelationship = 15;
 
-    /**
-     * Get the display name for the resource.
-     * @return string
-     */
-    public static function label()
+    public static function label(): string
     {
         return 'Products';
     }
 
-    /**
-     * Get the singular label for the resource.
-     * @return string
-     */
-    public static function singularLabel()
+    public static function singularLabel(): string
     {
         return 'Product';
     }
 
-    /**
-     * Get the text for the create resource button.
-     * @return string
-     */
-    public static function createButtonLabel()
+    public static function createButtonLabel(): string
     {
         return 'Attach Products';
     }
 
-    /**
-     * Get the value that should be displayed to represent the resource.
-     * @return string
-     */
-    public function title()
+    public function title(): string
     {
         return $this->product->name ?? 'Product #' . $this->id;
     }
 
-    /**
-     * The columns that should be searched.
-     * @var array
-     */
-    public static $search = [
-        'id',
-    ];
+    public static function searchableColumns(): array
+    {
+        return [
+            new SearchableRelation('product', 'name'),
+            new SearchableRelation('priceType', 'name'),
+            new SearchableRelation('vatCode', 'name'),
+        ];
+    }
 
     /**
      * Get the fields displayed by the resource.
-     * @return array<int, \Laravel\Nova\Fields\Field>
+     * @return array<int, Field>
      */
     public function fields(NovaRequest $request): array
     {
         return [
             BelongsTo::make('Offer', 'offer', Offer::class)
+                ->immutable()
                 ->withMeta(['extraAttributes' => ['readonly' => true]])
                 ->sortable()
                 ->rules('required'),
 
             BelongsTo::make('Product', 'product', Product::class)
+                ->searchable()
+                ->filterable()
                 ->sortable()
                 ->rules('required'),
 
-            BelongsTo::make('Price Type', 'priceType', PriceType::class)->onlyOnDetail(),
-            BelongsTo::make('Price Type', 'priceType', PriceType::class)->onlyOnIndex()->sortable(),
-            Select::make('Price Type', 'price_type_id')->onlyOnForms()
+            BelongsTo::make('Price Type', 'priceType', PriceType::class)->onlyOnIndex()->showOnDetail()->sortable()->filterable()->searchable(),
+            Select::make('Price Type', 'price_type_id')->onlyOnForms()->searchable()
                 ->options(fn() => \App\Models\Product\PriceType::all()->pluck('name', 'id')->toArray())
                 ->default(fn() => \App\Models\Product\PriceType::where('is_default', true)->first()?->id),
 
-            BelongsTo::make('VAT Code', 'vatCode', VatCode::class)->onlyOnDetail(),
-            BelongsTo::make('VAT Code', 'vatCode', VatCode::class)->onlyOnIndex()->sortable(),
-            Select::make('VAT Code', 'vat_code_id')->onlyOnForms()
+            BelongsTo::make('VAT Code', 'vatCode', VatCode::class)->onlyOnIndex()->showOnDetail()->sortable()->filterable()->searchable(),
+            Select::make('VAT Code', 'vat_code_id')->onlyOnForms()->searchable()
                 ->options(fn() => \App\Models\general\VatCode::all()->pluck('name', 'id')->toArray())
                 ->default(fn() => \App\Models\general\VatCode::where('is_default', true)->first()?->id),
 
@@ -172,7 +157,7 @@ class OfferProduct extends Resource
 
     /**
      * Get the cards available for the resource.
-     * @return array<int, \Laravel\Nova\Card>
+     * @return array<int, Card>
      */
     public function cards(NovaRequest $request): array
     {
@@ -181,7 +166,7 @@ class OfferProduct extends Resource
 
     /**
      * Get the filters available for the resource.
-     * @return array<int, \Laravel\Nova\Filters\Filter>
+     * @return array<int, Filter>
      */
     public function filters(NovaRequest $request): array
     {
@@ -190,7 +175,7 @@ class OfferProduct extends Resource
 
     /**
      * Get the lenses available for the resource.
-     * @return array<int, \Laravel\Nova\Lenses\Lens>
+     * @return array<int, Lens>
      */
     public function lenses(NovaRequest $request): array
     {
@@ -199,7 +184,7 @@ class OfferProduct extends Resource
 
     /**
      * Get the actions available for the resource.
-     * @return array<int, \Laravel\Nova\Actions\Action>
+     * @return array<int, Action>
      */
     public function actions(NovaRequest $request): array
     {

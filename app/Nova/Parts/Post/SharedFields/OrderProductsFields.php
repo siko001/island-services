@@ -28,13 +28,12 @@ class OrderProductsFields
             default:
                 break;
         }
-        $fields[] = BelongsTo::make('Product', 'product', Product::class);
-
-        $fields[] = BelongsTo::make('Price Type', 'priceType')->onlyOnDetail();
-        $fields[] = BelongsTo::make('Price Type', 'priceType')->onlyOnIndex();
+        $fields[] = BelongsTo::make('Product', 'product', Product::class)->searchable()->filterable()->sortable();
+        $fields[] = BelongsTo::make('Price Type', 'priceType')->onlyOnDetail()->showOnIndex();
         $fields[] = Select::make('Price Type', 'price_type_id')
             ->displayUsingLabels()
             ->rules('required')
+            ->sortable()
             ->onlyOnForms()
             ->searchable()
             ->hide()
@@ -57,6 +56,7 @@ class OrderProductsFields
             ->rules('numeric', "min:1")
             ->step(1)
             ->default(1)
+            ->sortable()
             ->hide()
             ->dependsOn(['product', 'price_type_id'], function($field, $request, $formData) {
                 $productId = $formData['product'] ?? null;
@@ -99,18 +99,19 @@ class OrderProductsFields
                     }
                 }
             })
+            ->sortable()
             ->textAlign('left')
             ->hide()
             ->rules('numeric', 'min:1')
             ->step(0.01);
 
-        $fields[] = Number::make('Total Price  (Ex. Vat)', 'total_price')->onlyOnDetail();
-        $fields[] = Number::make('Total Price  (Ex. Vat)', 'total_price')->onlyOnIndex()->textAlign('left');
+        $fields[] = Number::make('Total Price  (Ex. Vat)', 'total_price')->showOnDetail()->onlyOnIndex()->textAlign('left')->sortable();
         $fields[] = Number::make('Total Price', 'total_price')
             ->withMeta(['extraAttributes' => ['readonly' => true]])
             ->help('excluding VAT')
             ->onlyOnForms()
             ->hide()
+            ->sortable()
             ->dependsOn(['price_type_id', 'product', 'quantity', 'unit_price'], function($field, $request, $formData) {
                 $priceTypeId = $formData['price_type_id'] ?? null;
                 $productId = $formData['product'] ?? null;
@@ -146,6 +147,7 @@ class OrderProductsFields
 
         $fields[] = Number::make("Unit Deposit", 'deposit_price')
             ->hide()
+            ->sortable()
             ->dependsOn(['product'], function($field, $request, $formData) {
                 $productId = $formData['product'] ?? null;
                 if($productId) {
@@ -167,6 +169,7 @@ class OrderProductsFields
 
         $fields[] = Number::make("Total Deposit", 'total_deposit_price')
             ->hide()
+            ->sortable()
             ->withMeta(['extraAttributes' => ['readonly' => true]])
             ->dependsOn(['product', 'quantity', 'deposit_price'], function($field, $request, $formData) {
                 $productId = $formData['product'] ?? null;
@@ -321,8 +324,8 @@ class OrderProductsFields
                 }
             });
 
-        $fields[] = Boolean::make('Converted')->hideWhenCreating()->hideWhenUpdating();
-        $fields[] = BelongsTo::make('Prepaid Offer', "prepaidOffer")->hideWhenCreating()->hideWhenUpdating();
+        $fields[] = Boolean::make('Converted')->hideWhenCreating()->hideWhenUpdating()->sortable()->filterable();
+        $fields[] = BelongsTo::make('Prepaid Offer', "prepaidOffer")->hideWhenCreating()->hideWhenUpdating()->sortable();
 
         return $fields;
     }

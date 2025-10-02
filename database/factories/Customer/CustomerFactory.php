@@ -56,7 +56,6 @@ class CustomerFactory extends Factory
         }
 
         return [
-
             'client' => $name . " " . $surname,
             'issue_invoices' => $this->faker->boolean,
             'different_billing_details' => $usingDifferentBilling,
@@ -92,13 +91,13 @@ class CustomerFactory extends Factory
             'delivery_details_financial_surname' => $this->faker->lastName,
 
             // Credit
-            'credit_terms_current' => $this->faker->numberBetween(0, 90),
+            'credit_terms_current' => 0,
             'credit_terms_default' => 40,
-            'credit_limit_del' => $this->faker->randomFloat(2, 500, 10000),
-            'credit_limit_dep' => $this->faker->randomFloat(2, 100, 5000),
-            'balance_del' => $this->faker->randomFloat(2, 0, 2000),
-            'balance_dep' => $this->faker->randomFloat(2, 0, 1000),
-            'turnover' => $this->faker->randomFloat(2, 0, 50000),
+            'credit_limit_del' => 0,
+            'credit_limit_dep' => 0,
+            'balance_del' => 0,
+            'balance_dep' => 0,
+            'turnover' => 0,
 
             // Billing
             'billing_details_name' => $usingDifferentBilling ? $this->faker->firstName : null,

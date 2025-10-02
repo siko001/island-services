@@ -10,26 +10,31 @@ use Laravel\Nova\Fields\Number;
 use Laravel\Nova\Filters\Filter;
 use Laravel\Nova\Http\Requests\NovaRequest;
 use Laravel\Nova\Lenses\Lens;
+use Laravel\Nova\Query\Search\SearchableRelation;
 
 class PrepaidOfferProduct extends Resource
 {
-    /**
-     * The model the resource corresponds to.
-     * @var class-string<\App\Models\Post\PrepaidOfferProduct>
-     */
     public static $model = \App\Models\Post\PrepaidOfferProduct::class;
-    /**
-     * The single value that should be used to represent the resource when being displayed.
-     * @var string
-     */
-    public static $title = 'id';
+    public static $globallySearchable = false;
+    public static $perPageViaRelationship = 15;
+
+    public function title()
+    {
+        return $this->product->name ?? 'Product #' . $this->id;
+    }
+
     /**
      * The columns that should be searched.
      * @var array
      */
-    public static $search = [
-        'id',
-    ];
+    public static function searchableColumns(): array
+    {
+        return [
+            new SearchableRelation('product', 'name'),
+            new SearchableRelation('priceType', 'name'),
+            new SearchableRelation('vatCode', 'name'),
+        ];
+    }
 
     /**
      * Get the fields displayed by the resource.
@@ -40,16 +45,16 @@ class PrepaidOfferProduct extends Resource
         return [
             BelongsTo::make('Prepaid Offer', 'prepaidOffer', PrepaidOffer::class),
             BelongsTo::make('Product', 'product', Product::class)->sortable(),
-            BelongsTo::make('Price Type', 'priceType', PriceType::class)->sortable(),
-            BelongsTo::make('VAT Code', 'vatCode', VatCode::class)->sortable(),
+            BelongsTo::make('Price Type', 'priceType', PriceType::class)->sortable()->filterable(),
+            BelongsTo::make('VAT Code', 'vatCode', VatCode::class)->sortable()->filterable(),
             Number::make('Quantity in Offer', 'quantity')->sortable()->textAlign('left'),
             Number::make('Unit Price', 'price')->sortable()->textAlign('left'),
             Number::make('Total Price (Ex. Vat)', 'total_price')->sortable()->textAlign('left'),
             Number::make('Deposit', 'deposit')->sortable()->textAlign('left'),
             Number::make('BCRS Deposit', 'bcrs_deposit')->sortable()->textAlign('left'),
 
-            Number::make('Total Remaining')->sortable(),
-            Number::make('Total Taken')->sortable(),
+            Number::make('Total Remaining')->sortable()->filterable(),
+            Number::make('Total Taken')->sortable()->filterable(),
 
         ];
     }

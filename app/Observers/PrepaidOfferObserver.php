@@ -30,9 +30,20 @@ class PrepaidOfferObserver
 
     public static function updating(PrepaidOffer $prepaidOffer): void
     {
+        //Just Processed
+        if(!$prepaidOffer->terminated !== 1 && $prepaidOffer->isDirty('status') && $prepaidOffer->status == 1) {
+            foreach($prepaidOffer->prepaidOfferProducts as $lineItem) {
+                $lineItem->total_remaining = $lineItem->quantity;
+                $lineItem->total_taken = 0;
+                $lineItem->save();
+            }
+        }
+
+        //being Terminated
         if($prepaidOffer->isDirty('terminated') && $prepaidOffer->terminated == 1) {
             foreach($prepaidOffer->prepaidOfferProducts as $lineItem) {
                 $lineItem->total_taken = $lineItem->quantity;
+                $lineItem->total_remaining = 0;
                 $lineItem->save();
             }
         }
