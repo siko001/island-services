@@ -17,19 +17,25 @@ class CustomerDefaultProductsSeeder extends Seeder
 
         $products = Product::all();
         $customers = Customer::all();
+        $this->command->info('Creating Defaults for' . count($customers) . ' Customers and assigning default Products...');
 
         $customers->each(function($customer) use ($products) {
+            $this->command->info('Assigning Defaults to' . $customer->client);
+
             $numberOfProducts = random_int(1, 5);
             for($i = 0; $i < $numberOfProducts; $i++) {
                 $randomProduct = $products->random();
+                $randomType = $randomProduct->priceType->random();
+                $this->command->info('- Assigning' . $randomProduct->name . " with price type: " . $randomType->name);
                 CustomerDefaultProducts::create([
                     'product_id' => $randomProduct->id,
-                    'price_type_id' => $randomProduct->priceType->random()->id,
+                    'price_type_id' => $randomType->id,
                     'customer_id' => $customer->id,
                     'quantity' => random_int(1, 10),
                 ]);
             }
         });
 
+        $this->command->info('Done Assigning Customer Defaults Products');
     }
 }
