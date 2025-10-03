@@ -52,9 +52,9 @@ class DeliveryDetails
             default:
                 break;
         }
+
         $fields[] = BelongsTo::make('Area', 'area', Area::class)->hideWhenUpdating()->hideWhenCreating()->sortable()->filterable();
         $fields[] = BelongsTo::make('Location', 'location', Location::class)->hideWhenUpdating()->hideWhenCreating()->sortable()->filterable();
-
         $areasOptions = \App\Models\General\Area::all()->pluck('name', 'id')->toArray();
         switch($orderType) {
             case 'direct_sale':
@@ -77,6 +77,7 @@ class DeliveryDetails
             case 'delivery_note':
             case 'collection_note':
             case 'prepaid_offer':
+            case 'repair':
                 $fields[] = Select::make('Area', 'customer_area')
                     ->options($areasOptions)
                     ->sortable()
@@ -169,13 +170,19 @@ class DeliveryDetails
                 HelperFunctions::fillFromDependentField($field, $formData, Customer::class, 'customer', 'directions');
             });
 
-        $fields[] = TextArea::make("Remarks")
-            ->alwaysShow()
-            ->maxlength(255)
-            ->withMeta(['extraAttributes' => ['style' => 'max-height: 90px; min-height:40px']])
-            ->dependsOn('customer_area', function($field, $request, FormData $formData) {
-                HelperFunctions::fillFromDependentField($field, $formData, \App\Models\General\Area::class, 'customer_area', 'delivery_note_remark');
-            });
+        switch($orderType) {
+            case 'repair':
+                break;
+            default:
+                $fields[] = TextArea::make("Remarks")
+                    ->alwaysShow()
+                    ->maxlength(255)
+                    ->withMeta(['extraAttributes' => ['style' => 'max-height: 90px; min-height:40px']])
+                    ->dependsOn('customer_area', function($field, $request, FormData $formData) {
+                        HelperFunctions::fillFromDependentField($field, $formData, \App\Models\General\Area::class, 'customer_area', 'delivery_note_remark');
+                    });
+                break;
+        }
 
         return $fields;
 
