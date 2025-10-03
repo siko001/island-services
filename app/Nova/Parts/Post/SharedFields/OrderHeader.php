@@ -30,13 +30,12 @@ class OrderHeader
 
         $orderType = $orderType == 'repair' ? "repair_note" : $orderType;
 
-        $fields[] = Boolean::make("Processed", 'status')->readonly()->showOnDetail()->showOnDetail()->hideWhenCreating()->hideWhenUpdating()->filterable()->sortable();
+        $fields[] = Boolean::make("Processed", 'status')->readonly()->showOnDetail()->showOnDetail()->hideWhenCreating()->hideWhenUpdating()->sortable();
         $fields[] = Text::make(Str::title(str_replace('_', ' ', $orderType)) . ' Number', $orderType . '_number')
             ->immutable()
             ->default(function() use ($orderType, $model) {
                 return HelperFunctions::generateOrderNumber($orderType, $model);
             })
-            ->filterable()
             ->help('this field is auto generated')
             ->sortable()
             ->rules('required', 'max:255', 'unique:' . $orderType . 's,' . $orderType . '_number,{{resourceId}}')

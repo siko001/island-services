@@ -53,8 +53,8 @@ class DeliveryDetails
                 break;
         }
 
-        $fields[] = BelongsTo::make('Area', 'area', Area::class)->hideWhenUpdating()->hideWhenCreating()->sortable()->filterable();
-        $fields[] = BelongsTo::make('Location', 'location', Location::class)->hideWhenUpdating()->hideWhenCreating()->sortable()->filterable();
+        $fields[] = BelongsTo::make('Area', 'area', Area::class)->hideWhenUpdating()->hideWhenCreating()->sortable()->filterable()->searchable();
+        $fields[] = BelongsTo::make('Location', 'location', Location::class)->hideWhenUpdating()->hideWhenCreating()->sortable()->filterable()->searchable();
         $areasOptions = \App\Models\General\Area::all()->pluck('name', 'id')->toArray();
         switch($orderType) {
             case 'direct_sale':

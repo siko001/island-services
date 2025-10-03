@@ -13,7 +13,7 @@ class RepairProductFields
     {
 
         return [
-            BelongsTo::make('Product', 'product_id', Product::class)->onlyOnIndex(),
+            BelongsTo::make('Product', 'product', Product::class)->onlyOnIndex(),
             Select::make('Product', 'product_id') //TODO - To make from client Stock
             ->options(function() {
                 return \App\Models\Product\Product::where('is_spare_part', true)

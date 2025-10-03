@@ -8,6 +8,7 @@ use App\Models\General\Area;
 use App\Models\General\Location;
 use App\Models\General\OrderType;
 use App\Models\Product\Product;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -78,12 +79,17 @@ class Repair extends Model
 
     public function area(): BelongsTo
     {
-        return $this->belongsTo(Area::class);
+        return $this->belongsTo(Area::class, 'customer_area');
+    }
+
+    public function salesman(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
     }
 
     public function location(): BelongsTo
     {
-        return $this->belongsTo(Location::class);
+        return $this->belongsTo(Location::class, 'customer_location');
     }
 
     public function orderType(): BelongsTo
@@ -93,6 +99,6 @@ class Repair extends Model
 
     public function product(): BelongsTo
     {
-        return $this->belongsTo(Product::class);
+        return $this->belongsTo(Product::class, 'id');
     }
 }

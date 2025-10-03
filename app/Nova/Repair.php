@@ -28,7 +28,7 @@ class Repair extends Resource
     public static function searchableColumns(): array
     {
         return [
-            'repair',
+            'repair_note_number',
             new SearchableRelation('customer', 'client'),
             new SearchableRelation('customer', 'account_number'),
             new SearchableRelation('salesman', 'name'),
@@ -49,7 +49,7 @@ class Repair extends Resource
 
             Tab::group('Information', [
                 Tab::make("Location Details", (new DeliveryDetails)("repair")),
-                Tab::make("Repair Details", (new RepairProductFields)()),
+                Tab::make("Repair Detail\s", (new RepairProductFields)()),
                 Tab::make("Account Details", [
                     ...(new FinancialDetails)("repair"),
                     ...(new AdditionalDetails)('repair'),
