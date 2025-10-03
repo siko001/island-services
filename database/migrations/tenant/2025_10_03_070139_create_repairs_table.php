@@ -55,7 +55,7 @@ return new class extends Migration {
             $table->date('collection_date')->nullable();
 
             $table->boolean('sanitization')->default(false);
-            $table->boolean('sanitization_date')->default(false);
+            $table->date('sanitization_date')->nullable();
 
             $table->timestamps();
             $table->date('processed_at')->nullable();
