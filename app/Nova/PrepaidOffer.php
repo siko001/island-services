@@ -26,7 +26,7 @@ class PrepaidOffer extends Resource
 {
     use ResourcePolicies;
 
-    public static string $policyKey = 'direct_sale';
+    public static string $policyKey = 'prepaid_offer';
     public static $model = \App\Models\Post\PrepaidOffer::class;
     public static $title = 'prepaid_offer_number';
 
