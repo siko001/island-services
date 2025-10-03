@@ -65,32 +65,38 @@ class ProductFactory extends Factory
             ->map(fn($word) => strtoupper(substr($word, 0, 1)))
             ->join('');
 
+        $sparePart = $faker->boolean();
+        $sanitization = $sparePart && $faker->boolean();
+
+        $retailProduct = !$sparePart && $faker->boolean();
+        $accessory = (!$sparePart && !$retailProduct);
+
         return [
             'name' => $name,
             'abbreviation' => $abbreviation,
-            'product_price' => $faker->randomFloat(2, 3.50, 20),
+            'product_price' => !$sparePart ? $faker->randomFloat(2, 3.50, 20) : 0.00,
             'stock' => $faker->numberBetween(0, 2000),
             'stock_new' => $faker->numberBetween(0, 50),
             'stock_used' => $faker->numberBetween(0, 30),
             'stock_available' => $faker->numberBetween(0, 100),
-            'cost' => $faker->optional()->randomFloat(2, 5, 400),
-            'deposit' => $faker->optional()->randomFloat(2, 1, 4.95),
+            'cost' => !$sparePart ? $faker->optional()->randomFloat(2, 5, 400) : 0.00,
+            'deposit' => !$sparePart ? $faker->optional()->randomFloat(2, 1, 4.95) : 0.00,
             'packing_details' => $faker->sentence(),
             'on_order' => $faker->optional()->numberBetween(0, 50),
             'purchase_date' => $faker->optional()->date(),
             'last_service_date' => $faker->optional()->date(),
-            'requires_sanitization' => $faker->boolean(),
-            'sanitization_period' => $faker->optional()->numberBetween(1, 365),
+            'requires_sanitization' => $sanitization,
+            'sanitization_period' => $sanitization ? $faker->numberBetween(1, 365) : 0,
             'min_amount' => $faker->numberBetween(0, 10),
             'max_amount' => $faker->numberBetween(10, 100),
             'reorder_amount' => $faker->numberBetween(1, 50),
-            'is_spare_part' => $faker->boolean(),
-            'is_retail_product' => $faker->boolean(),
-            'spare_part_cost' => $faker->optional()->randomFloat(2, 1, 100),
+            'is_spare_part' => $sparePart,
+            'is_retail_product' => $retailProduct,
+            'spare_part_cost' => $sparePart ? $faker->randomFloat(2, 1, 100) : 0.00,
             'qty_per_palette' => $faker->numberBetween(0, 100),
-            'is_accessory' => $faker->boolean(),
-            'bcrs_deposit' => $faker->randomFloat(2, 0, 3),
-            'eco_tax' => $faker->optional()->randomFloat(2, 0, 5),
+            'is_accessory' => $accessory,
+            'bcrs_deposit' => $retailProduct ? $faker->randomFloat(2, 0, 3) : 00,
+            'eco_tax' => $retailProduct ? $faker->optional()->randomFloat(2, 0, 5) : 00,
 
             // Here's the updated JSON properly structured for Nova
             'driver_commissions' => $faker->boolean(70)
