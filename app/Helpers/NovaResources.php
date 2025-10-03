@@ -9,7 +9,6 @@ use App\Nova\ClientType;
 use App\Nova\CollectionNote;
 use App\Nova\Complaint;
 use App\Nova\Customer;
-use App\Nova\CustomerDefaultStock;
 use App\Nova\CustomerGroup;
 use App\Nova\DeliveryNote;
 use App\Nova\DirectSale;
@@ -23,6 +22,7 @@ use App\Nova\Permission;
 use App\Nova\PrepaidOffer;
 use App\Nova\PriceType;
 use App\Nova\Product;
+use App\Nova\Repair;
 use App\Nova\Role;
 use App\Nova\Service;
 use App\Nova\SparePart;
@@ -75,7 +75,8 @@ class NovaResources
             DeliveryNote::class,
             DirectSale::class,
             CollectionNote::class,
-            PrepaidOffer::class
+            PrepaidOffer::class,
+            Repair::class,
         ];
     }
 

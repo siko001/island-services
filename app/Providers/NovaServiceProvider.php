@@ -16,6 +16,7 @@ use App\Nova\Lenses\Post\PrepaidOffer\ProcessedPrepaidOffer;
 use App\Nova\Lenses\Post\PrepaidOffer\TerminatedPrepaidOffer;
 use App\Nova\Lenses\Post\PrepaidOffer\UnprocessedPrepaidOffer;
 use App\Nova\PrepaidOffer;
+use App\Nova\Repair;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Gate;
@@ -39,6 +40,7 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
      */
     public function boot(): void
     {
+
         parent::boot();
         Nova::withBreadcrumbs();
         //CSS
@@ -88,7 +90,7 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
 
                 //Other Companies
                 ($user && $user->can('view other_companies')) ?
-                    MenuItem::externalLink('Companies', env('APP_URL') . '/admin/get-companies')->data(['hasPermissionToView'])
+                    MenuItem::externalLink('Companies', env('APP_URL') . '/')->data(['hasPermissionToView'])
                     : null,
 
                 //General Section
@@ -133,6 +135,8 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
                         MenuItem::lens(PrepaidOffer::class, ProcessedPrepaidOffer::class)->name('Processed')->canSee(fn($request) => $request->user()?->can('view processed prepaid_offer') ?? false),
                         MenuItem::lens(PrepaidOffer::class, TerminatedPrepaidOffer::class)->name('Terminated')->canSee(fn($request) => $request->user()?->can('view terminated prepaid_offer') ?? false)
                     ])->collapsable(),
+
+                    MenuItem::resource(Repair::class)
 
                 ])->icon('cog-8-tooth')
                     ->collapsable(),
