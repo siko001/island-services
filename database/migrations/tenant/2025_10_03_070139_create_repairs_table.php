@@ -28,8 +28,8 @@ return new class extends Migration {
             $table->text('balance_on_delivery')->nullable();
             $table->text('balance_on_deposit')->nullable();
 
-            $table->foreignId('customer_area')->constrained('users')->onDelete('cascade');
-            $table->foreignId('customer_location')->constrained('order_types')->onDelete('cascade');
+            $table->foreignId('customer_area')->constrained('areas')->onDelete('cascade');
+            $table->foreignId('customer_location')->constrained('locations')->onDelete('cascade');
             $table->foreignId('operator_id')->constrained('users')->onDelete('cascade');
             $table->foreignId('order_type_id')->constrained('order_types')->onDelete('cascade');
             $table->foreignId('salesman_id')->constrained('users')->onDelete('cascade');
