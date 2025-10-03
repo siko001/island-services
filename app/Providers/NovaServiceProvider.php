@@ -123,6 +123,10 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
                         MenuItem::lens(DirectSale::class, ProcessedDirectSales::class)->name('Processed')->canSee(fn($request) => $request->user()?->can('view processed direct_sale') ?? false)
                     ])->collapsable(),
 
+                    MenuSection::make('Repairs', [MenuItem::resource(Repair::class)->name('Create Repair')])
+                        ->icon('cog')
+                        ->collapsable(),
+
                     MenuGroup::make("Collection Notes", [
                         MenuItem::resource(CollectionNote::class)->name("All / Create"),
                         MenuItem::lens(CollectionNote::class, UnprocessedCollectionNote::class)->name('Unprocessed')->canSee(fn($request) => $request->user()?->can('view unprocessed collection_note') ?? false),
@@ -135,8 +139,6 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
                         MenuItem::lens(PrepaidOffer::class, ProcessedPrepaidOffer::class)->name('Processed')->canSee(fn($request) => $request->user()?->can('view processed prepaid_offer') ?? false),
                         MenuItem::lens(PrepaidOffer::class, TerminatedPrepaidOffer::class)->name('Terminated')->canSee(fn($request) => $request->user()?->can('view terminated prepaid_offer') ?? false)
                     ])->collapsable(),
-
-                    MenuItem::resource(Repair::class)
 
                 ])->icon('cog-8-tooth')
                     ->collapsable(),
