@@ -299,7 +299,7 @@ Artisan::command('central:user:delete', function() {
 });
 
 Artisan::command('update-admin:permission', function() {
-    $superAdmin = Role::where('name', 'Super Admin')->first();
+    $superAdmin = Role::find(1);
     if(!$superAdmin) {
         $this->error('Super Admin role not found.');
         return;

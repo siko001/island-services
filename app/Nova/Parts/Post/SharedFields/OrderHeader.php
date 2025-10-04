@@ -9,9 +9,9 @@ use Illuminate\Support\Str;
 use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\Date;
-use Laravel\Nova\Fields\Email;
 use Laravel\Nova\Fields\FormData;
 use Laravel\Nova\Fields\Heading;
+use Laravel\Nova\Fields\Select;
 use Laravel\Nova\Fields\Text;
 
 class OrderHeader
@@ -28,13 +28,14 @@ class OrderHeader
                 break;
         }
 
-        $fields[] = Boolean::make("Processed", 'status')->readonly()->showOnDetail()->showOnDetail()->hideWhenCreating()->hideWhenUpdating()->filterable()->sortable();
+        $orderType = $orderType == 'repair' ? "repair_note" : $orderType;
+
+        $fields[] = Boolean::make("Processed", 'status')->readonly()->showOnDetail()->showOnDetail()->hideWhenCreating()->hideWhenUpdating()->sortable();
         $fields[] = Text::make(Str::title(str_replace('_', ' ', $orderType)) . ' Number', $orderType . '_number')
             ->immutable()
             ->default(function() use ($orderType, $model) {
                 return HelperFunctions::generateOrderNumber($orderType, $model);
             })
-            ->filterable()
             ->help('this field is auto generated')
             ->sortable()
             ->rules('required', 'max:255', 'unique:' . $orderType . 's,' . $orderType . '_number,{{resourceId}}')
@@ -47,10 +48,23 @@ class OrderHeader
                 ->rules('required');
         }
 
-        $fields[] = Date::make('Order Date', 'order_date')->default(\Carbon\Carbon::now())
-            ->sortable()
-            ->filterable()
-            ->rules('date');
+        switch($orderType) {
+            case 'prepaid_offer':
+            case 'delivery_note':
+            case 'direct_sale':
+                $fields[] = Date::make('Order Date', 'order_date')->default(\Carbon\Carbon::now())
+                    ->sortable()
+                    ->filterable()
+                    ->rules('date');
+                break;
+            case 'repair':
+                $fields[] = Date::make('Date', 'date')->default(\Carbon\Carbon::now())
+                    ->sortable()
+                    ->filterable()
+                    ->rules('date');
+            default:
+                break;
+        }
 
         $fields[] = BelongsTo::make('Customer', 'customer', Customer::class)->sortable()->searchable()->filterable()
             ->displayUsing(function($customer) {
@@ -88,10 +102,69 @@ class OrderHeader
                 HelperFunctions::fillFromDependentField($field, $formData, \App\Models\Customer\Customer::class, 'customer', 'account_number');
                 $formData['customer'] && $field->immutable();
             });
-        $fields[] = Email::make('Customer Email', 'customer_email')
+
+        $fields[] = Select::make('Customer Email', 'customer_email')->hide()
             ->dependsOn('customer', function($field, $request, FormData $formData) {
-                HelperFunctions::fillFromDependentField($field, $formData, \App\Models\Customer\Customer::class, 'customer', 'delivery_details_email_one');
+                $customerId = $formData['customer'];
+                if($customerId) {
+                    $customer = \App\Models\Customer\Customer::find($customerId);
+                    $customerEmails = [];
+                    $emailAttributes = [
+                        'delivery_details_email_one',
+                        'delivery_details_email_two',
+                    ];
+                    foreach($emailAttributes as $index => $attribute) {
+                        $email = $customer->$attribute;
+                        if(!empty($email)) {
+                            $customerEmails[$email] = 'Email ' . ($index + 1) . ': ' . $email;
+                        }
+                    }
+                    if(count($customerEmails)) {
+                        $field->options($customerEmails);
+                        $defaultEmail = array_key_first($customerEmails);
+                        $field->withMeta(['value' => $defaultEmail]);
+                        $field->show()->rules('required');
+                    }
+                }
             });
+
+        switch($orderType) {
+            case 'repair_note':
+                $fields[] = Select::make('Customer Mobile', 'customer_mobile')->hide()
+                    ->dependsOn('customer', function($field, $request, FormData $formData) {
+                        $customerId = $formData['customer'];
+                        if($customerId) {
+                            $customer = \App\Models\Customer\Customer::find($customerId);
+                            $customerNumbers = [
+                                $customer->delivery_details_mobile => 'Mobile: ' . $customer->delivery_details_mobile,
+                            ];
+                            $field->options($customerNumbers);
+                            $field->withMeta(['value' => $customer->delivery_details_mobile]);
+                            $field->show()->rules('required');
+                        }
+                    });
+
+                $fields[] = Select::make('Customer Telephone', 'customer_telephone')->hide()
+                    ->dependsOn('customer', function($field, $request, FormData $formData) {
+                        $customerId = $formData['customer'];
+                        if($customerId) {
+                            $customer = \App\Models\Customer\Customer::find($customerId);
+                            $customerNumbers = [
+                                $customer->delivery_details_telephone_home => 'Home Telephone: ' . $customer->delivery_details_telephone_home,
+                                $customer->delivery_details_telephone_office => 'Office Telephone: ' . $customer->delivery_details_telephone_office,
+                            ];
+
+                            $field->options($customerNumbers);
+                            $defaultNumber = $customer->delivery_details_telephone_home ?: $customer->delivery_details_telephone_office;
+                            $field->withMeta(['value' => $defaultNumber]);
+                            $field->show()->rules('required');
+
+                        }
+                    });
+                break;
+            default:
+                break;
+        }
 
         return $fields;
     }

@@ -13,7 +13,7 @@ return new class extends Migration {
         Schema::create('customer_default_products', function(Blueprint $table) {
             $table->id();
             $table->timestamps();
-            $table->foreignId('customer_id')->constrained('products')->onDelete('cascade');
+            $table->foreignId('customer_id')->constrained('customers')->onDelete('cascade');
             $table->foreignId('product_id')->constrained('products')->onDelete('cascade');
             $table->foreignId('price_type_id')->constrained('price_types')->onDelete('cascade');
             $table->integer('quantity')->default(1);

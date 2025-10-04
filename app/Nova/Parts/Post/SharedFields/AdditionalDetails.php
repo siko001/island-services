@@ -48,6 +48,8 @@ class AdditionalDetails
             case 'delivery_note':
             case 'collection_note':
             case 'prepaid_offer':
+            case 'repair':
+
                 $fields[] = Select::make('Salesman', 'salesman_id')
                     ->options(function() {
                         return User::getSalesmenRoles();
@@ -80,13 +82,18 @@ class AdditionalDetails
                 break;
 
         }
-
-        if($orderType == 'prepaid_offer') {
-            $fields[] = BelongsTo::make('Offer', 'offer', Offer::class)
-                ->onlyOnForms()
-                ->showOnDetail()
-                ->sortable()
-                ->rules('required');
+        switch($orderType) {
+            case 'prepaid_offer':
+                $fields[] = BelongsTo::make('Offer', 'offer', Offer::class)
+                    ->searchable()
+                    ->filterable()
+                    ->onlyOnForms()
+                    ->showOnDetail()
+                    ->sortable()
+                    ->rules('required');
+                break;
+            default:
+                break;
         }
 
         return $fields;

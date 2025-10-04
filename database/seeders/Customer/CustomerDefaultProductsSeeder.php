@@ -15,13 +15,16 @@ class CustomerDefaultProductsSeeder extends Seeder
     public function run(): void
     {
 
-        $products = Product::all();
+        $products = Product::where('is_retail_product', true)->get();
+        if(!$products) {
+            $this->command->info("No products that are marked as retail found, create and run");
+            return;
+        }
+
         $customers = Customer::all();
         $this->command->info('Creating Defaults for' . count($customers) . ' Customers and assigning default Products...');
-
         $customers->each(function($customer) use ($products) {
             $this->command->info('Assigning Defaults to' . $customer->client);
-
             $numberOfProducts = random_int(1, 5);
             for($i = 0; $i < $numberOfProducts; $i++) {
                 $randomProduct = $products->random();

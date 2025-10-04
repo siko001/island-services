@@ -10,7 +10,6 @@ class FinancialDetails
 {
     public function __invoke($orderType = null): array
     {
-        $fields = [];
 
         $fields = [
             Number::make('Balance On Delivery', 'balance_on_delivery')
@@ -35,6 +34,7 @@ class FinancialDetails
 
         switch($orderType) {
             case "prepaid_offer":
+            case "repair":
                 break;
             default:
                 $fields[] = Number::make('Credit Limit On Delivery', 'credit_on_delivery')

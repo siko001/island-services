@@ -28,7 +28,7 @@ class ProductPriceTypeSeeder extends Seeder
                 throw new Exception("At least one price type is required.");
             }
 
-            $products = Product::all();
+            $products = Product::where('is_retail_product', true)->get();
             if($products->isEmpty()) {
                 throw new Exception("At least one product is required.");
             }
