@@ -3,6 +3,7 @@
 namespace App\Helpers;
 
 use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 use Laravel\Nova\Notifications\NovaNotification;
 
 class Notifications
@@ -28,17 +29,7 @@ class Notifications
      */
     public static function notifyAdmins(object $model, array $attributes, string $operation, string $messageTemplate, string $icon = "user", $type = "success"): void
     {
-        $replacements = [
-            '{model}' => get_class($model),
-            '{operation}' => $operation,
-        ];
-
-        foreach($attributes as $key => $value) {
-            $replacements["{" . $key . "}"] = $value;
-        }
-
-        $message = str_replace(array_keys($replacements), array_values($replacements), $messageTemplate);
-
+        $message = self::getReplacements($model, $attributes, $operation, $messageTemplate);
         $admins = User::role('super admin')->get();
         foreach($admins as $admin) {
             $admin->notify(
@@ -48,5 +39,32 @@ class Notifications
                     ->type($type)
             );
         }
+    }
+
+    public static function notifyUser(object $model, array $attributes, string $operation, string $messageTemplate, string $icon = "user", $type = "success"): void
+    {
+        $user = Auth::user();
+        $message = self::getReplacements($model, $attributes, $operation, $messageTemplate);
+        $user->notify(
+            NovaNotification::make()
+                ->message($message)
+                ->icon($icon)
+                ->type($type)
+        );
+    }
+
+    protected static function getReplacements($model, $attributes, $operation, $messageTemplate): string
+    {
+        $replacements = [
+            '{model}' => get_class($model),
+            '{operation}' => $operation,
+        ];
+
+        foreach($attributes as $key => $value) {
+            $replacements["{" . $key . "}"] = $value;
+        }
+
+        return str_replace(array_keys($replacements), array_values($replacements), $messageTemplate);
+
     }
 }

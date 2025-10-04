@@ -2,12 +2,16 @@
 
 namespace App\Models\Post;
 
+use App\Helpers\HelperFunctions;
 use App\Models\Customer\Customer;
 use App\Models\General\Area;
 use App\Models\General\Location;
 use App\Models\General\OrderType;
 use App\Models\User;
+use App\Observers\DeliveryNoteObserver;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class DeliveryNote extends Model
 {
@@ -35,7 +39,8 @@ class DeliveryNote extends Model
         'balance_on_deposit',
         'credit_on_deposit',
         'credit_limit',
-        'last_delivery_date'
+        'last_delivery_date',
+        'create_from_default_products',
     ];
     protected $casts = [
         'order_date' => 'date',
@@ -47,58 +52,55 @@ class DeliveryNote extends Model
         'credit_on_delivery' => 'decimal:2',
         'balance_on_deposit' => 'decimal:2',
         'credit_on_deposit' => 'decimal:2',
-        'credit_limit' => 'integer'
+        'credit_limit' => 'integer',
+        'create_from_default_products' => "boolean",
     ];
 
-    public function salesman()
+    public function salesman(): BelongsTo
     {
-        return $this->belongsTo('App\Models\User', 'salesman_id');
+        return $this->belongsTo(User::class, 'salesman_id');
     }
 
-    public function operator()
+    public function operator(): BelongsTo
     {
         return $this->belongsTo(User::class, 'operator_id');
     }
 
-    public function orderType()
+    public function orderType(): BelongsTo
     {
         return $this->belongsTo(OrderType::class, 'order_type_id');
     }
 
-    public function customer()
+    public function customer(): BelongsTo
     {
         return $this->belongsTo(Customer::class, 'customer_id');
     }
 
-    public function area()
+    public function area(): BelongsTo
     {
         return $this->belongsTo(Area::class, 'customer_area');
     }
 
-    public function location()
+    public function location(): BelongsTo
     {
         return $this->belongsTo(Location::class, 'customer_location');
     }
 
-    public function deliveryNoteProducts()
+    public function deliveryNoteProducts(): HasMany
     {
         return $this->hasMany(DeliveryNoteProduct::class);
     }
 
-    //    public function priceType()
-    //    {
-    //        return $this->belongsTo(PriceType::class, 'price_type_id');
-    //    }
-
-    public static function generateDeliveryNoteNumber()
+    public static function boot(): void
     {
-        $lastDeliveryNote = self::orderBy('id', 'desc')->first();
-        if($lastDeliveryNote) {
-            $lastNumber = (int)substr($lastDeliveryNote->delivery_note_number, -4);
-            $newNumber = str_pad($lastNumber + 1, 4, '0', STR_PAD_LEFT);
-        } else {
-            $newNumber = '0001';
-        }
-        return 'DN-' . date('Y') . '-' . $newNumber;
+        parent::boot();
+        DeliveryNote::observe(DeliveryNoteObserver::class);
+    }
+
+    public function replicate(array $except = null): DeliveryNote
+    {
+        $new = parent::replicate($except);
+        $new->delivery_note_number = HelperFunctions::generateOrderNumber('delivery_note', $new);
+        return $new;
     }
 }

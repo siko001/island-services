@@ -2,50 +2,70 @@
 
 namespace App\Nova\Lenses\Post\DeliveryNote;
 
-use App\Nova\Parts\Post\DeliveryNote\DeliveryNoteLensFields;
+use App\Nova\Parts\Post\SharedFields\OrderLensFields;
+use App\Traits\LensPolicy;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Contracts\Pagination\Paginator;
+use Laravel\Nova\Actions\Action;
+use Laravel\Nova\Card;
+use Laravel\Nova\Fields\Field;
+use Laravel\Nova\Filters\Filter;
 use Laravel\Nova\Http\Requests\LensRequest;
 use Laravel\Nova\Http\Requests\NovaRequest;
 use Laravel\Nova\Lenses\Lens;
+use Laravel\Nova\Query\Search\SearchableRelation;
 
 class UnprocessedDeliveryNotes extends Lens
 {
-    /**
-     * The columns that should be searched.
-     * @var array
-     */
-    public static $search = [];
+    use LensPolicy;
+
+    public static string $policyKey = "unprocessed delivery_note";
+
+    public static function searchableColumns(): array
+    {
+        return [
+            'deliver_note_number',
+            new SearchableRelation('customer', 'client'),
+            new SearchableRelation('customer', 'account_number'),
+            new SearchableRelation('salesman', 'name'),
+            new SearchableRelation('area', 'name'),
+            new SearchableRelation('location', 'name'),
+        ];
+    }
 
     /**
      * Get the query builder / paginator for the lens.
      */
     public static function query(LensRequest $request, Builder $query): Builder|Paginator
     {
-        return $query->where('status', 0);
+        return $request->withOrdering($request->withFilters(
+            $query->where('status', 0)
+        ));
     }
 
     /**
      * Get the fields available to the lens.
-     * @return array<int, \Laravel\Nova\Fields\Field>
+     * @return array<int, Field>
      */
     public function fields(NovaRequest $request): array
     {
-        return (new DeliveryNoteLensFields)();
+        return (new OrderLensFields())('delivery_note');
     }
 
     /**
      * Get the cards available on the lens.
-     * @return array<int, \Laravel\Nova\Card>
+     * @return array<int, Card>
      */
     public function cards(NovaRequest $request): array
     {
-        return [];
+        return [
+            \App\Nova\Metrics\DeliveryNote\UnprocessedDeliveryNotes::make()->defaultRange('TODAY')->refreshWhenActionsRun(),
+        ];
     }
 
     /**
      * Get the filters available for the lens.
-     * @return array<int, \Laravel\Nova\Filters\Filter>
+     * @return array<int, Filter>
      */
     public function filters(NovaRequest $request): array
     {
@@ -54,7 +74,7 @@ class UnprocessedDeliveryNotes extends Lens
 
     /**
      * Get the actions available on the lens.
-     * @return array<int, \Laravel\Nova\Actions\Action>
+     * @return array<int, Action>
      */
     public function actions(NovaRequest $request): array
     {

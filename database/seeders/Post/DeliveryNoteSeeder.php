@@ -2,7 +2,9 @@
 
 namespace Database\Seeders\Post;
 
+use App\Helpers\HelperFunctions;
 use App\Models\Customer\Customer;
+use App\Models\General\Area;
 use App\Models\General\AreaLocation;
 use App\Models\General\OrderType;
 use App\Models\Post\DeliveryNote;
@@ -77,30 +79,58 @@ class DeliveryNoteSeeder extends Seeder
                 // Get random order type
                 $orderType = $orderTypes->random();
 
-                // Generate dates
-                // Make order date today or yesterday for more realistic data
-                $orderDate = Carbon::now()->subDays(rand(0, 1));
+                $randomDate = Carbon::now()->subDays(rand(0, 7));
 
                 // Get the next delivery date based on the customer's area and location
                 $deliveryDate = AreaLocation::getNextDeliveryDate($customerArea, $customerLocation, $customer->id);
 
                 // If no delivery date could be determined, default to at least 2 days after order date
-                if (!$deliveryDate) {
-                    $deliveryDate = Carbon::parse($orderDate)->addDays(rand(2, 5));
+                if(!$deliveryDate) {
+                    $deliveryDate = $randomDate;
                 }
 
+                $processed = rand(0, 1);
+
+                $this->command->info("Customer Area: {$customerArea}, Location: {$customerLocation}");
+
+                $areaLocation = null;
+                if($customerArea && $customerLocation) {
+                    $areaLocation = AreaLocation::where('area_id', $customerArea)
+                        ->where('location_id', $customerLocation)
+                        ->first();
+                }
+                if($areaLocation) {
+                    $days = collect([
+                        'Monday' => $areaLocation->monday,
+                        'Tuesday' => $areaLocation->tuesday,
+                        'Wednesday' => $areaLocation->wednesday,
+                        'Thursday' => $areaLocation->thursday,
+                        'Friday' => $areaLocation->friday,
+                        'Saturday' => $areaLocation->saturday,
+                        'Sunday' => $areaLocation->sunday,
+                    ])->filter(fn($delivered) => $delivered)->keys()->toArray();
+
+                    $this->command->info("Delivery days: " . implode(', ', $days));
+
+                    $daysForDelivery = implode(', ', $days);
+                } else {
+                    $this->command->warn('No area-location found or invalid area/location IDs.');
+                    $daysForDelivery = 'No delivery information';
+                }
                 // Create delivery note
                 $deliveryNote = DeliveryNote::create([
-                    'delivery_note_number' => DeliveryNote::generateDeliveryNoteNumber(),
-                    'order_date' => $orderDate,
+                    'delivery_note_number' => HelperFunctions::generateOrderNumber("delivery_note", DeliveryNote::class),
+                    'order_date' => $randomDate,
                     'delivery_date' => $deliveryDate,
                     'salesman_id' => $salesman->id,
                     'operator_id' => $operator->id,
                     'order_type_id' => $orderType->id,
+                    'days_for_delivery' => $daysForDelivery,
                     'delivery_instructions' => "Delivery instructions for {$customer->client}",
                     'delivery_directions' => "Directions for {$customer->client}",
-                    'remarks' => "Remarks for delivery note",
-                    'status' => rand(0, 1), // Randomly set as processed or not
+                    'remarks' => Area::where('id', $customerArea)->first()->delivery_note_remark,
+                    'processed_at' => $processed ? $deliveryDate : null,
+                    'status' => $processed,
                     'customer_id' => $customer->id,
                     'customer_account_number' => $customerAccountNumber,
                     'customer_email' => $customerEmail,
@@ -112,6 +142,7 @@ class DeliveryNoteSeeder extends Seeder
                     'balance_on_deposit' => $customer->balance_dep,
                     'credit_on_deposit' => $customer->credit_limit_dep,
                     'credit_limit' => $customer->credit_terms_current,
+                    'created_at' => $randomDate,
                 ]);
 
                 $this->command->info("Created delivery note #" . ($i + 1) . ": " . $deliveryNote->delivery_note_number . " for " . $customer->client);

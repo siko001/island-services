@@ -14,6 +14,9 @@ class ProductPriceTypeObserver
      */
     public function created(ProductPriceType $productPriceType): void
     {
+        if(app()->runningInConsole()) {
+            return;
+        }
         try {
             ProductPriceTypeJob::dispatch($productPriceType->product_id, $productPriceType->price_type_id);
         } catch(\Exception $e) {
@@ -26,7 +29,9 @@ class ProductPriceTypeObserver
      */
     public function updated(ProductPriceType $productPriceType): void
     {
-
+        if(app()->runningInConsole()) {
+            return;
+        }
         try {
             ProductPriceTypeJob::dispatch($productPriceType->product_id, $productPriceType->price_type_id);
         } catch(\Exception $e) {

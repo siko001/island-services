@@ -17,7 +17,7 @@ class OrderTypeSeeder extends Seeder
             [
                 'name' => 'Direct Sales',
                 'abbreviation' => 'Direct',
-                'is_default' => false,
+                'is_direct_sale' => true,
                 'short_period_type' => rand(0, 1),
             ],
 
@@ -30,49 +30,41 @@ class OrderTypeSeeder extends Seeder
             [
                 'name' => 'Standing Order',
                 'abbreviation' => 'SO',
-                'is_default' => false,
                 'short_period_type' => rand(0, 1),
             ],
             [
                 'name' => 'Trail Period',
                 'abbreviation' => 'Trial',
-                'is_default' => false,
                 'short_period_type' => rand(0, 1),
             ],
             [
                 'name' => 'Fax',
                 'abbreviation' => 'Fax',
-                'is_default' => false,
                 'short_period_type' => rand(0, 1),
             ],
             [
                 'name' => 'Phone Call',
                 'abbreviation' => 'phone',
-                'is_default' => false,
                 'short_period_type' => rand(0, 1),
             ],
             [
                 'name' => 'Website',
                 'abbreviation' => 'website',
-                'is_default' => false,
                 'short_period_type' => rand(0, 1),
             ],
             [
                 'name' => 'Salesman',
                 'abbreviation' => 'sales',
-                'is_default' => false,
                 'short_period_type' => rand(0, 1),
             ],
             [
                 'name' => 'Driver',
                 'abbreviation' => 'driver',
-                'is_default' => false,
                 'short_period_type' => rand(0, 1),
             ],
             [
                 'name' => 'Trail Period',
                 'abbreviation' => 'Trial',
-                'is_default' => false,
                 'short_period_type' => rand(0, 1),
             ],
         ];

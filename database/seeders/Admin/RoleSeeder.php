@@ -22,6 +22,8 @@ class RoleSeeder extends Seeder
         app()[PermissionRegistrar::class]->forgetCachedPermissions(); // Clear cache before using Spatie's permission models
 
         $commissionRoles = ['Driver', 'Salesman'];
+        $driverRole = ['Driver'];
+        $saleManRole = ['Salesman'];
 
         $rolePermissions = [
             'Super Admin' => '*',
@@ -38,7 +40,11 @@ class RoleSeeder extends Seeder
         foreach(Data::RoleOptions() as $roleName) {
             $role = Role::updateOrCreate(
                 ['name' => $roleName, 'guard_name' => 'tenant'],
-                ['earns_commission' => in_array($roleName, $commissionRoles)]
+                [
+                    'earns_commission' => in_array($roleName, $commissionRoles),
+                    'is_salesmen_role' => in_array($roleName, $saleManRole),
+                    'is_driver_role' => in_array($roleName, $driverRole)
+                ],
             );
 
             // Assign permissions based on the role
@@ -53,7 +59,6 @@ class RoleSeeder extends Seeder
                     $role->syncPermissions($permissions);
                 }
             } else {
-                // Optionally remove all permissions from roles not defined in $rolePermissions
                 $role->syncPermissions([]);
             }
         }
@@ -68,5 +73,6 @@ class RoleSeeder extends Seeder
         } else {
             $this->command->info('No users found to assign the Super Admin role. Please run the db seeder and that will run this file.  command: php artisan db:seed.');
         }
+
     }
 }

@@ -13,7 +13,9 @@ class AreaObserver
      */
     public function created(Area $area): void
     {
-        //
+        if(app()->runningInConsole()) {
+            return;
+        }
         CreateSageAreaJob::dispatch($area);
     }
 
@@ -22,7 +24,9 @@ class AreaObserver
      */
     public function updated(Area $area): void
     {
-
+        if(app()->runningInConsole()) {
+            return;
+        }
         UpdateSageAreaJob::dispatch($area);
     }
 

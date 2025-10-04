@@ -13,6 +13,7 @@ return new class extends Migration {
         Schema::create('locations', function(Blueprint $table) {
             $table->id();
             $table->string('name');
+            $table->boolean('is_direct_sale')->default(false);
             $table->timestamps();
         });
 
@@ -21,6 +22,8 @@ return new class extends Migration {
             $table->string('name');
             $table->string('abbreviation')->nullable();
             $table->boolean('is_foreign_area')->default(false);
+            $table->boolean('is_direct_sale')->default(false);
+
             // Commission fields
             $table->float('commission_paid_outstanding_delivery', 8, 2)->default(0.00);
             $table->float('commission_paid_outstanding_deposit', 8, 2)->default(0.00);

@@ -4,6 +4,8 @@ namespace App\Helpers;
 
 use App\Models\Admin\Role;
 use App\Models\Customer\Customer;
+use App\Models\Post\PrepaidOffer;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
@@ -76,10 +78,10 @@ class HelperFunctions
         }
     }
 
-    public static function otherDefaultExists($model, $currentId): bool
+    public static function otherDefaultExists($model, $currentId, $columnName = "is_default"): bool
     {
         // Replace ModelName with your actual model
-        return $model::where('is_default', true)
+        return $model::where($columnName, true)
             ->where('id', '!=', $currentId)
             ->exists();
     }
@@ -116,7 +118,7 @@ class HelperFunctions
 
     protected static int $seedingCounter = 0;
 
-    protected static function getInitials(string $value1, string $value2): string
+    public static function getInitials(string $value1, string $value2): string
     {
         $initials = '';
         $words = array_merge(
@@ -150,7 +152,7 @@ class HelperFunctions
             self::$seedingCounter++;
             $number = str_pad(self::$seedingCounter + 1, 4, '0', STR_PAD_LEFT);
         } else {
-            $number = str_pad(Customer::orderBy('id', 'desc')->first()->id + 1, 4, '0', STR_PAD_LEFT);
+            $number = str_pad(Customer::orderBy('id', 'desc')->first()->id, 4, '0', STR_PAD_LEFT);
         }
 
         return strtoupper($initials) . '-' . $number;
@@ -176,5 +178,78 @@ class HelperFunctions
         }
 
         return $filename;
+    }
+
+    /**
+     * Generate Order Number based on type, year, next availability.
+     * @param string| $orderType
+     * $param model | $model
+     * @return string
+     */
+    public static function generateOrderNumber(string $orderType, $model): string
+    {
+        $initialsMap = [
+            'delivery_note' => 'DN',
+            'direct_sale' => 'DS',
+            'collection_note' => 'CN',
+            'prepaid_offer' => 'PPO',
+        ];
+        $initials = $initialsMap[$orderType] ?? 'ON';
+
+        $column = $orderType . '_number';
+        $lastEntry = $model::select($column)->orderBy('id', 'desc')->first();
+
+        if($lastEntry && !empty($lastEntry->$column)) {
+            $parts = explode('-', $lastEntry->$column);
+            $lastNumberStr = end($parts);
+            $lastNumber = (int)$lastNumberStr;
+            $nextNumber = $lastNumber + 1;
+        } else {
+            $nextNumber = 1;
+        }
+
+        $paddedNumber = str_pad($nextNumber, max(strlen((string)$nextNumber), 4), '0', STR_PAD_LEFT);
+        $year = Carbon::now()->format('Y');
+        return $initials . '-' . $year . '-' . $paddedNumber;
+    }
+
+    public static function revertPrepaidOfferProductsIfNeeded($model): void
+    {
+        if($model->converted && $model->prepaid_offer_id) {
+            $prepaidOffer = PrepaidOffer::find($model->prepaid_offer_id);
+            if($prepaidOffer && $prepaidOffer->status == 1) {
+                $prepaidOfferProduct = $prepaidOffer->prepaidOfferProducts()->where('product_id', $model->product_id)->first();
+                if($prepaidOfferProduct) {
+                    $prepaidOfferProduct->total_remaining += $model->quantity;
+                    $prepaidOfferProduct->total_taken -= $model->quantity;
+                    $prepaidOfferProduct->save();
+
+                    // Notify Admins
+                    Notifications::notifyUser(
+                        $prepaidOfferProduct,
+                        [
+                            'order_note' => $model->delivery_note_id ? 'Delivery Note' : ($model->direct_sale_id ? 'Direct Sale' : 'Record'),
+                            'product' => $prepaidOfferProduct->product->name,
+                            'order_note_number' => $model->deliveryNote->delivery_note_number ?? ($model->directSale->direct_sale_number ?? 'N/A'),
+                            'prepaid_offer_number' => $prepaidOffer->prepaid_offer_number,
+                            'quantity' => $model->quantity
+                        ],
+                        'created',
+                        "Product {product} quantities ({quantity}) reverted in Prepaid Offer {prepaid_offer_number} due to removal of associated record from {order_note}: {order_note_number} .",
+                        'check'
+                    );
+
+                }
+            }
+        }
+    }
+
+    public static function getTenantUrl($path): string
+    {
+        $tenant = strtolower(tenancy()->tenant?->id);
+        $url = config('app.url');
+        $urlWithoutProtocol = preg_replace("(^https?://)", "", $url);
+        $protocol = request()->getScheme();
+        return $protocol . '://' . $tenant . '.' . $urlWithoutProtocol . '/' . ltrim($path, '/');
     }
 }

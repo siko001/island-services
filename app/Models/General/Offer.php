@@ -4,6 +4,7 @@ namespace App\Models\General;
 
 use App\Models\Product\Product;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Offer extends Model
 {
@@ -26,7 +27,7 @@ class Offer extends Model
     /**
      * Get the offer products for the offer.
      */
-    public function offerProducts()
+    public function offerProducts(): HasMany
     {
         return $this->hasMany(OfferProduct::class);
     }

@@ -4,7 +4,9 @@ namespace App\Nova;
 
 use App\Helpers\HelperFunctions;
 use App\Nova\Parts\General\WeekdaysFields;
-use Illuminate\Http\Request;
+use App\Traits\ResourcePolicies;
+use Laravel\Nova\Actions\Action;
+use Laravel\Nova\Card;
 use Laravel\Nova\Fields\BelongsToMany;
 use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\Email;
@@ -12,33 +14,22 @@ use Laravel\Nova\Fields\Number;
 use Laravel\Nova\Fields\Select;
 use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Fields\Textarea;
+use Laravel\Nova\Filters\Filter;
 use Laravel\Nova\Http\Requests\NovaRequest;
+use Laravel\Nova\Lenses\Lens;
 use Laravel\Nova\Panel;
 
 class Area extends Resource
 {
-    /**
-     * The model the resource corresponds to.
-     * @var class-string<\App\Models\General\Area>
-     */
+    use ResourcePolicies;
+
+    public static string $policyKey = 'area';
     public static $model = \App\Models\General\Area::class;
-    /**
-     * The single value that should be used to represent the resource when being displayed.
-     * @var string
-     */
     public static $title = 'name';
-    /**
-     * The columns that should be searched.
-     * @var array
-     */
     public static $search = [
         'name',
     ];
 
-    /**
-     * Get the fields displayed by the resource.
-     * @return array<int, \Laravel\Nova\Fields\Field>
-     */
     public function fields(NovaRequest $request): array
     {
         return [
@@ -49,6 +40,16 @@ class Area extends Resource
                 ->hideFromIndex(function(NovaRequest $request) {
                     return $request->viaRelationship();
                 }),
+
+            Boolean::make("Direct Sale Default", "is_direct_sale")
+                ->help('Only 1 Default')
+                ->hideWhenUpdating(function() {
+                    return HelperFunctions::otherDefaultExists($this::$model, $this->resource->id, 'is_direct_sale');
+                })
+                ->hideWhenCreating(function() {
+                    return HelperFunctions::otherDefaultExists($this::$model, $this->resource->id, 'is_direct_sale');
+                })
+                ->sortable(),
 
             Boolean::make('Is Foreign', 'is_foreign_area')
                 ->sortable()
@@ -94,6 +95,7 @@ class Area extends Resource
 
             Panel::make("Delivery Note Information", [
                 Textarea::make('Delivery Note Remark', 'delivery_note_remark')
+                    ->alwaysShow()
                     ->sortable()
                     ->rules('max:255')
                     ->maxlength(255)
@@ -138,7 +140,7 @@ class Area extends Resource
 
     /**
      * Get the cards available for the resource.
-     * @return array<int, \Laravel\Nova\Card>
+     * @return array<int, Card>
      */
     public function cards(NovaRequest $request): array
     {
@@ -147,7 +149,7 @@ class Area extends Resource
 
     /**
      * Get the filters available for the resource.
-     * @return array<int, \Laravel\Nova\Filters\Filter>
+     * @return array<int, Filter>
      */
     public function filters(NovaRequest $request): array
     {
@@ -156,7 +158,7 @@ class Area extends Resource
 
     /**
      * Get the lenses available for the resource.
-     * @return array<int, \Laravel\Nova\Lenses\Lens>
+     * @return array<int, Lens>
      */
     public function lenses(NovaRequest $request): array
     {
@@ -165,36 +167,12 @@ class Area extends Resource
 
     /**
      * Get the actions available for the resource.
-     * @return array<int, \Laravel\Nova\Actions\Action>
+     * @return array<int, Action>
      */
     public function actions(NovaRequest $request): array
     {
         return [];
     }
-
     //Resource authorization methods
-    public static function authorizedToCreate(Request $request): bool
-    {
-        return $request->user() && $request->user()->can('create area');
-    }
 
-    public function authorizedToUpdate(Request $request): bool
-    {
-        return $request->user() && $request->user()->can('update area');
-    }
-
-    public function authorizedToDelete(Request $request): bool
-    {
-        return $request->user() && $request->user() && $request->user()->can('delete area');
-    }
-
-    public static function authorizedToViewAny(Request $request): bool
-    {
-        return $request->user() && $request->user()->can('view any area');
-    }
-
-    public function authorizedToView(Request $request): bool
-    {
-        return $request->user() && $request->user()->can('view area');
-    }
 }

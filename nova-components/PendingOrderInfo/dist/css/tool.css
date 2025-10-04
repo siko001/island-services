@@ -1,0 +1,221 @@
+:root {
+    /* Light theme (default) */
+    --modal-bg: rgb(241, 245, 249);
+    --text-color: #3f3f3f;
+    --border-color: #ccc;
+    --hover-shadow: #00a8c6;
+    --selected-bg: #e2e8f0;
+    --hover-bg: #e2e8f077;
+    --table-bg: rgb(255, 255, 255);
+    --table-header-bg: oklch(96.7% 0.003 264.542);
+
+    /* Button colors */
+    --close-button-color: black;
+    --convert-button-color: blue;
+    --amend-button-color: red;
+}
+
+/* Dark theme */
+html.dark {
+    --modal-bg: #1f2937;
+    --text-color: #e5e7eb;
+    --border-color: #4b5563;
+    --hover-shadow: #0891b2;
+    --selected-bg: rgba(55, 65, 81, 0.67);
+    --hover-bg: #4b556377;
+    --table-bg: #374151;
+    --table-header-bg: rgb(15, 23, 42);
+
+    /* Button colors */
+    --close-button-color: #e5e7eb;
+    --convert-button-color: #93c5fd;
+    --amend-button-color: #fca5a5;
+}
+
+.overlay {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 998;
+}
+
+#custom-modal,
+#conversion-modal {
+    position: fixed;
+    z-index: 999;
+    left: 50%;
+    top: 10%;
+    transform: translateX(-50%);
+    min-width: 1280px;
+    background-color: var(--modal-bg);
+    border-radius: 0.375rem;
+    overflow: scroll;
+    scroll-behavior: smooth;
+}
+
+#conversion-modal {
+    z-index: 1000;
+}
+
+/*Modal Grid*/
+.grid-container {
+    margin-bottom: 1rem;
+    width: 100%;
+    padding: 0.5rem 0 0.5rem 0.5rem;
+}
+
+/*Modal Header*/
+.order-heading {
+    font-size: 1rem;
+    color: var(--text-color);
+}
+
+.border-color {
+    border-color: var(--border-color) !important;
+}
+
+.table-row-header {
+    background: var(--table-header-bg);
+    font-weight: 600;
+    color: var(--text-color);
+}
+.table-row-bg {
+    background: var(--table-bg) !important;
+    border-bottom: 1px solid var(--border-color);
+    color: var(--text-color);
+}
+
+/*Grid Inner Container*/
+.grid-inner-container {
+    padding: 0.5rem;
+    height: 100%;
+}
+
+.product-row-input input {
+    padding-left: 0.5rem !important;
+    height: 26px !important;
+    width: 100% !important;
+}
+
+.row-bg {
+    background: var(--table-bg) !important;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.row-bg.order-number {
+    color: #007acc;
+    font-weight: 600;
+}
+
+html.dark .row-bg.order-number {
+    color: #15c6fc;
+    font-weight: 600;
+}
+
+/*Header*/
+.table-header {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+}
+
+/*Order & Product tables*/
+.table-container, .product-table-container {
+    max-height: 11rem;
+    overflow-y: auto;
+    scroll-behavior: smooth;
+}
+
+.product-conversion-table-container {
+    max-height: 20rem;
+    overflow-y: auto;
+    scroll-behavior: smooth;
+}
+
+.text-color {
+    color: var(--text-color);
+}
+
+/*Resource Modal Button*/
+.hover-button {
+    transition: box-shadow 0.3s ease;
+}
+.hover-button:hover {
+    box-shadow: 2px 2px 2px var(--hover-shadow);
+}
+/*----*/
+
+/*Modal Close Button*/
+.close-button {
+    transition: box-shadow 0.3s ease;
+    border: 1px solid var(--close-button-color);
+    color: var(--close-button-color);
+}
+.close-button:hover {
+    box-shadow: 2px 2px 2px var(--close-button-color);
+}
+/*----*/
+
+/*Convert Button*/
+.covert-button {
+    transition: box-shadow 0.3s ease;
+    border: 1px solid var(--convert-button-color);
+    color: var(--convert-button-color);
+}
+.covert-button:hover {
+    box-shadow: 2px 2px 2px var(--convert-button-color);
+}
+/*----*/
+
+/*Amend Button*/
+.amend-button {
+    transition: box-shadow 0.3s ease;
+    border: 1px solid var(--amend-button-color);
+    color: var(--amend-button-color);
+}
+.amend-button:hover {
+    box-shadow: 2px 2px 2px var(--amend-button-color);
+}
+/*----*/
+
+.product-row {
+    padding: 0.25rem 0.50rem;
+    white-space: nowrap !important;
+}
+
+/*Selected Row*/
+.selected-row {
+    background: var(--selected-bg) !important;
+}
+
+.order-parent:hover > .element {
+    background: var(--hover-bg) !important;
+    cursor: pointer;
+}
+/*----*/
+
+@media (max-width: 1280px ) {
+    #custom-modal,
+    #conversion-modal {
+        min-width: 90%
+    }
+}
+
+@media (max-width: 768px ) {
+    #custom-modal,
+    #conversion-modal {
+        position: absolute;
+        top: -2%;
+        max-width: 95%;
+        min-width: 95%
+    }
+
+    .grid-container {
+        padding: 0;
+    }
+}
+

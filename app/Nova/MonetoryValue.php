@@ -2,7 +2,7 @@
 
 namespace App\Nova;
 
-use App\Policies\ResourcePolicies;
+use App\Traits\ResourcePolicies;
 use Laravel\Nova\Fields\Number;
 use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Http\Requests\NovaRequest;
@@ -12,20 +12,9 @@ class MonetoryValue extends Resource
     use ResourcePolicies;
 
     public static string $policyKey = 'monetory_value';
-    /**
-     * The model the resource corresponds to.
-     * @var class-string<\App\Models\General\MonetoryValue>
-     */
     public static $model = \App\Models\General\MonetoryValue::class;
-    /**
-     * The single value that should be used to represent the resource when being displayed.
-     * @var string
-     */
     public static $title = 'name';
-    /**
-     * The columns that should be searched.
-     * @var array
-     */
+    public static $globallySearchable = false;
     public static $search = [
         'name',
     ];

@@ -6,6 +6,7 @@ namespace App\Models;
 use App\Models\Admin\Role;
 use App\Models\General\Vehicle;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Nova\Http\Requests\NovaRequest;
@@ -58,17 +59,17 @@ class User extends Authenticatable
         ];
     }
 
-    public function vehicles()
+    public function vehicles(): BelongsToMany
     {
         return $this->belongsToMany(Vehicle::class, 'driver_vehicle');
     }
 
-    public static function getSalesmenRoles()
+    public static function getSalesmenRoles(): array
     {
         $salesmen = [];
 
         $roles = Role::with('users')
-            ->where('earns_commission', true)
+            ->where('is_salesmen_role', true)
             ->get();
         foreach($roles as $role) {
             foreach($role->users as $user) {
@@ -94,10 +95,10 @@ class User extends Authenticatable
             }
 
             //if the user is terminated, and they have commission enabled, disable it
-            if($user->is_terminated && ($user->gets_commission || $user->standard_commission)) {
+            if($user->is_terminated && ($user->gets_commission || $user->standard_commission || $user->is_default_salesman)) {
                 $user->gets_commission = false;
                 $user->standard_commission = false;
-
+                $user->is_default_salesman = false;
             }
             return true;
         });

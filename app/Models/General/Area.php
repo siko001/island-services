@@ -18,7 +18,9 @@ class Area extends Model
         'commission_cash_deposit',
         'delivery_note_remark',
         'customer_care_email',
-        'updated_at'
+        'is_direct_sale',
+        'updated_at',
+        'created_at',
     ];
     protected $casts = [
         'commission_paid_outstanding_delivery' => 'float',
@@ -26,7 +28,9 @@ class Area extends Model
         'commission_cash_delivery' => 'float',
         'commission_cash_deposit' => 'float',
         'is_foreign_area' => 'boolean',
+        'is_direct_sale' => 'boolean',
         'updated_at' => 'datetime',
+        'created_at' => 'datetime',
     ];
 
     public function locations()
@@ -45,7 +49,7 @@ class Area extends Model
         return $this->hasMany(Vehicle::class);
     }
 
-    public static function boot()
+    public static function boot(): void
     {
         parent::boot();
         Area::observe(AreaObserver::class);

@@ -20,6 +20,8 @@ return new class extends Migration {
             $table->foreignId('operator_id')->constrained('users')->onDelete('cascade');
             $table->foreignId('order_type_id')->constrained('order_types')->onDelete('cascade');
 
+            $table->text('days_for_delivery')->nullable();
+
             $table->date('expiry_date')->nullable();
             $table->string('delivery_instructions')->nullable();
             $table->string('delivery_directions')->nullable();
@@ -42,7 +44,10 @@ return new class extends Migration {
             $table->decimal('credit_on_deposit', 10, 2)->default(0.00);
 
             $table->integer('credit_limit')->nullable()->default(0);
+            $table->timestamp('processed_at')->nullable();
             $table->date('last_delivery_date')->nullable();
+
+            $table->boolean('create_from_default_products')->default(false);
 
             //            Load sheet?
             //            blank delivery note number?
@@ -72,6 +77,9 @@ return new class extends Migration {
             $table->string('make')->nullable();
             $table->string('model')->nullable();
             $table->string('serial_number')->nullable();
+
+            $table->boolean('converted')->default(false);
+            $table->foreignId('prepaid_offer_id')->nullable()->constrained('prepaid_offers')->onDelete('cascade');
 
             $table->timestamps();
 

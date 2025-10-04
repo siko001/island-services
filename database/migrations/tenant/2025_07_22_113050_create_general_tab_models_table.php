@@ -15,6 +15,7 @@ return new class extends Migration {
             $table->string('name');
             $table->string('abbreviation')->nullable();
             $table->boolean('short_period_type')->default(false);
+            $table->boolean('is_direct_sale')->default(false);
             $table->boolean('is_default')->default(false);
             $table->timestamps();
         });

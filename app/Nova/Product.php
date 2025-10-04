@@ -2,13 +2,15 @@
 
 namespace App\Nova;
 
+use App\Helpers\HelperFunctions;
 use App\Nova\Parts\Product\AdditionalDetails;
 use App\Nova\Parts\Product\PriceTypeDynamicFields;
 use App\Nova\Parts\Product\StockInfo;
 use App\Nova\Parts\Product\WebsiteInfo;
-use App\Policies\ResourcePolicies;
+use App\Traits\ResourcePolicies;
 use Laravel\Nova\Fields\BelongsToMany;
-use Laravel\Nova\Fields\ID;
+use Laravel\Nova\Fields\Field;
+use Laravel\Nova\Fields\Image;
 use Laravel\Nova\Fields\Number;
 use Laravel\Nova\Fields\Repeater;
 use Laravel\Nova\Fields\Text;
@@ -20,32 +22,42 @@ class Product extends Resource
     use ResourcePolicies;
 
     public static string $policyKey = 'product';
-    /**
-     * The model the resource corresponds to.
-     * @var class-string<\App\Models\Product\Product>
-     */
     public static $model = \App\Models\Product\Product::class;
-    /**
-     * The single value that should be used to represent the resource when being displayed.
-     * @var string
-     */
     public static $title = 'name';
-    /**
-     * The columns that should be searched.
-     * @var array
-     */
     public static $search = [
         'name',
     ];
 
     /**
      * Get the fields displayed by the resource.
-     * @return array<int, \Laravel\Nova\Fields\Field>
+     * @return array<int, Field>
      */
     public function fields(NovaRequest $request): array
     {
         return [
-            ID::make()->sortable(),
+            Image::make('Image', 'image_path')
+                ->preview(function($value) {
+                    if($value) {
+                        return HelperFunctions::getTenantUrl('tenancy/assets/images/' . basename($value));
+                    }
+                    return false;
+                })
+                ->thumbnail(function($value) {
+                    if($value) {
+                        return HelperFunctions::getTenantUrl('tenancy/assets/images/' . basename($value));
+                    }
+                    return false;
+                })
+                ->disableDownload()
+                ->onlyOnIndex()
+                ->showOnDetail()
+                ->canSee(function($request) {
+                    if($request['relationshipType'] == null && !isset($request['perPage'])) {
+                        return $this->resource->image_path;
+                    }
+                    return true;
+                }),
+
             Text::make('Name')
                 ->rules('required'),
 
@@ -56,6 +68,7 @@ class Product extends Resource
                 ->hideFromIndex(),
 
             Number::make('Product Price')
+                ->filterable()
                 ->rules('required', 'numeric', 'min:0')
                 ->step('0.01')
                 ->textAlign('left')

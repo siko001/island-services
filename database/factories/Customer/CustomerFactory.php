@@ -24,24 +24,38 @@ class CustomerFactory extends Factory
         $usingDifferentSummerAddress = $this->faker->boolean;
 
         // Get a random valid AreaLocation row
-        $areaLocation = AreaLocation::inRandomOrder()->first();
+        $areaLocation = AreaLocation::join('locations', 'area_location.location_id', '=', 'locations.id')
+            ->where('locations.name', '!=', 'Direct Sales')
+            ->inRandomOrder()
+            ->select('area_location.*')
+            ->first();
+
         $deliveryAreaId = $areaLocation ? $areaLocation->area_id : 1;
         $deliveryLocationId = $areaLocation ? $areaLocation->location_id : 1;
 
         if($usingDifferentBilling) {
-            $billingAreaLocation = AreaLocation::inRandomOrder()->first();
+            $billingAreaLocation = AreaLocation::join('locations', 'area_location.location_id', '=', 'locations.id')
+                ->where('locations.name', '!=', 'Direct Sales')
+                ->inRandomOrder()
+                ->select('area_location.*')
+                ->first();
+
             $billingAreaId = $billingAreaLocation ? $billingAreaLocation->area_id : 1;
             $billingLocationId = $billingAreaLocation ? $billingAreaLocation->location_id : 1;
         }
 
         if($usingDifferentSummerAddress) {
-            $summerAreaLocation = AreaLocation::inRandomOrder()->first();
+            $summerAreaLocation = AreaLocation::join('locations', 'area_location.location_id', '=', 'locations.id')
+                ->where('locations.name', '!=', 'Direct Sales')
+                ->inRandomOrder()
+                ->select('area_location.*')
+                ->first();
+
             $summerAreaId = $summerAreaLocation ? $summerAreaLocation->area_id : 1;
             $summerLocationId = $summerAreaLocation ? $summerAreaLocation->location_id : 1;
         }
 
         return [
-
             'client' => $name . " " . $surname,
             'issue_invoices' => $this->faker->boolean,
             'different_billing_details' => $usingDifferentBilling,
@@ -66,7 +80,7 @@ class CustomerFactory extends Factory
             'delivery_details_telephone_office' => $this->faker->phoneNumber,
             'delivery_details_fax_one' => $this->faker->optional()->phoneNumber,
             'delivery_details_fax_two' => $this->faker->optional()->phoneNumber,
-            'delivery_details_email_one' => $this->faker->email,
+            'delivery_details_email_one' => $name . "." . $surname . "@gmail.com",
             'delivery_details_email_two' => $this->faker->optional()->email,
             'delivery_details_mobile' => $this->faker->phoneNumber,
             'delivery_details_url' => $this->faker->optional()->url,
@@ -77,13 +91,13 @@ class CustomerFactory extends Factory
             'delivery_details_financial_surname' => $this->faker->lastName,
 
             // Credit
-            'credit_terms_current' => $this->faker->numberBetween(0, 90),
+            'credit_terms_current' => 0,
             'credit_terms_default' => 40,
-            'credit_limit_del' => $this->faker->randomFloat(2, 500, 10000),
-            'credit_limit_dep' => $this->faker->randomFloat(2, 100, 5000),
-            'balance_del' => $this->faker->randomFloat(2, 0, 2000),
-            'balance_dep' => $this->faker->randomFloat(2, 0, 1000),
-            'turnover' => $this->faker->randomFloat(2, 0, 50000),
+            'credit_limit_del' => 0,
+            'credit_limit_dep' => 0,
+            'balance_del' => 0,
+            'balance_dep' => 0,
+            'turnover' => 0,
 
             // Billing
             'billing_details_name' => $usingDifferentBilling ? $this->faker->firstName : null,
@@ -130,7 +144,6 @@ class CustomerFactory extends Factory
             },
 
             'client_types_id' => ClientType::inRandomOrder()->value('id') ?? 1,
-
             'deliver_instruction' => $this->faker->sentence,
             'directions' => $this->faker->sentence,
             'remarks' => $this->faker->optional()->sentence,

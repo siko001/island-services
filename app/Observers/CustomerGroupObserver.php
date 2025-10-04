@@ -13,6 +13,9 @@ class CustomerGroupObserver
      */
     public function created(CustomerGroup $customerGroup): void
     {
+        if(app()->runningInConsole()) {
+            return;
+        }
         CreateSageCustomerGroupJob::dispatch($customerGroup);
     }
 
@@ -21,6 +24,9 @@ class CustomerGroupObserver
      */
     public function updated(CustomerGroup $customerGroup): void
     {
+        if(app()->runningInConsole()) {
+            return;
+        }
         UpdateSageCustomerGroupJob::dispatch($customerGroup);
     }
 

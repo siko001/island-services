@@ -3,9 +3,13 @@
 namespace App\Nova;
 
 use Illuminate\Http\Request;
+use Laravel\Nova\Actions\Action;
+use Laravel\Nova\Card;
 use Laravel\Nova\Fields\BelongsToMany;
 use Laravel\Nova\Fields\Text;
+use Laravel\Nova\Filters\Filter;
 use Laravel\Nova\Http\Requests\NovaRequest;
+use Laravel\Nova\Lenses\Lens;
 
 class Permission extends Resource
 {
@@ -14,28 +18,16 @@ class Permission extends Resource
      * @var class-string<\App\Models\Admin\Permission>
      */
     public static $model = \App\Models\Admin\Permission::class;
-    /**
-     * The single value that should be used to represent the resource when being displayed.
-     * @var string
-     */
     public static $title = 'id';
-    /**
-     * The columns that should be searched.
-     * @var array
-     */
     public static $search = [
-        'id',
+        'name',
     ];
 
-    /**
-     * Get the fields displayed by the resource.
-     * @return array<int, \Laravel\Nova\Fields\Field>
-     */
     public function fields(NovaRequest $request): array
     {
 
         return [
-            Text::make('Name', 'name')->sortable()->rules('required', 'max:255')->onlyOnIndex(),
+            Text::make('Name', 'name')->sortable()->rules('required', 'max:255'),
             BelongsToMany::make('Roles'),
             BelongsToMany::make('Users', 'users', User::class),
         ];
@@ -43,7 +35,7 @@ class Permission extends Resource
 
     /**
      * Get the cards available for the resource.
-     * @return array<int, \Laravel\Nova\Card>
+     * @return array<int, Card>
      */
     public function cards(NovaRequest $request): array
     {
@@ -52,7 +44,7 @@ class Permission extends Resource
 
     /**
      * Get the filters available for the resource.
-     * @return array<int, \Laravel\Nova\Filters\Filter>
+     * @return array<int, Filter>
      */
     public function filters(NovaRequest $request): array
     {
@@ -61,7 +53,7 @@ class Permission extends Resource
 
     /**
      * Get the lenses available for the resource.
-     * @return array<int, \Laravel\Nova\Lenses\Lens>
+     * @return array<int, Lens>
      */
     public function lenses(NovaRequest $request): array
     {
@@ -70,7 +62,7 @@ class Permission extends Resource
 
     /**
      * Get the actions available for the resource.
-     * @return array<int, \Laravel\Nova\Actions\Action>
+     * @return array<int, Action>
      */
     public function actions(NovaRequest $request): array
     {

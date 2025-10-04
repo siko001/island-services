@@ -11,7 +11,17 @@
         "build-grouped-permissions": "cd nova-components/GroupedPermissions && npm run dev",
         "build-grouped-permissions-prod": "cd nova-components/GroupedPermissions && npm run prod",
         "build-gallery": "cd nova-components/Gallery && npm run dev",
-        "build-gallery-prod": "cd nova-components/Gallery && npm run prod"
+        "build-gallery-prod": "cd nova-components/Gallery && npm run prod",
+        "build-login-logs": "cd nova-components/LoginLogs && npm run dev",
+        "build-login-logs-prod": "cd nova-components/LoginLogs && npm run prod",
+        "build-custom-heading": "cd nova-components/CustomHeading && npm run dev",
+        "build-custom-heading-prod": "cd nova-components/CustomHeading && npm run prod",
+        "build-system-logs": "cd nova-components/SystemLogs && npm run dev",
+        "build-system-logs-prod": "cd nova-components/SystemLogs && npm run prod",
+        "build-system-trail": "cd nova-components/SystemTrail && npm run dev",
+        "build-system-trail-prod": "cd nova-components/SystemTrail && npm run prod",
+        "build-pending-order-info": "cd nova-components/PendingOrderInfo && npm run dev",
+        "build-pending-order-info-prod": "cd nova-components/PendingOrderInfo && npm run prod"
     },
     "devDependencies": {
         "@tailwindcss/vite": "^4.0.0",
