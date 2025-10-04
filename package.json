@@ -4,7 +4,7 @@
     "type": "module",
     "scripts": {
         "dev": "vite",
-        "build": "vite build && npm run copy-tenants",
+        "build": "vite build && npm run",
         "copy-tenants": "mkdir -p public/tenancy/assets/build/assets/ && rsync -a public/build/assets/ public/tenancy/assets/build/assets/",
         "build-example-card": "cd nova-components/ExampleCard && npm run dev",
         "build-example-card-prod": "cd nova-components/ExampleCard && npm run prod",
@@ -21,7 +21,9 @@
         "build-system-trail": "cd nova-components/SystemTrail && npm run dev",
         "build-system-trail-prod": "cd nova-components/SystemTrail && npm run prod",
         "build-pending-order-info": "cd nova-components/PendingOrderInfo && npm run dev",
-        "build-pending-order-info-prod": "cd nova-components/PendingOrderInfo && npm run prod"
+        "build-pending-order-info-prod": "cd nova-components/PendingOrderInfo && npm run prod",
+        "build-process-repair": "cd nova-components/ProcessRepair && npm run dev",
+        "build-process-repair-prod": "cd nova-components/ProcessRepair && npm run prod"
     },
     "devDependencies": {
         "@tailwindcss/vite": "^4.0.0",
